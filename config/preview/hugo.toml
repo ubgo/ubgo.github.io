@@ -1,0 +1,12 @@
+# Owner preview (portless, https://ubgo.shipd.fyi): adds the /preview/ page with
+# the logo options and the rendered profile README. Never used for production.
+[module]
+  [[module.mounts]]
+    source = "content"
+    target = "content"
+  [[module.mounts]]
+    source = "content-preview"
+    target = "content"
+  [[module.mounts]]
+    source = "assets"
+    target = "assets"

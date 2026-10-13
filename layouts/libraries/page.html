@@ -1,0 +1,43 @@
+{{ define "main" }}
+{{- $l := .Params.lib }}
+{{- $all := hugo.Data.libraries.libraries }}
+<nav class="pt-6 text-[12px] text-slate-500" aria-label="Breadcrumb">
+  <a href="{{ "/libraries/" | relURL }}" class="hover:text-slate-800 dark:hover:text-white">Libraries</a>
+  <span aria-hidden="true">/</span>
+  <a href="{{ printf "/libraries/?area=%s" $l.area | relURL }}" class="hover:text-slate-800 dark:hover:text-white">{{ .Params.areaTitle }}</a>
+</nav>
+<article class="pt-2 max-w-3xl">
+  <h1 class="font-mono font-semibold text-[26px] tracking-tight text-slate-900 dark:text-white flex flex-wrap items-center gap-2">{{ $l.name }} {{ partial "kind-badge.html" $l }}</h1>
+  <p class="mt-2 text-[15px] text-slate-700 dark:text-slate-300">{{ $l.summary }}</p>
+  <dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-[13px]">
+    <dt class="text-slate-500">Area</dt><dd>{{ .Params.areaTitle }}</dd>
+    <dt class="text-slate-500">Language</dt><dd>{{ $l.lang }}</dd>
+    <dt class="text-slate-500">Repository</dt><dd class="min-w-0 truncate"><a class="text-brand-700 dark:text-brand-400 hover:underline" href="https://github.com/ubgo/{{ $l.name }}">github.com/ubgo/{{ $l.name }}</a></dd>
+  </dl>
+  {{- with $l.install }}
+  <h2 class="mt-6 mb-2 font-display font-semibold text-[15px] text-slate-900 dark:text-white">Install</h2>
+  {{ partial "install.html" . }}
+  {{- else }}
+  <p class="mt-6 text-[13px] text-slate-600 dark:text-slate-400">{{ if eq $l.kind "examples" }}This repo holds runnable examples. Clone it and run them with <code class="font-mono text-[12.5px]">go run .</code> as its README describes.{{ else }}See the repository README for how to use it.{{ end }}</p>
+  {{- end }}
+  {{- if eq $l.kind "deprecated" }}
+  <p class="mt-4 rounded-md border border-amber-300 dark:border-amber-500/40 bg-amber-50 dark:bg-amber-500/10 px-3 py-2 text-[13px] text-amber-900 dark:text-amber-200">This library is deprecated. New code should use the replacement listed under related libraries.</p>
+  {{- end }}
+  <div class="mt-5 flex flex-wrap gap-2 text-[13px]">
+    <a href="https://github.com/ubgo/{{ $l.name }}" class="h-8 px-3 inline-flex items-center rounded-md bg-brand-600 text-white font-medium hover:bg-brand-700">View on GitHub</a>
+    {{- with $l.docs }}
+    <a href="{{ . }}" class="h-8 px-3 inline-flex items-center rounded-md border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">{{ if hasPrefix . "https://pkg.go.dev" }}pkg.go.dev{{ else }}npm{{ end }}</a>
+    {{- end }}
+  </div>
+  {{- with $l.related }}
+  <h2 class="mt-8 mb-2 font-display font-semibold text-[15px] text-slate-900 dark:text-white">Related</h2>
+  <ul class="text-[13px] divide-y divide-slate-100 dark:divide-slate-800/70 border-y border-slate-100 dark:border-slate-800/70">
+    {{- range . }}
+    {{- with index (where $all "name" .) 0 }}
+    <li class="py-1.5 flex gap-3"><a class="font-mono font-medium shrink-0 text-slate-900 dark:text-white hover:text-brand-700 dark:hover:text-brand-400" href="{{ printf "/libraries/%s/" .name | relURL }}">{{ .name }}</a><span class="text-slate-600 dark:text-slate-400 truncate">{{ .summary }}</span></li>
+    {{- end }}
+    {{- end }}
+  </ul>
+  {{- end }}
+</article>
+{{ end }}

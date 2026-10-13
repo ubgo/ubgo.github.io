@@ -1,0 +1,383 @@
+# The one list of public ubgo libraries. The site (library index, one page per
+# library, home page) and profile/README.md are both generated from this file,
+# so edit it here and run `task profile` to refresh the org README.
+#
+# Fields per library:
+#   name     repo name under github.com/ubgo (also the page slug)
+#   area     one of the keys in `areas` below
+#   summary  one plain line, no marketing
+#   lang     Go | TypeScript
+#   install  the install line the repo's own README gives (empty for example repos)
+#   docs     API docs link (pkg.go.dev or npm); empty when there is no package to document
+#   kind     library (default) | examples | cli | deprecated
+#   featured true to show on the home page
+#   related  optional list of other library names
+#
+# Only PUBLIC repos may appear here.
+
+areas:
+  - key: errors-logging
+    title: Errors and logging
+    blurb: Structured errors, logging and telemetry.
+  - key: caching
+    title: Caching
+    blurb: One cache interface with in-memory, Redis, Postgres, Memcached, tiered and cluster backends.
+  - key: config-env
+    title: Config and env
+    blurb: Typed configuration and .env files.
+  - key: sql-data
+    title: SQL and data
+    blurb: SQL building, JSON column types, IDs and locks.
+  - key: graphql-ent
+    title: GraphQL and ent
+    blurb: Helpers and code generation for gqlgen and the ent ORM.
+  - key: http-services
+    title: HTTP and services
+    blurb: HTTP calls, health checks, graceful shutdown and build info.
+  - key: crypto
+    title: Crypto
+    blurb: Safe-default encryption and signing for Go and TypeScript.
+  - key: tooling
+    title: Tooling
+    blurb: Doc checking, task running, code generation and small utilities.
+
+libraries:
+  # Errors and logging
+  - name: errx
+    area: errors-logging
+    summary: One structured error type with stable identity, class, redactable fields, return traces and a wire codec.
+    lang: Go
+    install: go get github.com/ubgo/errx
+    docs: https://pkg.go.dev/github.com/ubgo/errx
+    featured: true
+  - name: logger
+    area: errors-logging
+    summary: Adapter-based, slog-native structured logging with sampling, redaction, OpenTelemetry and rotation.
+    lang: Go
+    install: go get github.com/ubgo/logger
+    docs: https://pkg.go.dev/github.com/ubgo/logger
+    featured: true
+  - name: otelkit
+    area: errors-logging
+    summary: One constructor that sets up OpenTelemetry traces, metrics and logs, with presets for common backends.
+    lang: Go
+    install: go get github.com/ubgo/otelkit
+    docs: https://pkg.go.dev/github.com/ubgo/otelkit
+  - name: goerr
+    area: errors-logging
+    summary: Error type with separate operator and user messages, error codes, key/value data and trace IDs.
+    lang: Go
+    install: go get github.com/ubgo/goerr
+    docs: https://pkg.go.dev/github.com/ubgo/goerr
+    related: [errx]
+
+  # Caching
+  - name: cache
+    area: caching
+    summary: The core cache interface with generics, single-flight Remember, a distributed locker and a shared conformance suite.
+    lang: Go
+    install: go get github.com/ubgo/cache
+    docs: https://pkg.go.dev/github.com/ubgo/cache
+    featured: true
+    related: [cache-mem, cache-redis, cache-pg, cache-memcached, cache-tiered, cache-cluster, cache-examples]
+  - name: cache-mem
+    area: caching
+    summary: Sharded in-memory backend for cache with W-TinyLFU or LRU eviction and optional snapshots.
+    lang: Go
+    install: go get github.com/ubgo/cache-mem
+    docs: https://pkg.go.dev/github.com/ubgo/cache-mem
+    related: [cache]
+  - name: cache-redis
+    area: caching
+    summary: Redis 6+ backend for cache with prefix isolation and Pub/Sub invalidation across processes.
+    lang: Go
+    install: go get github.com/ubgo/cache-redis
+    docs: https://pkg.go.dev/github.com/ubgo/cache-redis
+    related: [cache]
+  - name: cache-pg
+    area: caching
+    summary: Postgres and SQLite backend for cache over database/sql, with Migrate and Vacuum.
+    lang: Go
+    install: go get github.com/ubgo/cache-pg
+    docs: https://pkg.go.dev/github.com/ubgo/cache-pg
+    related: [cache]
+  - name: cache-memcached
+    area: caching
+    summary: Memcached backend for cache, covering the parts of the interface Memcached supports.
+    lang: Go
+    install: go get github.com/ubgo/cache-memcached
+    docs: https://pkg.go.dev/github.com/ubgo/cache-memcached
+    related: [cache]
+  - name: cache-tiered
+    area: caching
+    summary: Stacks cache backends into L1/L2/L3 tiers with read promotion and per-tier TTL.
+    lang: Go
+    install: go get github.com/ubgo/cache-tiered
+    docs: https://pkg.go.dev/github.com/ubgo/cache-tiered
+    related: [cache]
+  - name: cache-cluster
+    area: caching
+    summary: Peer-aware distributed cache with a consistent-hash ring and HTTP peer fill, on any cache backend.
+    lang: Go
+    install: go get github.com/ubgo/cache-cluster
+    docs: https://pkg.go.dev/github.com/ubgo/cache-cluster
+    related: [cache]
+  - name: cache-obj
+    area: caching
+    summary: In-process cache that holds live Go objects by reference, with TTL and LRU and no serialization.
+    lang: Go
+    install: go get github.com/ubgo/cache-obj
+    docs: https://pkg.go.dev/github.com/ubgo/cache-obj
+    related: [cache]
+  - name: cache-cli
+    area: caching
+    summary: Command-line cache inspector (get, set, del, stats, keys) with JSON output, built on cache.
+    lang: Go
+    install: go install github.com/ubgo/cache-cli@latest
+    docs: https://pkg.go.dev/github.com/ubgo/cache-cli
+    kind: cli
+    related: [cache]
+  - name: cache-examples
+    area: caching
+    summary: Runnable examples for the cache family, one self-contained program per feature.
+    lang: Go
+    install: ""
+    docs: ""
+    kind: examples
+    related: [cache]
+  - name: threadsafecache
+    area: caching
+    summary: Generic thread-safe LRU and TTL cache. Deprecated; use cache-obj instead.
+    lang: Go
+    install: go get github.com/ubgo/threadsafecache
+    docs: ""  # not on pkg.go.dev yet (checked 2026-10-13)
+    kind: deprecated
+    related: [cache-obj]
+
+  # Config and env
+  - name: cfgkit
+    area: config-env
+    summary: Typed config from env, .env, JSON, YAML, TOML, flags and secret stores into one validated struct.
+    lang: Go
+    install: go get github.com/ubgo/cfgkit
+    docs: https://pkg.go.dev/github.com/ubgo/cfgkit
+    featured: true
+    related: [dotenv]
+  - name: dotenv
+    area: config-env
+    summary: .env parser and editor that keeps comments, order and quoting, plus the dotenvctl CLI.
+    lang: Go
+    install: go get github.com/ubgo/dotenv
+    docs: https://pkg.go.dev/github.com/ubgo/dotenv
+    related: [cfgkit]
+
+  # SQL and data
+  - name: sqlb
+    area: sql-data
+    summary: Typed SQL builder with compile-checked columns and joins, Postgres and ClickHouse packages and a driver conformance suite.
+    lang: Go
+    install: go get github.com/ubgo/sqlb
+    docs: https://pkg.go.dev/github.com/ubgo/sqlb
+    featured: true
+  - name: lock
+    area: sql-data
+    summary: One lock interface with five backends (filelock, flock, Redis, Postgres, etcd) and fencing tokens.
+    lang: Go
+    install: go get github.com/ubgo/lock
+    docs: https://pkg.go.dev/github.com/ubgo/lock
+  - name: jsontype
+    area: sql-data
+    summary: A JSON type that round-trips between Go, JSON and SQL drivers (Postgres jsonb, MySQL json, SQLite).
+    lang: Go
+    install: go get github.com/ubgo/jsontype
+    docs: https://pkg.go.dev/github.com/ubgo/jsontype
+  - name: jsonslice
+    area: sql-data
+    summary: A JSON-backed slice that round-trips through SQL columns and gqlgen scalars.
+    lang: Go
+    install: go get github.com/ubgo/jsonslice
+    docs: https://pkg.go.dev/github.com/ubgo/jsonslice
+  - name: publicid
+    area: sql-data
+    summary: URL-safe, non-sequential public IDs from a fixed lowercase nanoid alphabet.
+    lang: Go
+    install: go get github.com/ubgo/publicid
+    docs: ""  # not on pkg.go.dev yet (checked 2026-10-13)
+  - name: gouuid
+    area: sql-data
+    summary: Small helpers around google/uuid.
+    lang: Go
+    install: go get github.com/ubgo/gouuid
+    docs: https://pkg.go.dev/github.com/ubgo/gouuid
+  - name: gormuuid
+    area: sql-data
+    summary: Postgres uuid[] field type for GORM.
+    lang: Go
+    install: go get github.com/ubgo/gormuuid
+    docs: https://pkg.go.dev/github.com/ubgo/gormuuid
+
+  # GraphQL and ent
+  - name: gqlkit
+    area: graphql-ent
+    summary: Generates typed GraphQL client SDKs for Go and TypeScript with compile-checked field selection.
+    lang: Go
+    install: go get github.com/khanakia/gqlkit/gqlkit
+    docs: https://pkg.go.dev/github.com/khanakia/gqlkit/gqlkit
+    featured: true
+  - name: entkit
+    area: graphql-ent
+    summary: Column types and field helpers for ent and gqlgen, as small independent modules.
+    lang: Go
+    install: go get github.com/ubgo/entkit/jsonmap
+    docs: ""  # not on pkg.go.dev yet (checked 2026-10-13)
+    related: [entx, jsontype, jsonslice]
+  - name: entx
+    area: graphql-ent
+    summary: Extensions for ent such as polymorphic relations, cascade delete and per-API GraphQL schemas.
+    lang: Go
+    install: go get github.com/khanakia/entx/entpoly
+    docs: https://pkg.go.dev/github.com/khanakia/entx/entpoly
+    related: [entkit]
+  - name: gqlutil
+    area: graphql-ent
+    summary: Small helper functions for gqlgen.
+    lang: Go
+    install: go get github.com/ubgo/gqlutil
+    docs: https://pkg.go.dev/github.com/ubgo/gqlutil
+  - name: gqlmodel
+    area: graphql-ent
+    summary: Custom scalar field types for gqlgen.
+    lang: Go
+    install: go get github.com/ubgo/gqlmodel
+    docs: https://pkg.go.dev/github.com/ubgo/gqlmodel
+  - name: gqlgenfn
+    area: graphql-ent
+    summary: Helper functions for using gqlgen with Gin.
+    lang: Go
+    install: go get github.com/ubgo/gqlgenfn
+    docs: https://pkg.go.dev/github.com/ubgo/gqlgenfn
+
+  # HTTP and services
+  - name: health
+    area: http-services
+    summary: Thread-safe health and readiness registry with k8s-style probes, framework adapters and ready-made checkers.
+    lang: Go
+    install: go get github.com/ubgo/health
+    docs: https://pkg.go.dev/github.com/ubgo/health
+    featured: true
+    related: [health-examples, shutdown]
+  - name: shutdown
+    area: http-services
+    summary: Phased graceful shutdown for services, parallel within a phase, with a watchdog and telemetry hooks.
+    lang: Go
+    install: go get github.com/ubgo/shutdown
+    docs: https://pkg.go.dev/github.com/ubgo/shutdown
+    related: [shutdown-examples, health]
+  - name: httpreq
+    area: http-services
+    summary: JSON-over-HTTP calls on top of net/http with one function, options and typed errors.
+    lang: Go
+    install: go get github.com/ubgo/httpreq
+    docs: https://pkg.go.dev/github.com/ubgo/httpreq
+  - name: buildinfo
+    area: http-services
+    summary: Version, commit, build time and module info for Go binaries, from runtime/debug with -ldflags overrides.
+    lang: Go
+    install: go get github.com/ubgo/buildinfo
+    docs: https://pkg.go.dev/github.com/ubgo/buildinfo
+    related: [buildinfo-examples]
+  - name: health-examples
+    area: http-services
+    summary: Runnable example apps for health, covering every HTTP framework adapter and observability.
+    lang: Go
+    install: ""
+    docs: ""
+    kind: examples
+    related: [health]
+  - name: shutdown-examples
+    area: http-services
+    summary: Runnable examples for shutdown.
+    lang: Go
+    install: ""
+    docs: ""
+    kind: examples
+    related: [shutdown]
+  - name: buildinfo-examples
+    area: http-services
+    summary: Runnable example apps for buildinfo, from ldflags stamping to HTTP, OpenTelemetry, Zap and slog.
+    lang: Go
+    install: ""
+    docs: ""
+    kind: examples
+    related: [buildinfo]
+  - name: gofm
+    area: http-services
+    summary: An early framework for building Go microservices.
+    lang: Go
+    install: ""
+    docs: ""
+
+  # Crypto
+  - name: crypt
+    area: crypto
+    summary: Go crypto with safe defaults (AES-GCM, ChaCha20-Poly1305, argon2id, HMAC, Ed25519, key rotation), byte-compatible with crypt-ts.
+    lang: Go
+    install: go get github.com/ubgo/crypt
+    docs: https://pkg.go.dev/github.com/ubgo/crypt
+    featured: true
+    related: [crypt-ts]
+  - name: crypt-ts
+    area: crypto
+    summary: TypeScript and Node.js crypto with safe defaults over node:crypto, byte-compatible with the Go crypt.
+    lang: TypeScript
+    install: ""  # README says npm install @ubgo/crypt, but the package is not on npm yet (checked 2026-10-13)
+    docs: ""  # not on npm yet (checked 2026-10-13)
+    related: [crypt]
+
+  # Tooling
+  - name: docsync
+    area: tooling
+    summary: Finds the sentences in your docs that stopped being true when the code they describe changed.
+    lang: Go
+    install: go get github.com/ubgo/docsync
+    docs: https://pkg.go.dev/github.com/ubgo/docsync
+    featured: true
+  - name: lath
+    area: tooling
+    summary: A task runner where tasks are typed Go functions and a deploy runs the same on a laptop, over ssh and in CI.
+    lang: Go
+    install: go install github.com/ubgo/lath/cmd/lath@latest
+    docs: https://pkg.go.dev/github.com/ubgo/lath/kit
+    kind: cli
+  - name: gots
+    area: tooling
+    summary: Generates TypeScript types, enums, constants and interfaces from Go source.
+    lang: Go
+    install: go install github.com/khanakia/gots/cmd/cli@latest
+    docs: ""  # not on pkg.go.dev yet (checked 2026-10-13)
+    kind: cli
+  - name: goutil
+    area: tooling
+    summary: A small set of everyday Go helper functions.
+    lang: Go
+    install: go get github.com/ubgo/goutil
+    docs: https://pkg.go.dev/github.com/ubgo/goutil
+  - name: ubgo-skills
+    area: tooling
+    summary: Reusable skill files that capture Go and frontend coding conventions.
+    lang: TypeScript
+    install: npx skills add ubgo/ubgo-skills
+    docs: ""
+
+# Principles shown on the profile README and the about page. Each one is stated
+# in the listed repos' own READMEs; re-check them before adding a name here.
+principles:
+  - title: Small cores
+    text: The core module has no third-party dependencies, so importing it adds nothing to your go.sum.
+    repos: [errx, logger, health, shutdown, buildinfo, sqlb, lock, httpreq]
+  - title: Adapters live outside the core
+    text: Integrations (frameworks, OpenTelemetry, drivers, secret stores) ship as separate modules, so you only download what you import.
+    repos: [errx, logger, health, shutdown, buildinfo, cfgkit, sqlb, otelkit, lock]
+  - title: Shared conformance suites
+    text: A family's contract is a test suite that every backend runs, so backends behave the same.
+    repos: [cache, cache-obj, sqlb]

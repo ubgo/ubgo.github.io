@@ -1,0 +1,47 @@
+{{ define "main" }}
+{{- $libs := hugo.Data.libraries.libraries }}
+{{- $areas := hugo.Data.libraries.areas }}
+<div class="pt-8 pb-3">
+  <h1 class="font-display font-bold text-[26px] tracking-tight text-slate-900 dark:text-white">Libraries</h1>
+  <p class="mt-1 text-slate-600 dark:text-slate-400">Every public ubgo library. Press <kbd class="font-mono text-[11px] px-1 rounded border border-slate-300 dark:border-slate-700">/</kbd> to search, <kbd class="font-mono text-[11px] px-1 rounded border border-slate-300 dark:border-slate-700">Esc</kbd> to clear.</p>
+</div>
+
+<div class="sticky top-12 z-10 bg-white/95 dark:bg-ink/95 backdrop-blur py-2 flex flex-wrap items-center gap-2" data-lib-filters>
+  <label class="sr-only" for="lib-q">Search libraries</label>
+  <input id="lib-q" type="search" placeholder="Search name or description" autocomplete="off" class="h-7 w-full sm:w-64 px-2 rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-[13px] placeholder:text-slate-400">
+  <div class="flex flex-wrap gap-1" role="group" aria-label="Filter by area">
+    <button type="button" data-area="" aria-pressed="true" class="lib-chip">All</button>
+    {{- range $areas }}
+    <button type="button" data-area="{{ .key }}" aria-pressed="false" class="lib-chip">{{ .title }}</button>
+    {{- end }}
+  </div>
+  <span class="ml-auto text-[12px] text-slate-500 tabular-nums" data-lib-count aria-live="polite">{{ len $libs }} of {{ len $libs }}</span>
+</div>
+
+<div class="overflow-x-auto -mx-4 px-4">
+<table class="w-full text-[13px] border-collapse">
+  <thead class="text-left text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
+    <tr class="border-b border-slate-200 dark:border-slate-800">
+      <th scope="col" class="py-1.5 pr-3 font-medium">Name</th>
+      <th scope="col" class="py-1.5 pr-3 font-medium hidden sm:table-cell">Area</th>
+      <th scope="col" class="py-1.5 pr-3 font-medium hidden sm:table-cell">Description</th>
+      <th scope="col" class="py-1.5 font-medium hidden md:table-cell">Lang</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{- range $areas }}
+    {{- $a := . }}
+    {{- range sort (where $libs "area" .key) "name" }}
+    <tr class="border-b border-slate-100 dark:border-slate-800/70 hover:bg-slate-50 dark:hover:bg-slate-900/50 align-top" data-lib data-area="{{ .area }}" data-text="{{ lower (printf "%s %s %s" .name .summary $a.title) }}">
+      <td class="py-1.5 pr-3 sm:whitespace-nowrap"><a href="{{ printf "/libraries/%s/" .name | relURL }}" class="font-mono font-medium text-slate-900 dark:text-white hover:text-brand-700 dark:hover:text-brand-400">{{ .name }}</a> {{ partial "kind-badge.html" . }}<p class="sm:hidden mt-0.5 text-slate-600 dark:text-slate-300">{{ .summary }}</p></td>
+      <td class="py-1.5 pr-3 whitespace-nowrap text-slate-500 dark:text-slate-400 hidden sm:table-cell">{{ $a.title }}</td>
+      <td class="py-1.5 pr-3 text-slate-600 dark:text-slate-300 hidden sm:table-cell">{{ .summary }}</td>
+      <td class="py-1.5 text-slate-500 dark:text-slate-400 hidden md:table-cell">{{ .lang }}</td>
+    </tr>
+    {{- end }}
+    {{- end }}
+  </tbody>
+</table>
+</div>
+<p class="hidden py-6 text-center text-slate-500" data-lib-empty>No library matches. <button type="button" class="text-brand-700 dark:text-brand-400 underline" data-lib-reset>Clear filters</button></p>
+{{ end }}

@@ -1,0 +1,16 @@
+{{ define "main" }}
+{{- $d := hugo.Data.libraries }}
+<article class="pt-8 max-w-3xl prose-ubgo">
+  <h1>About ubgo</h1>
+  <p>ubgo is a collection of open-source libraries, mostly for Go, with a few for TypeScript. Each library does one job and lives in its own repository, so a service imports only the parts it uses. There are {{ len $d.libraries }} public libraries across {{ len $d.areas }} areas.</p>
+  <p>ubgo is maintained by <a href="https://github.com/khanakia">Aman Bansal</a>. Issues and pull requests go to each library's own repository.</p>
+  <h2>Principles</h2>
+  <p>These are true of the libraries named under each one, as stated in their own READMEs. They are not promised for every library.</p>
+  {{- range $d.principles }}
+  <h3>{{ .title }}</h3>
+  <p>{{ .text }} Examples: {{ range $i, $r := .repos }}{{ if $i }}, {{ end }}<a href="{{ printf "/libraries/%s/" $r | relURL }}">{{ $r }}</a>{{ end }}.</p>
+  {{- end }}
+  <h2>Install</h2>
+  <p>Go libraries install with <code>go get github.com/ubgo/&lt;name&gt;</code>. A few repos use a different module path or a sub-module; each library page shows the exact line from its README.</p>
+</article>
+{{ end }}

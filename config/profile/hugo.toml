@@ -1,0 +1,16 @@
+# Used only by `task profile`: renders profile/profile/README.md from data/libraries.yaml.
+disableKinds = ["home", "taxonomy", "term", "rss", "sitemap", "robotstxt", "404"]
+
+[outputFormats.profilereadme]
+  mediaType = "text/markdown"
+  baseName = "README"
+  isPlainText = true
+  notAlternative = true
+
+[module]
+  [[module.mounts]]
+    source = "content-profile"
+    target = "content"
+  [[module.mounts]]
+    source = "assets"
+    target = "assets"

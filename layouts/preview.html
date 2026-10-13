@@ -1,0 +1,50 @@
+{{ define "main" }}
+{{- $opts := slice
+  (dict "key" "socket" "name" "A · Socket" "rec" true "why" "A bold lowercase u that holds one amber block: a library dropping into place in your service. Two simple shapes, so it stays clear at 16 and 32 pixels and on light or dark backgrounds.")
+  (dict "key" "grid" "name" "B · Grid" "rec" false "why" "A u built from module cells, with one part sliding into the open slot. Reads as modular, but the gaps between cells blur at 16 to 32 pixels and it looks like many other grid logos.")
+  (dict "key" "brackets" "name" "C · Brackets" "rec" false "why" "A core and its adapters (three stacked bars) inside code brackets. Says code clearly, but the brackets get thin at small sizes and the mark does not hint at the name.")
+}}
+<div class="pt-8 pb-2">
+  <p class="text-[12px] font-medium text-amber-700 dark:text-amber-300">Preview only. Not in the production build or the sitemap.</p>
+  <h1 class="font-display font-bold text-[26px] tracking-tight text-slate-900 dark:text-white">Pick a logo</h1>
+  <p class="mt-1 text-slate-600 dark:text-slate-400">Three directions, each shown on the color, dark and light tiles, at 128, 32 and 16 pixels, on a light and a dark background. The recommended one is marked. To switch, set <code class="font-mono text-[12.5px]">logo.concept</code> in <code class="font-mono text-[12.5px]">brand/brand.json</code> and run <code class="font-mono text-[12.5px]">task all</code> in <code class="font-mono text-[12.5px]">brand/</code>.</p>
+</div>
+<div class="grid gap-3 md:grid-cols-3 mt-4">
+  {{- range $opts }}
+  {{- $k := .key }}
+  <section class="rounded-lg border {{ if .rec }}border-brand-500 ring-1 ring-brand-500{{ else }}border-slate-200 dark:border-slate-800{{ end }} overflow-hidden">
+    <div class="px-3 py-2 flex items-center justify-between border-b border-slate-200 dark:border-slate-800">
+      <h2 class="font-display font-semibold text-[15px] text-slate-900 dark:text-white">{{ .name }}</h2>
+      {{ if .rec }}<span class="h-5 px-1.5 inline-flex items-center rounded bg-brand-600 text-white text-[11px] font-medium">Recommended</span>{{ end }}
+    </div>
+    {{- range slice (dict "bg" "bg-white" "label" "On light") (dict "bg" "bg-[#0d1117]" "label" "On dark") }}
+    <div class="{{ .bg }} p-3 flex items-end gap-3 flex-wrap">
+      <img src="{{ $k }}.svg" width="96" height="96" alt="{{ $k }} logo, color tile">
+      <img src="{{ $k }}-dark.svg" width="56" height="56" alt="{{ $k }} logo, dark tile">
+      <img src="{{ $k }}-light.svg" width="56" height="56" alt="{{ $k }} logo, light tile">
+      <img src="{{ $k }}.svg" width="32" height="32" alt="{{ $k }} logo at 32 pixels">
+      <img src="{{ $k }}.svg" width="16" height="16" alt="{{ $k }} logo at 16 pixels">
+      <span class="sr-only">{{ .label }}</span>
+    </div>
+    {{- end }}
+    <p class="px-3 py-2 text-[13px] text-slate-600 dark:text-slate-400">{{ .why }}</p>
+  </section>
+  {{- end }}
+</div>
+
+<h2 class="mt-10 mb-2 font-display font-semibold text-[17px] text-slate-900 dark:text-white">Recommended set: lockups and social card</h2>
+<div class="grid gap-3 md:grid-cols-2">
+  <div class="rounded-lg border border-slate-200 dark:border-slate-800 bg-white p-4"><img src="ubgo-lockup.svg" alt="ubgo lockup on light" class="h-12 w-auto"></div>
+  <div class="rounded-lg border border-slate-200 dark:border-slate-800 bg-[#0d1117] p-4"><img src="ubgo-lockup-dark.svg" alt="ubgo lockup on dark" class="h-12 w-auto"></div>
+  <img src="og-card.svg" alt="Social card, dark" class="w-full h-auto rounded-lg border border-slate-200 dark:border-slate-800">
+  <img src="og-card-light.svg" alt="Social card, light" class="w-full h-auto rounded-lg border border-slate-200 dark:border-slate-800">
+</div>
+
+<h2 class="mt-10 mb-2 font-display font-semibold text-[17px] text-slate-900 dark:text-white">GitHub org profile README (rendered)</h2>
+<p class="mb-3 text-[13px] text-slate-600 dark:text-slate-400">This is <code class="font-mono text-[12.5px]">profile/profile/README.md</code>, generated from <code class="font-mono text-[12.5px]">site/data/libraries.yaml</code>. GitHub's own styling will differ a little.</p>
+<div class="rounded-lg border border-slate-200 dark:border-slate-800 p-4 sm:p-6 prose-ubgo">
+  {{ $md := partial "profile-readme.md" . }}
+  {{ $md = replace $md `src="ubgo-icon-512.png"` (printf `src="%s"` ("ubgo-icon-512.png" | relURL)) }}
+  {{ $md | .RenderString (dict "display" "block") }}
+</div>
+{{ end }}

@@ -1,0 +1,8 @@
+{{- /* assets/css/site.css is built from main.css by the Tailwind CLI before Hugo runs. */ -}}
+{{ with resources.Get "css/site.css" }}
+  {{ with . | fingerprint }}
+  <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+  {{ end }}
+{{ else }}
+  {{ errorf "assets/css/site.css is missing: run `task css` (Tailwind CLI) before Hugo" }}
+{{ end }}

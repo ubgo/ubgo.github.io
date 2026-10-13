@@ -1,0 +1,53 @@
+{{ define "main" }}
+{{- $libs := hugo.Data.libraries.libraries }}
+{{- $areas := hugo.Data.libraries.areas }}
+<section class="pt-10 pb-8 sm:pt-14 grid gap-8 sm:grid-cols-[1fr_auto] items-center">
+  <div class="min-w-0">
+    <h1 class="font-display font-bold text-[34px] sm:text-[44px] leading-none tracking-tight text-slate-900 dark:text-white flex items-center gap-3">
+      <img src="{{ "icon.svg" | relURL }}" alt="ubgo logo" width="48" height="48" class="size-10 sm:size-12">ubgo
+    </h1>
+    <p class="mt-3 text-[17px] sm:text-[19px] font-medium text-slate-800 dark:text-slate-100">{{ site.Params.tagline }}</p>
+    <p class="mt-2 max-w-2xl text-slate-600 dark:text-slate-400">{{ len $libs }} open-source libraries, mostly Go with a few TypeScript ones, for errors, logging, caching, config, SQL, GraphQL, HTTP services, crypto and tooling. Each one does one job and has its own repo, so you import only what you need.</p>
+    <div class="mt-5 max-w-md">{{ partial "install.html" "go get github.com/ubgo/<name>" }}</div>
+    <div class="mt-4 flex flex-wrap gap-2 text-[13px]">
+      <a href="{{ "/libraries/" | relURL }}" class="h-8 px-3 inline-flex items-center rounded-md bg-brand-600 text-white font-medium hover:bg-brand-700">Browse libraries</a>
+      <a href="{{ site.Params.github }}" class="h-8 px-3 inline-flex items-center rounded-md border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">github.com/ubgo</a>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="featured" class="py-4">
+  <div class="flex items-baseline justify-between mb-3">
+    <h2 id="featured" class="font-display font-semibold text-[17px] text-slate-900 dark:text-white">Featured libraries</h2>
+    <a href="{{ "/libraries/" | relURL }}" class="text-[13px] text-brand-700 dark:text-brand-400 hover:underline">All {{ len $libs }} →</a>
+  </div>
+  <ul class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+    {{- range where $libs "featured" true }}
+    {{- $area := index (where $areas "key" .area) 0 }}
+    <li>
+      <a href="{{ printf "/libraries/%s/" .name | relURL }}" class="group block h-full rounded-lg border border-slate-200 dark:border-slate-800 p-3 hover:border-brand-500 dark:hover:border-brand-500 hover:bg-slate-50 dark:hover:bg-slate-900/50">
+        <div class="flex items-center justify-between gap-2">
+          <span class="font-mono font-medium text-[14px] text-slate-900 dark:text-white group-hover:text-brand-700 dark:group-hover:text-brand-400">{{ .name }}</span>
+          <span class="text-[11px] text-slate-500 dark:text-slate-400">{{ $area.title }}</span>
+        </div>
+        <p class="mt-1 text-[13px] leading-snug text-slate-600 dark:text-slate-400">{{ .summary }}</p>
+      </a>
+    </li>
+    {{- end }}
+  </ul>
+</section>
+
+<section aria-labelledby="areas" class="py-6">
+  <h2 id="areas" class="font-display font-semibold text-[17px] text-slate-900 dark:text-white mb-3">By area</h2>
+  <ul class="grid gap-x-6 gap-y-1 sm:grid-cols-2 text-[13px]">
+    {{- range $areas }}
+    {{- $n := len (where $libs "area" .key) }}
+    <li class="flex items-baseline gap-2 py-1 border-b border-slate-100 dark:border-slate-800/70">
+      <a href="{{ printf "/libraries/?area=%s" .key | relURL }}" class="font-medium text-slate-900 dark:text-white hover:text-brand-700 dark:hover:text-brand-400">{{ .title }}</a>
+      <span class="text-slate-400 tabular-nums">{{ $n }}</span>
+      <span class="ml-auto truncate text-slate-500 dark:text-slate-400 hidden md:inline">{{ .blurb }}</span>
+    </li>
+    {{- end }}
+  </ul>
+</section>
+{{ end }}

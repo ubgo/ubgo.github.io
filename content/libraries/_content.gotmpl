@@ -1,0 +1,13 @@
+{{/* One page per public library, generated from data/libraries.yaml. */}}
+{{ $areas := dict }}
+{{ range hugo.Data.libraries.areas }}{{ $areas = merge $areas (dict .key .title) }}{{ end }}
+{{ range hugo.Data.libraries.libraries }}
+  {{ $.AddPage (dict
+    "path" .name
+    "title" .name
+    "kind" "page"
+    "params" (dict "lib" . "areaTitle" (index $areas .area))
+    "summary" .summary
+    "content" (dict "mediaType" "text/markdown" "value" "")
+  ) }}
+{{ end }}

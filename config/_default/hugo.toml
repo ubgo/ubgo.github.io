@@ -1,0 +1,21 @@
+baseURL = "https://ubgo.github.io/"
+locale = "en"
+title = "ubgo"
+enableRobotsTXT = true
+disableKinds = ["taxonomy", "term", "rss"]
+
+[params]
+  description = "Open-source Go libraries, plus a few TypeScript ones, for errors, logging, caching, config, SQL, GraphQL, HTTP services, crypto and tooling."
+  tagline = "Focused Go libraries for production services."
+  github = "https://github.com/ubgo"
+  ogImage = "og-card.png"
+
+[markup.goldmark.renderer]
+  unsafe = true
+
+[sitemap]
+  changeFreq = "weekly"
+
+[minify]
+  minifyOutput = true
+
