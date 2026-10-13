@@ -22,11 +22,23 @@
     "license" $lic "deps" $deps
   ) }}
 {{- end }}
+{{- /* volt repos join the map as their own area; their pages live under /volt/. */}}
+{{- range $d.volt.repos }}
+  {{- $lic := "" }}
+  {{- $deps := slice }}
+  {{- with index hugo.Data.facts .name }}{{ $lic = .license }}{{ $deps = .ubgoDeps }}{{ end }}
+  {{- $nodes = $nodes | append (dict
+    "name" .name "area" "volt" "summary" .summary "kind" (.kind | default "library") "lang" .lang
+    "featured" (.featured | default false) "family" .family "examplesRepo" "" "interop" "" "replacedBy" ""
+    "license" $lic "deps" $deps "url" (printf "/volt/%s/" .name | relURL)
+  ) }}
+{{- end }}
 {{- $areas := slice }}
 {{- range $d.areas }}{{ $areas = $areas | append (dict "key" .key "title" .title) }}{{ end }}
+{{- $areas = $areas | append (dict "key" "volt" "title" "volt") }}
 <div class="pt-8 pb-3">
   <h1 class="font-display font-bold text-[26px] tracking-tight text-slate-900 dark:text-white">Library map</h1>
-  <p class="mt-1 max-w-3xl text-slate-600 dark:text-slate-400">All {{ len $d.libraries }} public libraries, grouped by area. Every line is a real link: family members, example repos, go.mod requires, the byte-compatible crypt pair and one replacement. <span class="hidden sm:inline">Drag to pan, scroll or pinch to zoom, hover a library to see what it touches.</span><span class="sm:hidden">Tap a library to see what it touches, tap again to open it.</span></p>
+  <p class="mt-1 max-w-3xl text-slate-600 dark:text-slate-400">All {{ len $d.libraries }} public libraries and the {{ len $d.volt.repos }} volt repos, grouped by area. Every line is a real link: family members, example repos, go.mod requires, the byte-compatible crypt pair and one replacement. <span class="hidden sm:inline">Drag to pan, scroll or pinch to zoom, hover a library to see what it touches.</span><span class="sm:hidden">Tap a library to see what it touches, tap again to open it.</span></p>
 </div>
 
 <div class="sticky top-12 z-10 -mx-4 px-4 bg-white/95 dark:bg-ink/95 backdrop-blur py-2 flex flex-wrap items-center gap-2" data-map-tools>
@@ -34,7 +46,7 @@
   <input id="map-q" type="search" placeholder="Search the map" autocomplete="off" class="h-7 w-full sm:w-56 px-2 rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-[13px] placeholder:text-slate-400">
   <div class="flex flex-wrap gap-1" role="group" aria-label="Filter by area">
     <button type="button" data-map-area="" aria-pressed="true" class="lib-chip">All</button>
-    {{- range $d.areas }}
+    {{- range $areas }}
     <button type="button" data-map-area="{{ .key }}" aria-pressed="false" class="lib-chip">{{ .title }}</button>
     {{- end }}
   </div>
@@ -52,7 +64,7 @@
 <section class="mp relative mb-8" data-map data-base="{{ "/libraries/" | relURL }}" aria-label="Library map">
   <div class="mp-stage relative overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/40" data-map-stage>
     <svg class="mp-svg block w-full" role="img" aria-labelledby="map-svg-title" data-map-svg>
-      <title id="map-svg-title">Graph of {{ len $d.libraries }} ubgo libraries in {{ len $d.areas }} areas and the links between them</title>
+      <title id="map-svg-title">Graph of {{ len $d.libraries }} ubgo libraries and {{ len $d.volt.repos }} volt repos, and the links between them</title>
     </svg>
     <div class="mp-zoom absolute left-2 bottom-2 hidden sm:flex flex-col rounded-lg border border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-900/90 backdrop-blur shadow-sm overflow-hidden" data-map-zoom>
       <button type="button" class="size-7 inline-flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-zoom="in" aria-label="Zoom in" title="Zoom in (+)"><svg class="size-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg></button>

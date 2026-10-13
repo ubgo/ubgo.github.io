@@ -17,8 +17,8 @@
   <a href="{{ "/libraries/" | relURL }}" class="inline-flex items-center gap-2 h-7 pl-1 pr-3 rounded-full border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 backdrop-blur text-[12px] text-slate-600 dark:text-slate-300 hover:border-brand-500 transition-colors">
     <span class="h-5 px-2 inline-flex items-center rounded-full bg-brand-600 text-white font-medium">{{ len $libs }}</span>libraries across {{ len $areas }} areas <span aria-hidden="true">→</span>
   </a>
-  <h1 class="mt-5 mx-auto max-w-3xl font-display font-bold text-[38px] leading-[1.04] sm:text-[60px] tracking-tight text-slate-900 dark:text-white">Focused Go libraries for <span class="bg-gradient-to-r from-brand-600 via-brand-500 to-accent bg-clip-text text-transparent">production services</span>.</h1>
-  <p class="mt-5 mx-auto max-w-2xl text-[16px] sm:text-[17px] leading-relaxed text-slate-600 dark:text-slate-400">Errors, logging, caching, config, SQL, GraphQL, HTTP services and crypto. Each library does one job and lives in its own repo, so your service imports only what it uses.</p>
+  <h1 class="mt-5 mx-auto max-w-4xl font-display font-bold text-[38px] leading-[1.04] sm:text-[60px] tracking-tight text-slate-900 dark:text-white">Batteries included for Go, <span class="bg-gradient-to-r from-brand-600 via-brand-500 to-accent bg-clip-text text-transparent">one module at a time</span>.</h1>
+  <p class="mt-5 mx-auto max-w-2xl text-[16px] sm:text-[17px] leading-relaxed text-slate-600 dark:text-slate-400">ubgo is an ecosystem for building Go apps, in the spirit of the components Laravel ships for caching, logging and configuration. Every piece is its own Go module, so a service imports only what it uses. The main libraries share one shape, a small core with adapters outside it and a shared test suite, so learning one teaches you the next.</p>
   <div class="mt-7 mx-auto max-w-md">{{ partial "install.html" "go get github.com/ubgo/<name>" }}</div>
   <div class="mt-5 flex flex-wrap justify-center gap-2 text-[13.5px]">
     <a href="{{ "/libraries/" | relURL }}" class="h-10 px-5 inline-flex items-center rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-medium shadow-sm hover:opacity-90 transition">Browse libraries</a>
@@ -38,6 +38,27 @@
   <p class="mt-2 text-center text-[11.5px] text-slate-400">Counted from the public repos' go.mod files and contrib/ folders.</p>
 </section>
 
+<section class="py-10" aria-labelledby="compare">
+  <div class="max-w-2xl">
+    <h2 id="compare" class="font-display font-semibold text-[22px] text-slate-900 dark:text-white">How ubgo compares</h2>
+    <p class="mt-1 text-[14px] text-slate-600 dark:text-slate-400">ubgo is not one framework you adopt whole. It is a set of Go modules that follow the same rules.</p>
+  </div>
+  <div class="mt-4">{{ partial "compare.html" . }}</div>
+</section>
+
+<section class="py-10 grid gap-8 lg:grid-cols-[1fr_1.25fr] items-center [&>*]:min-w-0" aria-labelledby="layers">
+  <div>
+    <p class="text-[12px] font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-300">New: volt</p>
+    <h2 id="layers" class="mt-1 font-display font-semibold text-[26px] leading-tight text-slate-900 dark:text-white">From libraries to a shipped program</h2>
+    <p class="mt-2 text-[14.5px] leading-relaxed text-slate-600 dark:text-slate-400">ubgo libraries are the parts your code runs on. <a class="font-medium text-slate-900 dark:text-white underline-offset-2 hover:underline" href="{{ "/volt/" | relURL }}">volt</a> is the layer on top: the <span class="font-mono text-[13px]">volt</span> tool scaffolds a CLI, runs the CI gate, builds for every platform and makes releases it checks after publishing, and its kit modules give a CLI the parts every CLI needs.</p>
+    <div class="mt-4 flex flex-wrap gap-2 text-[13px]">
+      <a href="{{ "/volt/" | relURL }}" class="h-9 px-4 inline-flex items-center rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-medium hover:opacity-90">Meet volt</a>
+      <code class="h-9 px-3 inline-flex items-center rounded-lg border border-slate-200 dark:border-slate-700 font-mono text-[12px] text-slate-600 dark:text-slate-300">{{ hugo.Data.libraries.volt.install }}</code>
+    </div>
+  </div>
+  {{ partial "layers-diagram.html" (dict "compact" true) }}
+</section>
+
 <section class="py-10" aria-labelledby="explore">
   <h2 id="explore" class="sr-only">Explore</h2>
   <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -45,7 +66,7 @@
       (dict "u" "/map/" "t" "Library map" "x" "Every library, grouped by area, with the real links between them." "i" "map")
       (dict "u" "/explainers/" "t" "Explainers" "x" (printf "%d step-through diagrams of how the main libraries work." (len $explainers)) "i" "play")
       (dict "u" "/picker/" "t" "Which package?" "x" "Answer two or three questions, get the right library." "i" "pick")
-      (dict "u" "/brand/" "t" "Brand" "x" "The Socket logo, colours, type and every file to download." "i" "brand")
+      (dict "u" "/volt/" "t" "volt" "x" "Build, release and ship Go CLIs. The layer on top of ubgo." "i" "volt")
     }}
     <a href="{{ .u | relURL }}" class="group relative overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-4 hover:border-brand-500 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand-500/5 transition">
       <div class="h-24 -mx-4 -mt-4 mb-3 border-b border-slate-100 dark:border-slate-800 bg-gradient-to-br from-slate-50 to-brand-50/60 dark:from-slate-900 dark:to-brand-500/10 flex items-center justify-center">
@@ -55,6 +76,8 @@
         <svg viewBox="0 0 160 80" class="h-20 w-auto" aria-hidden="true"><g class="fill-slate-200 dark:fill-slate-700"><rect x="14" y="18" width="40" height="10" rx="5"/><rect x="14" y="35" width="60" height="10" rx="5"/><rect x="14" y="52" width="30" height="10" rx="5"/></g><rect x="14" y="35" width="60" height="10" rx="5" fill="#0891B2" class="origin-left scale-x-50 group-hover:scale-x-100 transition-transform duration-500"/><circle cx="122" cy="40" r="22" fill="#0891B2"/><path d="M116 30v20l16-10z" fill="#fff"/></svg>
         {{- else if eq .i "pick" }}
         <svg viewBox="0 0 160 80" class="h-20 w-auto" aria-hidden="true"><g fill="none" class="stroke-slate-300 dark:stroke-slate-600" stroke-width="1.5"><path d="M30 40h30M60 40l28-18M60 40l28 18M88 22h26M88 58h26"/></g><circle cx="30" cy="40" r="7" fill="#0891B2"/><circle cx="60" cy="40" r="5" class="fill-slate-300 dark:fill-slate-600"/><circle cx="88" cy="22" r="5" class="fill-slate-300 dark:fill-slate-600"/><circle cx="88" cy="58" r="5" fill="#0891B2"/><rect x="114" y="50" width="34" height="16" rx="8" fill="#FBBF24"/></svg>
+        {{- else if eq .i "volt" }}
+        <svg viewBox="0 0 160 80" class="h-20 w-auto" aria-hidden="true"><rect x="40" y="12" width="80" height="16" rx="5" class="fill-white dark:fill-slate-800 stroke-slate-300 dark:stroke-slate-600" stroke-dasharray="3 2"/><rect x="40" y="32" width="80" height="16" rx="5" fill="#0891B2"/><rect x="40" y="52" width="80" height="16" rx="5" class="fill-white dark:fill-slate-800 stroke-slate-300 dark:stroke-slate-600"/><path d="M84 34 76 42h6l-2 6 8-9h-6z" fill="#FBBF24" class="origin-center group-hover:scale-125 transition-transform"/></svg>
         {{- else }}
         <img src="{{ "brand/icon.svg" | relURL }}" alt="" width="56" height="56" class="size-14 group-hover:rotate-[-6deg] transition-transform">
         {{- end }}
@@ -140,6 +163,7 @@
     </div>
     {{- end }}
   </div>
+  <p class="mt-6 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 px-4 py-3 text-center text-[14px] text-slate-600 dark:text-slate-400">More libraries are on the way.</p>
 </section>
 </div>
 {{ end }}

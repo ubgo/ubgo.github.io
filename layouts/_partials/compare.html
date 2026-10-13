@@ -1,0 +1,27 @@
+{{- /*
+  "How ubgo compares": only claims about ubgo itself, each backed by the repos
+  (counts from data/facts; adapter names from contrib/ folders; suites from the
+  test files recorded in libraries.yaml). No claims about other projects.
+*/ -}}
+{{- $d := hugo.Data.libraries }}
+{{- $modules := 0 }}{{ $adapters := 0 }}
+{{- range $d.libraries }}{{ $f := index hugo.Data.facts .name }}{{ $modules = add $modules (len $f.modules) }}{{ $adapters = add $adapters (len $f.contrib) }}{{ end }}
+<div class="grid gap-3 md:grid-cols-2">
+  <div class="rounded-2xl border border-emerald-200 dark:border-emerald-500/25 bg-white dark:bg-slate-900/40 p-4 sm:p-5">
+    <h3 class="font-display font-semibold text-[16px] text-slate-900 dark:text-white flex items-center gap-2"><span class="size-5 inline-flex items-center justify-center rounded-full bg-emerald-500 text-white text-[12px]" aria-hidden="true">✓</span>ubgo is</h3>
+    <ul class="mt-3 space-y-3 text-[13.5px] leading-snug text-slate-700 dark:text-slate-300">
+      <li><strong class="text-slate-900 dark:text-white">Separate Go modules.</strong> {{ $modules }} go.mod files across the {{ len $d.libraries }} public libraries. You add the ones you use. <a class="text-brand-700 dark:text-brand-400 hover:underline" href="{{ "/map/" | relURL }}">See the map</a></li>
+      <li><strong class="text-slate-900 dark:text-white">Small cores, adapters outside them.</strong> {{ $adapters }} adapter modules live in <code class="font-mono text-[12px]">contrib/</code> folders, so an integration's dependencies stay out of your build until you import it. For example <a class="font-mono text-[12.5px] hover:underline" href="{{ "/libraries/errx/" | relURL }}">errx</a>, <a class="font-mono text-[12.5px] hover:underline" href="{{ "/libraries/logger/" | relURL }}">logger</a> and <a class="font-mono text-[12.5px] hover:underline" href="{{ "/libraries/health/" | relURL }}">health</a>.</li>
+      <li><strong class="text-slate-900 dark:text-white">Backends you can swap, checked by one suite.</strong> {{ $withSuite := slice }}{{ range $d.libraries }}{{ if .suite }}{{ $withSuite = $withSuite | append . }}{{ end }}{{ end }}{{ range $i, $l := $withSuite }}{{ if $i }}, {{ end }}<a class="font-mono text-[12.5px] hover:underline" href="{{ printf "/libraries/%s/" $l.name | relURL }}">{{ $l.name }}</a> (<code class="font-mono text-[12px]">{{ $l.suite.name }}</code>){{ end }}: a backend counts only when its tests run the suite.</li>
+      <li><strong class="text-slate-900 dark:text-white">Fits the HTTP stack you already use.</strong> <a class="font-mono text-[12.5px] hover:underline" href="{{ "/libraries/health/" | relURL }}">health</a>, <a class="font-mono text-[12.5px] hover:underline" href="{{ "/libraries/shutdown/" | relURL }}">shutdown</a> and <a class="font-mono text-[12.5px] hover:underline" href="{{ "/libraries/buildinfo/" | relURL }}">buildinfo</a> ship adapters for net/http, Gin, Chi, Echo and Fiber.</li>
+    </ul>
+  </div>
+  <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-4 sm:p-5">
+    <h3 class="font-display font-semibold text-[16px] text-slate-900 dark:text-white flex items-center gap-2"><span class="size-5 inline-flex items-center justify-center rounded-full bg-slate-400 dark:bg-slate-600 text-white text-[12px]" aria-hidden="true">✕</span>ubgo is not</h3>
+    <ul class="mt-3 space-y-3 text-[13.5px] leading-snug text-slate-700 dark:text-slate-300">
+      <li><strong class="text-slate-900 dark:text-white">A web framework.</strong> There is no ubgo router or request lifecycle. You keep your own, and the libraries plug into it.</li>
+      <li><strong class="text-slate-900 dark:text-white">An ORM.</strong> <a class="font-mono text-[12.5px] hover:underline" href="{{ "/libraries/sqlb/" | relURL }}">sqlb</a> builds typed SQL; <a class="font-mono text-[12.5px] hover:underline" href="{{ "/libraries/entkit/" | relURL }}">entkit</a> and <a class="font-mono text-[12.5px] hover:underline" href="{{ "/libraries/entx/" | relURL }}">entx</a> extend the ent ORM instead of replacing it.</li>
+      <li><strong class="text-slate-900 dark:text-white">All or nothing.</strong> A library needs another one only when its go.mod says so, and the <a class="text-brand-700 dark:text-brand-400 hover:underline" href="{{ "/map/" | relURL }}">map</a> draws every one of those links.</li>
+    </ul>
+  </div>
+</div>

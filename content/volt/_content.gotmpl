@@ -1,0 +1,11 @@
+{{/* One page per public volt repo, generated from libraries.yaml (volt.repos). */}}
+{{ range hugo.Data.libraries.volt.repos }}
+  {{ $.AddPage (dict
+    "path" .name
+    "title" .name
+    "kind" "page"
+    "params" (dict "lib" . "areaTitle" "volt")
+    "summary" .summary
+    "content" (dict "mediaType" "text/markdown" "value" "")
+  ) }}
+{{ end }}

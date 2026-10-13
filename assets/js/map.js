@@ -53,7 +53,7 @@ function buildEdges(nodes, byName) {
     edges.push(e)
   }
   for (const n of nodes) {
-    if (n.family) add(n.name, n.family, n.kind === "examples" ? "examples" : "family")
+    if (n.family) add(n.name, n.family, n.kind === "examples" || n.kind === "demo" ? "examples" : "family")
     if (n.examplesRepo) add(n.examplesRepo, n.name, "examples")
     if (n.interop) add(n.name, n.interop, "interop")
     if (n.replacedBy) add(n.name, n.replacedBy, "replaced")
@@ -332,10 +332,11 @@ function init() {
     return
   }
   const base = root.dataset.base || "/libraries/"
-  const href = (name) => `${base}${name}/`
   const nodes = data.nodes
   const areas = data.areas
   const byName = Object.fromEntries(nodes.map((n) => [n.name, n]))
+  // A node may carry its own url (volt repos live under /volt/); default is the library page.
+  const href = (name) => byName[name]?.url || `${base}${name}/`
   const areaTitle = Object.fromEntries(areas.map((a) => [a.key, a.title]))
   const edges = buildEdges(nodes, byName)
   const adj = {}
@@ -517,7 +518,7 @@ function init() {
       if (label) label.classList.toggle("is-lit", !!active && on)
     }
     for (const c of svg.querySelectorAll(".mp-cluster")) c.classList.toggle("is-lit", !!f && [...f].some((n) => byName[n].area === c.dataset.area))
-    if (countEl) countEl.textContent = f ? `${f.size} of ${nodes.length}` : `${nodes.length} libraries · ${edges.length} links`
+    if (countEl) countEl.textContent = f ? `${f.size} of ${nodes.length}` : `${nodes.length} repos · ${edges.length} links`
   }
 
   function showPanel(name) {

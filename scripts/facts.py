@@ -12,6 +12,7 @@ read from the repo itself, never guessed:
   go          Go version from the root go.mod
   license     license name detected from the LICENSE file
   latestTag   highest root vX.Y.Z tag ("" when there is none)
+  streamTags  highest tag per prefixed stream, e.g. {"volt": "v0.2.0"} for volt/v0.2.0
   branch      default branch of the clone (for links into the repo)
   coreDeps    number of direct requires in the root go.mod
   modules     every go.mod in the repo: {dir, module, deps}
@@ -28,7 +29,12 @@ import re
 import sys
 
 ROOT, LIBS, OUT = sys.argv[1:4]
-NAMES = re.findall(r"^  - name: ([a-z0-9-]+)", open(LIBS, encoding="utf-8").read(), re.M)
+# Every repo listed in libraries.yaml: the libraries (2-space indent) and the volt
+# repos (4-space indent under volt.repos). FACTS_ONLY=a,b limits a run to those.
+NAMES = re.findall(r"^ +- name: ([a-z0-9-]+)", open(LIBS, encoding="utf-8").read(), re.M)
+ALL_NAMES = list(NAMES)  # dependency matching always sees every repo name
+if os.environ.get("FACTS_ONLY"):
+    NAMES = [n for n in NAMES if n in os.environ["FACTS_ONLY"].split(",")]
 # Module path prefixes that refer to a ubgo library (some repos moved from khanakia).
 PREFIXES = ("github.com/ubgo/", "github.com/khanakia/")
 SKIP_DIRS = {"internal", "cmd", "contrib", "examples", "example", "docs", "testdata", "scripts", "brand", "vendor", ".github", "node_modules"}
@@ -64,6 +70,18 @@ def branch(repo):
         if m:
             return m.group(1)
     return "main"
+
+
+def stream_tags(name):
+    p = os.path.join(ROOT, f"{name}.tags")
+    if not os.path.exists(p):
+        return {}
+    best = {}
+    for stream, ver in re.findall(r"refs/tags/(.+?)[/@](v\d+\.\d+\.\d+)$", open(p).read(), re.M):
+        key = tuple(int(x) for x in ver[1:].split("."))
+        if stream not in best or key > best[stream][0]:
+            best[stream] = (key, ver)
+    return {k: v[1] for k, v in sorted(best.items())}
 
 
 def latest_tag(name):
@@ -148,7 +166,7 @@ def main():
                 name_of[parse_gomod(os.path.join(d, "go.mod"))[0]] = n
     for n in NAMES:
         repo = os.path.join(ROOT, n)
-        f = {"name": n, "module": "", "go": "", "coreDeps": 0, "license": license_name(repo), "latestTag": latest_tag(n), "branch": branch(repo),
+        f = {"name": n, "module": "", "go": "", "coreDeps": 0, "license": license_name(repo), "latestTag": latest_tag(n), "streamTags": stream_tags(n), "branch": branch(repo),
              "modules": [], "contrib": [], "packages": [], "ubgoDeps": []}
         seen = set()
         for d, dirs, files in os.walk(repo):
@@ -163,7 +181,7 @@ def main():
             for r in direct:
                 target = name_of.get(r)
                 if target is None and r.startswith(PREFIXES):
-                    target = next((x for x in NAMES if r.split("/")[2] == x), None)
+                    target = next((x for x in ALL_NAMES if r.split("/")[2] == x), None)
                 if target and target != n and target not in seen and not rel.startswith(("examples", "example")):
                     seen.add(target)
                     f["ubgoDeps"].append({"name": target, "from": rel})

@@ -1,0 +1,17 @@
+{
+ "name": "volt-action",
+ "module": "",
+ "go": "",
+ "coreDeps": 0,
+ "license": "",
+ "latestTag": "",
+ "streamTags": {},
+ "branch": "main",
+ "modules": [],
+ "contrib": [],
+ "packages": [],
+ "ubgoDeps": [],
+ "examples": [],
+ "features": [],
+ "table": ""
+}
