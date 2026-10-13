@@ -133,7 +133,7 @@ pkg/textutil     library  v0.1.0    <span class="text-emerald-400">up to date</s
   <div>
     <h2 class="font-display font-semibold text-[22px] text-slate-900 dark:text-white">Run it in CI</h2>
     <p class="mt-1 text-[14px] text-slate-600 dark:text-slate-400"><a class="font-mono underline-offset-2 hover:underline" href="{{ "/volt/volt-action/" | relURL }}">volt-action</a> installs the released volt binary, checksum-verified, and runs one command. It has no logic of its own; the pipeline lives in the binary.</p>
-    <div class="mt-3 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-slate-50 dark:bg-[#0d1117] codepanel">{{ transform.Highlight "- uses: khanakia/volt-action@v1\n  with: { args: ci }" "yaml" "" }}</div>
+    <div class="mt-3 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-slate-50 dark:bg-[#0d1117] codepanel">{{ transform.Highlight "- uses: ubgo/volt-action@v1\n  with: { args: ci }" "yaml" "" }}</div>
     <p class="mt-2 text-[12px] text-slate-500">From the volt-action README. A release hook can stop a release before anything is created, as the volt-demo-clis README shows:</p>
     <div class="mt-2 rounded-xl border border-slate-800 bg-[#0b1220] overflow-hidden"><pre class="p-4 font-mono text-[12px] leading-relaxed text-slate-300 overflow-x-auto"><span class="text-slate-500">$</span> RELEASE_BLOCKED=1 volt release ./cmd/notes --bump patch
 hook pre_release: ./scripts/release-gate.sh

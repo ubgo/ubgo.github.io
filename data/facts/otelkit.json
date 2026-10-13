@@ -5,6 +5,7 @@
  "coreDeps": 14,
  "license": "Apache-2.0",
  "latestTag": "",
+ "streamTags": {},
  "branch": "main",
  "modules": [
   {

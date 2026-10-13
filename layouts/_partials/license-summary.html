@@ -1,0 +1,7 @@
+{{- /* One sentence about the libraries' licenses, computed from data/facts so it can
+       never overstate: "Every library is X." only when every library's LICENSE
+       file reads X. Returns plain text. Volt repos are not libraries and are not
+       counted here. */ -}}
+{{- $seen := dict }}
+{{- range hugo.Data.libraries.libraries }}{{ $f := index hugo.Data.facts .name }}{{ $seen = merge $seen (dict (or $f.license "no LICENSE file") true) }}{{ end }}
+{{- if eq (len $seen) 1 }}{{ range $k, $_ := $seen }}{{ if ne $k "no LICENSE file" }}Every library is open source under {{ $k }}.{{ else }}No library has a LICENSE file yet.{{ end }}{{ end }}{{ else }}Each library has its own license; see About.{{ end -}}

@@ -3,58 +3,66 @@
  "module": "",
  "go": "",
  "coreDeps": 0,
- "license": "",
+ "license": "Apache-2.0",
  "latestTag": "",
+ "streamTags": {
+  "entcascade": "v0.1.0",
+  "entgqlmulti": "v0.1.0",
+  "entpoly": "v0.1.0",
+  "entreadonly": "v0.1.0",
+  "entskiptable": "v0.1.0",
+  "enttui": "v0.1.0"
+ },
  "branch": "main",
  "modules": [
   {
    "dir": "entcascade",
-   "module": "github.com/khanakia/entx/entcascade",
+   "module": "github.com/ubgo/entx/entcascade",
    "deps": 1
   },
   {
    "dir": "entgqlmulti",
-   "module": "github.com/khanakia/entx/entgqlmulti",
+   "module": "github.com/ubgo/entx/entgqlmulti",
    "deps": 2
   },
   {
    "dir": "entpoly",
-   "module": "github.com/khanakia/entx/entpoly",
+   "module": "github.com/ubgo/entx/entpoly",
    "deps": 3
   },
   {
    "dir": "entreadonly",
-   "module": "github.com/khanakia/entx/entreadonly",
+   "module": "github.com/ubgo/entx/entreadonly",
    "deps": 1
   },
   {
    "dir": "entskiptable",
-   "module": "github.com/khanakia/entx/entskiptable",
+   "module": "github.com/ubgo/entx/entskiptable",
    "deps": 2
   },
   {
    "dir": "enttui",
-   "module": "github.com/khanakia/entx/enttui",
+   "module": "github.com/ubgo/entx/enttui",
    "deps": 4
   },
   {
    "dir": "testent",
-   "module": "github.com/khanakia/entx/testent",
+   "module": "github.com/ubgo/entx/testent",
    "deps": 3
   },
   {
    "dir": "testentgqlmulti",
-   "module": "github.com/khanakia/entx/testentgqlmulti",
+   "module": "github.com/ubgo/entx/testentgqlmulti",
    "deps": 8
   },
   {
    "dir": "testentpoly",
-   "module": "github.com/khanakia/entx/testentpoly",
+   "module": "github.com/ubgo/entx/testentpoly",
    "deps": 6
   },
   {
    "dir": "testenttui",
-   "module": "github.com/khanakia/entx/testenttui",
+   "module": "github.com/ubgo/entx/testenttui",
    "deps": 4
   }
  ],

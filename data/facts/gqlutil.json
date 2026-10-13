@@ -3,8 +3,9 @@
  "module": "github.com/ubgo/gqlutil",
  "go": "1.17",
  "coreDeps": 2,
- "license": "",
+ "license": "Apache-2.0",
  "latestTag": "v0.0.4",
+ "streamTags": {},
  "branch": "main",
  "modules": [
   {

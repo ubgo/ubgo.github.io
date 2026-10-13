@@ -5,6 +5,28 @@
  "coreDeps": 1,
  "license": "Apache-2.0",
  "latestTag": "v0.1.0",
+ "streamTags": {
+  "contrib/cli-cobra": "v0.1.0",
+  "contrib/flags-pflag": "v0.1.0",
+  "contrib/format-hcl": "v0.1.0",
+  "contrib/format-ini": "v0.1.0",
+  "contrib/format-properties": "v0.1.0",
+  "contrib/format-toml": "v0.1.0",
+  "contrib/format-yaml": "v0.1.0",
+  "contrib/source-appconfig": "v0.1.0",
+  "contrib/source-azurekeyvault": "v0.1.0",
+  "contrib/source-consul": "v0.1.0",
+  "contrib/source-etcd": "v0.1.0",
+  "contrib/source-gcpsecrets": "v0.1.0",
+  "contrib/source-k8s": "v0.1.0",
+  "contrib/source-kiln": "v0.1.0",
+  "contrib/source-nats": "v0.1.0",
+  "contrib/source-s3": "v0.1.0",
+  "contrib/source-secretsmanager": "v0.1.0",
+  "contrib/source-ssm": "v0.1.0",
+  "contrib/source-vault": "v0.1.0",
+  "examples": "v0.1.0"
+ },
  "branch": "main",
  "modules": [
   {

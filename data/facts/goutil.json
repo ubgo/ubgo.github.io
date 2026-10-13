@@ -3,8 +3,9 @@
  "module": "github.com/ubgo/goutil",
  "go": "1.24.2",
  "coreDeps": 1,
- "license": "",
+ "license": "Apache-2.0",
  "latestTag": "v0.1.4",
+ "streamTags": {},
  "branch": "main",
  "modules": [
   {

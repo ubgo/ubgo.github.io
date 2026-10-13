@@ -6,11 +6,11 @@
  "license": "",
  "latestTag": "",
  "streamTags": {
-  "appdir": "v0.1.0",
-  "output": "v0.1.0",
-  "skillcmd": "v0.1.0",
-  "versioncmd": "v0.1.0",
-  "volt": "v0.2.0"
+  "appdir": "v0.2.0",
+  "output": "v0.2.0",
+  "skillcmd": "v0.2.0",
+  "versioncmd": "v0.2.0",
+  "volt": "v0.3.0"
  },
  "branch": "main",
  "modules": [

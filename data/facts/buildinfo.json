@@ -5,6 +5,16 @@
  "coreDeps": 0,
  "license": "Apache-2.0",
  "latestTag": "v0.1.2",
+ "streamTags": {
+  "contrib/buildinfo-chi": "v0.1.2",
+  "contrib/buildinfo-echo": "v0.1.2",
+  "contrib/buildinfo-fiber": "v0.1.2",
+  "contrib/buildinfo-gin": "v0.1.2",
+  "contrib/buildinfo-nethttp": "v0.1.2",
+  "contrib/buildinfo-otel": "v0.1.2",
+  "contrib/buildinfo-slog": "v0.1.2",
+  "contrib/buildinfo-zap": "v0.1.2"
+ },
  "branch": "main",
  "modules": [
   {

@@ -5,6 +5,16 @@
  "coreDeps": 0,
  "license": "Apache-2.0",
  "latestTag": "v0.2.0",
+ "streamTags": {
+  "contrib/shutdown-chi": "v0.1.0",
+  "contrib/shutdown-echo": "v0.1.0",
+  "contrib/shutdown-fiber": "v0.1.0",
+  "contrib/shutdown-gin": "v0.1.0",
+  "contrib/shutdown-nethttp": "v0.1.0",
+  "contrib/shutdown-otel": "v0.1.1",
+  "contrib/shutdown-prom": "v0.1.0",
+  "contrib/shutdown-zap": "v0.1.0"
+ },
  "branch": "main",
  "modules": [
   {

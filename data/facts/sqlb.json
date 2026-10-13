@@ -5,6 +5,17 @@
  "coreDeps": 0,
  "license": "Apache-2.0",
  "latestTag": "v0.1.1",
+ "streamTags": {
+  "contrib/debug": "v0.1.0",
+  "contrib/driver-mysql": "v0.1.0",
+  "contrib/driver-pgx": "v0.1.0",
+  "contrib/driver-sqlite": "v0.1.0",
+  "contrib/migrate": "v0.1.0",
+  "contrib/structbind": "v0.1.0",
+  "contrib/vet": "v0.1.1",
+  "sqlb": "v0.1.1",
+  "sqlbvet": "v0.1.0"
+ },
  "branch": "main",
  "modules": [
   {

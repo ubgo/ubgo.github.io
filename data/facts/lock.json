@@ -5,6 +5,15 @@
  "coreDeps": 0,
  "license": "Apache-2.0",
  "latestTag": "v0.1.0",
+ "streamTags": {
+  "contrib/gocronlock": "v0.1.0",
+  "etcdlock": "v0.1.0",
+  "filelock": "v0.1.0",
+  "flock": "v0.1.0",
+  "memlock": "v0.1.0",
+  "pglock": "v0.1.0",
+  "redislock": "v0.1.0"
+ },
  "branch": "main",
  "modules": [
   {
