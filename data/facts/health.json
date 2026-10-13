@@ -1,0 +1,167 @@
+{
+ "name": "health",
+ "module": "github.com/ubgo/health",
+ "go": "1.24",
+ "coreDeps": 0,
+ "license": "Apache-2.0",
+ "latestTag": "v0.1.0",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/health",
+   "deps": 0
+  },
+  {
+   "dir": "contrib/health-chi",
+   "module": "github.com/ubgo/health/contrib/health-chi",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/health-dns",
+   "module": "github.com/ubgo/health/contrib/health-dns",
+   "deps": 1
+  },
+  {
+   "dir": "contrib/health-echo",
+   "module": "github.com/ubgo/health/contrib/health-echo",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/health-fiber",
+   "module": "github.com/ubgo/health/contrib/health-fiber",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/health-gin",
+   "module": "github.com/ubgo/health/contrib/health-gin",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/health-httpprobe",
+   "module": "github.com/ubgo/health/contrib/health-httpprobe",
+   "deps": 1
+  },
+  {
+   "dir": "contrib/health-nats",
+   "module": "github.com/ubgo/health/contrib/health-nats",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/health-nethttp",
+   "module": "github.com/ubgo/health/contrib/health-nethttp",
+   "deps": 1
+  },
+  {
+   "dir": "contrib/health-otel",
+   "module": "github.com/ubgo/health/contrib/health-otel",
+   "deps": 4
+  },
+  {
+   "dir": "contrib/health-postgres",
+   "module": "github.com/ubgo/health/contrib/health-postgres",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/health-prom",
+   "module": "github.com/ubgo/health/contrib/health-prom",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/health-redis",
+   "module": "github.com/ubgo/health/contrib/health-redis",
+   "deps": 2
+  }
+ ],
+ "contrib": [
+  {
+   "name": "health-chi",
+   "module": "github.com/ubgo/health/contrib/health-chi",
+   "deps": 2,
+   "summary": "Chi adapter for `github.com/ubgo/health` — exposes liveness, readiness, and startup probes as stdlib `http.Handler`s with a Chi-native `Mount` helper."
+  },
+  {
+   "name": "health-dns",
+   "module": "github.com/ubgo/health/contrib/health-dns",
+   "deps": 1,
+   "summary": "DNS adapter for `github.com/ubgo/health` — implements `health.Checker` by resolving a host via a DNS resolver."
+  },
+  {
+   "name": "health-echo",
+   "module": "github.com/ubgo/health/contrib/health-echo",
+   "deps": 2,
+   "summary": "Echo adapter for `github.com/ubgo/health` — exposes liveness, readiness, and startup probes as `echo.HandlerFunc`s with a `Mount` helper."
+  },
+  {
+   "name": "health-fiber",
+   "module": "github.com/ubgo/health/contrib/health-fiber",
+   "deps": 2,
+   "summary": "Fiber adapter for `github.com/ubgo/health` — exposes liveness, readiness, and startup probes as `fiber.Handler`s with a `Mount` helper."
+  },
+  {
+   "name": "health-gin",
+   "module": "github.com/ubgo/health/contrib/health-gin",
+   "deps": 2,
+   "summary": "Gin adapter for `github.com/ubgo/health` — exposes liveness, readiness, and startup probes as `gin.HandlerFunc`s with a `Mount` helper."
+  },
+  {
+   "name": "health-httpprobe",
+   "module": "github.com/ubgo/health/contrib/health-httpprobe",
+   "deps": 1,
+   "summary": "Generic outbound HTTP probe for `github.com/ubgo/health` — implements `health.Checker` by issuing a GET to a configured URL and accepting any 2xx/3xx response."
+  },
+  {
+   "name": "health-nats",
+   "module": "github.com/ubgo/health/contrib/health-nats",
+   "deps": 2,
+   "summary": "NATS adapter for `github.com/ubgo/health` — implements `health.Checker` based on the connection state of a NATS client."
+  },
+  {
+   "name": "health-nethttp",
+   "module": "github.com/ubgo/health/contrib/health-nethttp",
+   "deps": 1,
+   "summary": "Stdlib `net/http` adapter for `github.com/ubgo/health` — exposes liveness, readiness, and startup probes as `http.Handler`s with a `Mount` helper."
+  },
+  {
+   "name": "health-otel",
+   "module": "github.com/ubgo/health/contrib/health-otel",
+   "deps": 4,
+   "summary": "OpenTelemetry adapter for `github.com/ubgo/health` — emits an OTEL span for every check the registry runs by subscribing as a `health.Observer`."
+  },
+  {
+   "name": "health-postgres",
+   "module": "github.com/ubgo/health/contrib/health-postgres",
+   "deps": 2,
+   "summary": "Postgres adapter for `github.com/ubgo/health` — implements `health.Checker` for a Postgres connection or pool, using pgx's `Ping` method."
+  },
+  {
+   "name": "health-prom",
+   "module": "github.com/ubgo/health/contrib/health-prom",
+   "deps": 2,
+   "summary": "Prometheus adapter for `github.com/ubgo/health` — exposes health checks as Prometheus metrics by subscribing as a `health.Observer`."
+  },
+  {
+   "name": "health-redis",
+   "module": "github.com/ubgo/health/contrib/health-redis",
+   "deps": 2,
+   "summary": "Redis adapter for `github.com/ubgo/health` — implements `health.Checker` by running the Redis `PING` command via go-redis."
+  }
+ ],
+ "packages": [],
+ "ubgoDeps": [],
+ "examples": [
+  {
+   "title": "How the pieces fit together",
+   "code": "reg := health.NewRegistry()\nreg.Register(healthredis.New(\"cache\", redisClient))     // CHECKER\nreg.Register(healthpostgres.New(\"db\",  pgxPool))        // CHECKER\nhealthotel.Register(reg)                                // OBSERVER\nhealthgin.Mount(r, reg)                                 // RENDERER"
+  },
+  {
+   "title": "Quick start",
+   "code": "package main\n\nimport (\n    \"context\"\n    \"log\"\n    \"time\"\n\n    \"github.com/ubgo/health\"\n)\n\ntype pingChecker struct{ name string }\n\nfunc (p *pingChecker) Name() string { return p.name }\n\nfunc (p *pingChecker) Check(ctx context.Context) health.Result {\n    // Run your dependency check here. Set Status, Error, Latency, etc.\n    return health.Result{Status: health.StatusUp}\n}\n\nfunc main() {\n    reg := health.NewRegistry()\n    _ = reg.Register(&pingChecker{name: \"db\"})\n    _ = reg.Register(&pingChecker{name: \"cache\"})\n\n    ctx := context.Background()\n    reg.Start(ctx, 30*time.Second) // background re-checks every 30s\n    defer reg.Stop()\n\n    snap := reg.SnapshotForProbe(health.ProbeReadiness)\n    log.Printf(\"ready=%s\", snap.Status)\n}"
+  },
+  {
+   "title": "Observer pattern",
+   "code": "reg.Subscribe(func(name string, r health.Result) {\n    if r.Status == health.StatusDown {\n        slack.Notify(\"check failed: \" + name)\n    }\n})"
+  }
+ ],
+ "features": [],
+ "table": "| **Checker** *(writes to registry)* | `health-postgres`, `health-redis`, `health-nats`, `health-httpprobe`, `health-dns` | Ping a real dependency over the network. Implement `health.Checker`. |\n| **Renderer** *(reads from registry)* | `health-nethttp`, `health-gin`, `health-chi`, `health-echo`, `health-fiber` | Take the registry snapshot and expose `/healthz` / `/readyz` / `/startupz` as HTTP. No I/O against dependencies. |\n| **Observer** *(subscribes to registry, async)* | `health-otel`, `health-prom` | React to every check result — emit a span, increment a counter. No HTTP exposure of their own. |\n| **Core** *(the registry itself)* | [`github.com/ubgo/health`](https://github.com/ubgo/health) | Stores results, aggregates probes, fires observers. Stdlib only, no third-party deps. |"
+}

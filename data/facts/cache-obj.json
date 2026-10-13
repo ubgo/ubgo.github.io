@@ -1,0 +1,56 @@
+{
+ "name": "cache-obj",
+ "module": "github.com/ubgo/cache-obj",
+ "go": "1.24",
+ "coreDeps": 2,
+ "license": "Apache-2.0",
+ "latestTag": "v0.1.0",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/cache-obj",
+   "deps": 2
+  }
+ ],
+ "contrib": [],
+ "packages": [
+  "objtest"
+ ],
+ "ubgoDeps": [
+  {
+   "name": "cache",
+   "from": "."
+  }
+ ],
+ "examples": [
+  {
+   "title": "Example",
+   "code": "import cacheobj \"github.com/ubgo/cache-obj\"\n\n// Cache compiled regexes — a value that must stay live (it can't survive a codec).\nre := cacheobj.New[*regexp.Regexp](cacheobj.WithCapacity(128))\n\nre.Set(`\\d+`, regexp.MustCompile(`\\d+`))\n\nif r, ok := re.Get(`\\d+`); ok {\n    r.MatchString(\"abc123\") // same compiled program, zero cost\n}"
+  },
+  {
+   "title": "Quick start",
+   "code": "package main\n\nimport (\n    \"fmt\"\n    \"regexp\"\n    \"time\"\n\n    cacheobj \"github.com/ubgo/cache-obj\"\n)\n\nfunc main() {\n    // A bounded cache of compiled regexes with a 1-hour TTL.\n    re := cacheobj.New[*regexp.Regexp](\n        cacheobj.WithCapacity(1024),\n        cacheobj.WithDefaultTTL(time.Hour),\n    )\n\n    // Get-or-load with single-flight: compiles once, even under concurrency.\n    digits, _ := re.Remember(`\\d+`, time.Hour, func() (*regexp.Regexp, error) {\n        return regexp.Compile(`\\d+`)\n    })\n    fmt.Println(digits.MatchString(\"abc123\")) // true\n\n    // A second Get returns the exact same instance.\n    again, _ := re.Get(`\\d+`)\n    fmt.Println(again == digits) // true\n\n    fmt.Printf(\"%+v\\n\", re.Stats()) // {Hits:1 Misses:1 Sets:1 ...}\n}"
+  },
+  {
+   "title": "API",
+   "code": "type Cache[T any] interface {\n    Get(key string) (T, bool)\n    Set(key string, v T)\n    SetTTL(key string, v T, ttl time.Duration)\n    Del(key string)\n    Len() int\n    Purge()\n    Stats() cache.Stats\n}\n\nfunc New[T any](opts ...Option) *Store[T]\n\n// On the concrete *Store[T] returned by New (kept off the minimal interface):\nfunc (s *Store[T]) Remember(key string, ttl time.Duration, fn func() (T, error)) (T, error)\nfunc (s *Store[T]) Close() // stops the background sweeper; idempotent"
+  },
+  {
+   "title": "Options",
+   "code": "c := cacheobj.New[*http.Client](\n    cacheobj.WithCapacity(1000),                 // LRU bound; omit for unbounded\n    cacheobj.WithDefaultTTL(10*time.Minute),     // TTL applied by Set; SetTTL overrides\n    cacheobj.WithOnEvict(func(key string, v *http.Client, cause cache.EvictionCause) {\n        // cause is cache.EvictSize (capacity) or cache.EvictExpired (TTL); v is the evicted value\n    }),\n    cacheobj.WithSweepInterval(time.Minute),     // background expiry sweeper (else lazy); call Close to stop\n    cacheobj.WithClock(myFakeClock),             // deterministic TTL tests\n)"
+  }
+ ],
+ "features": [
+  "**Live objects, by reference.** `Get` returns the same instance you `Set` — no serialization, no copy. The only cache in the family that can hold non-serializable values.",
+  "**Generics.** `Cache[T]` stores `T` directly, no `interface{}` boxing.",
+  "**Per-entry TTL.** `SetTTL(key, v, ttl)`; `ttl <= 0` means the entry never expires. `WithDefaultTTL` sets the TTL `Set` applies.",
+  "**LRU bound.** `WithCapacity(n)` evicts the least-recently-used entry when full. Omit it for an unbounded cache.",
+  "**Value-bearing eviction hook.** `WithOnEvict(func(key string, v T, cause cache.EvictionCause))` fires when an entry is dropped *involuntarily* (capacity or expiry) and hands you the value — so you can close handles or release resources.",
+  "**Single-flight `Remember`.** Get-or-load that collapses a thundering herd: N concurrent misses for the same key run the loader once and share the result.",
+  "**Optional background sweeper.** `WithSweepInterval(d)` proactively evicts expired entries; `Close()` stops it. Default expiry is lazy (no goroutine).",
+  "**Stats.** `Stats()` returns the shared `cache.Stats` shape, so observability reads identically across the family.",
+  "**Thread-safe.** Every operation is safe for concurrent use, verified under `-race`.",
+  "**A conformance suite.** `objtest.Run` *is* the contract; the built-in implementation passes it, and so must any alternative."
+ ],
+ "table": "| The same value over Redis / Postgres / tiered | `ubgo/cache` + a network backend |\n| A `*regexp.Regexp`, `*http.Client`, open connection, `func`, `chan` | **`cache-obj`** |\n| An object with unexported state that must survive intact (e.g. an ORM entity you traverse/mutate) | **`cache-obj`** |"
+}

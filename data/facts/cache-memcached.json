@@ -1,0 +1,40 @@
+{
+ "name": "cache-memcached",
+ "module": "github.com/ubgo/cache-memcached",
+ "go": "1.24",
+ "coreDeps": 2,
+ "license": "PolyForm Perimeter 1.0.0",
+ "latestTag": "v0.1.0",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/cache-memcached",
+   "deps": 2
+  }
+ ],
+ "contrib": [],
+ "packages": [],
+ "ubgoDeps": [
+  {
+   "name": "cache",
+   "from": "."
+  }
+ ],
+ "examples": [
+  {
+   "title": "Quick start",
+   "code": "package main\n\nimport (\n\t\"context\"\n\t\"errors\"\n\t\"log\"\n\t\"time\"\n\n\t\"github.com/bradfitz/gomemcache/memcache\"\n\t\"github.com/ubgo/cache\"\n\tmemcachedcache \"github.com/ubgo/cache-memcached\"\n)\n\nfunc main() {\n\tmc := memcache.New(\"localhost:11211\")\n\tc := memcachedcache.New(mc)\n\tdefer c.Close()\n\n\tctx := context.Background()\n\t_ = c.Set(ctx, \"k\", []byte(\"v\"), time.Minute)\n\n\tb, err := c.Get(ctx, \"k\")\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\tlog.Printf(\"%s\", b)\n\n\t// Unsupported ops are explicit, never silent:\n\tif _, err := c.TTL(ctx, \"k\"); errors.Is(err, cache.ErrUnsupported) {\n\t\tlog.Println(\"Memcached cannot report remaining TTL\")\n\t}\n}"
+  },
+  {
+   "title": "Method reference",
+   "code": "ctx := context.Background()\n\n// --- Works ---\nb, err := c.Get(ctx, \"k\")                        // ErrNotFound on miss\nm, err := c.GetMulti(ctx, []string{\"a\", \"b\"})    // missing keys absent from map\nok, err := c.Has(ctx, \"k\")\nerr = c.Set(ctx, \"k\", []byte(\"v\"), time.Minute)  // ttl<=0 => no expiry (Expiration 0)\nerr = c.SetMulti(ctx, map[string]cache.Item{\"a\": {Value: []byte(\"1\")}})\ncreated, err := c.SetNX(ctx, \"k\", []byte(\"v\"), time.Minute) // ADD; false if exists\nerr = c.Expire(ctx, \"k\", time.Hour)              // TOUCH; ErrNotFound if absent\nerr = c.Touch(ctx, \"k\")                          // Expire(key, 1h)\nn, err := c.Incr(ctx, \"hits\", 1)                 // missing key initialised to delta\nn, err = c.Decr(ctx, \"hits\", 2)                  // floors at 0 (unsigned counter)\nerr = c.Del(ctx, \"a\", \"b\")                       // DELETE; miss tolerated\nerr = c.Flush(ctx)                               // flush_all\nerr = c.Ping(ctx)\nerr = c.Close()                                  // idempotent; does not close mc\n\n// --- ErrUnsupported by protocol design ---\n_, err = c.TTL(ctx, \"k\")                         // cache.ErrUnsupported\nerr = c.DeleteByPrefix(ctx, \"user:\")             // cache.ErrUnsupported\nit := c.Iterate(ctx, cache.IterateOpts{})\n_ = it.Next()                                    // false\n_ = it.Err()                                     // cache.ErrUnsupported"
+  }
+ ],
+ "features": [
+  "**Interop, not greenfield.** If you already run Memcached, this lets that fleet back any code written against `cache.Cache` without standing up Redis or Postgres.",
+  "**Honest about limits.** TTL introspection, prefix delete, and key iteration are impossible over the Memcached protocol. This adapter returns an explicit `cache.ErrUnsupported` (or an iterator whose first `Next()` is false with `Err() == ErrUnsupported`) instead of faking them or silently returning empty.",
+  "**Correct counter semantics.** Memcached counters are unsigned and decrement floors at `0`; this adapter implements the missing-key initialisation dance atomically so `Incr`/`Decr` behave per the contract (missing key = 0) within Memcached's rules.",
+  "**Server-free tests.** A complete in-process fake exercises every supported op; `MEMCACHED_ADDR` enables optional real-server checks."
+ ],
+ "table": "| `cache.Cache` op | Memcached mapping | Status |\n|---|---|---|\n| `Get` / `GetMulti` / `Has` | `get` | works |\n| `Set` / `SetMulti` | `set` | works |\n| `SetNX` | `add` (`ErrNotStored` ⇒ key exists ⇒ `false`) | works |\n| `Expire` / `Touch` | `touch` | works |\n| `Incr` / `Decr` | `incr` / `decr` + missing-key `add` init | works (Decr floors at 0) |\n| `Del` | `delete` (miss tolerated) | works |\n| `Flush` | `flush_all` | works |\n| `Ping` / `Close` | `version` / local flag | works |\n| `TTL(key)` | — no command exists | **`ErrUnsupported`** |\n| `DeleteByPrefix` | — no server-side scan | **`ErrUnsupported`** |\n| `Iterate` | — no key enumeration | **`ErrUnsupported`** (iterator: `Next()`=false, `Err()`=`ErrUnsupported`) |"
+}

@@ -1,0 +1,26 @@
+{
+ "name": "gqlmodel",
+ "module": "github.com/ubgo/gqlmodel",
+ "go": "1.17",
+ "coreDeps": 2,
+ "license": "",
+ "latestTag": "v0.0.4",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/gqlmodel",
+   "deps": 2
+  }
+ ],
+ "contrib": [],
+ "packages": [],
+ "ubgoDeps": [],
+ "examples": [
+  {
+   "title": "How to Use",
+   "code": "type Category struct {\n  ID   uuid.UUID `json:\"id\"`\n  Name string    `json:\"name\"`\n}"
+  }
+ ],
+ "features": [],
+ "table": ""
+}

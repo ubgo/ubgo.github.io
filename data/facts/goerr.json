@@ -1,0 +1,26 @@
+{
+ "name": "goerr",
+ "module": "github.com/ubgo/goerr",
+ "go": "1.24",
+ "coreDeps": 0,
+ "license": "Apache-2.0",
+ "latestTag": "v0.1.0",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/goerr",
+   "deps": 0
+  }
+ ],
+ "contrib": [],
+ "packages": [],
+ "ubgoDeps": [],
+ "examples": [
+  {
+   "title": "Quick start",
+   "code": "package main\n\nimport (\n    \"fmt\"\n\n    \"github.com/ubgo/goerr\"\n)\n\nfunc main() {\n    err := goerr.New(\"db: deadlock detected on user_orders\",\n        goerr.WithMessageUser(\"Something went wrong, please retry\"),\n        goerr.WithCode(\"E_TX_RETRY\"),\n        goerr.WithTraceID(\"trace-abc123\"),\n        goerr.WithKV(\"table\", \"user_orders\"),\n    )\n\n    fmt.Println(err.Error())             // operator-facing\n    fmt.Println(err.ErrorUser().Error()) // user-facing\n    fmt.Println(err.Response().ToJSON()) // wire payload\n}"
+  }
+ ],
+ "features": [],
+ "table": ""
+}

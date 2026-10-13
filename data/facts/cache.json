@@ -1,0 +1,108 @@
+{
+ "name": "cache",
+ "module": "github.com/ubgo/cache",
+ "go": "1.24",
+ "coreDeps": 0,
+ "license": "PolyForm Perimeter 1.0.0",
+ "latestTag": "v0.1.0",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/cache",
+   "deps": 0
+  },
+  {
+   "dir": "contrib/cache-otel",
+   "module": "github.com/ubgo/cache/contrib/cache-otel",
+   "deps": 4
+  },
+  {
+   "dir": "contrib/cache-prom",
+   "module": "github.com/ubgo/cache/contrib/cache-prom",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/codec-msgpack",
+   "module": "github.com/ubgo/cache/contrib/codec-msgpack",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/codec-protobuf",
+   "module": "github.com/ubgo/cache/contrib/codec-protobuf",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/codec-zstd",
+   "module": "github.com/ubgo/cache/contrib/codec-zstd",
+   "deps": 2
+  }
+ ],
+ "contrib": [
+  {
+   "name": "cache-otel",
+   "module": "github.com/ubgo/cache/contrib/cache-otel",
+   "deps": 4,
+   "summary": "`cache-otel` exports **OpenTelemetry metrics for the `github.com/ubgo/cache` Go cache**. It adapts `cache.ObsHooks` (the core's zero-dependency observability se"
+  },
+  {
+   "name": "cache-prom",
+   "module": "github.com/ubgo/cache/contrib/cache-prom",
+   "deps": 2,
+   "summary": "`cache-prom` exports **Prometheus metrics for the `github.com/ubgo/cache` Go cache**. It adapts `cache.ObsHooks` (the core's zero-dependency observability seam)"
+  },
+  {
+   "name": "codec-msgpack",
+   "module": "github.com/ubgo/cache/contrib/codec-msgpack",
+   "deps": 2,
+   "summary": "`codec-msgpack` is a **MessagePack `cache.Codec` for the `github.com/ubgo/cache` Go cache**. It serializes cached values with MessagePack instead of JSON or Gob"
+  },
+  {
+   "name": "codec-protobuf",
+   "module": "github.com/ubgo/cache/contrib/codec-protobuf",
+   "deps": 2,
+   "summary": "`codec-protobuf` is a **Protocol Buffers `cache.Codec` for the `github.com/ubgo/cache` Go cache**. It serializes cached values with the Protobuf wire format: co"
+  },
+  {
+   "name": "codec-zstd",
+   "module": "github.com/ubgo/cache/contrib/codec-zstd",
+   "deps": 2,
+   "summary": "`codec-zstd` adds **zstd compression to the `github.com/ubgo/cache` Go cache**. It wraps *any* `cache.Codec` (JSON, Gob, msgpack, protobuf, …) and transparently"
+  }
+ ],
+ "packages": [
+  "admin",
+  "cachetest"
+ ],
+ "ubgoDeps": [],
+ "examples": [
+  {
+   "title": "Quick start",
+   "code": "c := memcache.New(memcache.WithMaxEntries(100_000))\ndefer c.Close()\n\n// Bytes in, bytes out. Get returns (nil, cache.ErrNotFound) on miss — never (nil, nil).\n_ = c.Set(ctx, \"k\", []byte(\"v\"), time.Minute)\nb, err := c.Get(ctx, \"k\")\n\n// Typed load-through with stampede protection and the differentiator options:\nu, err := cache.Remember(ctx, c, \"user:42\", 5*time.Minute,\n    func(ctx context.Context) (User, error) { return db.LoadUser(ctx, 42) },\n    cache.WithJitter(0.1),                 // spread expiry across a batch of keys\n    cache.WithStaleIfError(time.Minute),   // serve last-good if the loader fails\n    cache.WithRefreshAhead(0.8),           // refresh hot keys before they expire\n)\n\n// Multi-tenant isolation:\ntenant := cache.Namespaced(c, \"tenant:42\")\n\n// Portable distributed lock (works on any backend):\nl := cache.NewLock(c, \"cron:nightly\", 30*time.Second)\nif err := l.Acquire(ctx); err == nil {\n    defer l.Release(ctx)\n    // ... only one holder runs this ...\n}"
+  },
+  {
+   "title": "Architecture & decorator composition",
+   "code": "c := cache.NewAuditLog(\n        cache.NewBulkhead(\n            cache.NewRetry(\n                cache.NewCircuitBreaker(rediscache.New(rdb)),\n            ), 256),\n        auditSink)"
+  },
+  {
+   "title": "The `Cache` interface and its semantics",
+   "code": "type Cache interface {\n    Get(ctx, key) ([]byte, error)\n    GetMulti(ctx, keys) (map[string][]byte, error)\n    Has(ctx, key) (bool, error)\n    TTL(ctx, key) (time.Duration, error)\n    Set(ctx, key, val, ttl) error\n    SetMulti(ctx, items map[string]Item) error\n    SetNX(ctx, key, val, ttl) (bool, error)\n    Expire(ctx, key, ttl) error\n    Touch(ctx, key) error\n    Incr(ctx, key, delta) (int64, error)\n    Decr(ctx, key, delta) (int64, error)\n    Del(ctx, keys ...string) error\n    DeleteByPrefix(ctx, prefix) error\n    Flush(ctx) error\n    Iterate(ctx, IterateOpts) Iterator\n    Ping(ctx) error\n    Close() error\n    Stats() Stats\n}"
+  },
+  {
+   "title": "Errors",
+   "code": "v, err := c.Get(ctx, \"user:42\")\nif errors.Is(err, cache.ErrNotFound) {\n    // cache miss — load it\n}"
+  }
+ ],
+ "features": [
+  "**One interface, every backend** — `Cache` is bytes-in/bytes-out; adapters for in-memory, Redis, Postgres/SQLite, tiered, and Memcached.",
+  "**Typed generics** — `Remember[T]`, `GetT[T]`, `SetT[T]`, `Typed[T]`, `RememberMulti[T]`, `Warm[T]`, `Memoize` — no manual (de)serialization at call sites.",
+  "**Single-flight `Remember`** — concurrent misses for the same key collapse to one loader call.",
+  "**Cache patterns built in** — refresh-ahead, stale-while-revalidate (SWR), stale-if-error, negative caching, TTL jitter.",
+  "**Pluggable codecs** — JSON, gob, raw; `EncryptedCodec` (AES-GCM) for caching PII/secrets in shared stores; msgpack/zstd/protobuf in `contrib/`.",
+  "**Namespace isolation** — `Namespaced` prefixes keys so many services share one backend safely.",
+  "**Portable distributed lock** — `Locker` built on `SetNX`, works on any adapter with no backend-specific code.",
+  "**Cross-process invalidation** — best-effort fan-out bus so L1 caches drop stale copies.",
+  "**Resilience decorators** — circuit breaker, retry with backoff, bulkhead (concurrency limit).",
+  "**Observability** — zero-dependency hooks (`Instrument`/`ObsHooks`), per-namespace stats, hot-key detection (Space-Saving), audit log, an admin HTTP endpoint."
+ ],
+ "table": "| Module | Backend |\n|---|---|\n| [`cache-mem`](https://github.com/ubgo/cache-mem) | in-memory, sharded — Adaptive W-TinyLFU (default) or LRU; snapshot + periodic checkpoint |\n| [`cache-redis`](https://github.com/ubgo/cache-redis) | Redis 6+ (+ Pub/Sub invalidation) |\n| [`cache-pg`](https://github.com/ubgo/cache-pg) | Postgres 14+ / SQLite (portable `database/sql`) |\n| [`cache-tiered`](https://github.com/ubgo/cache-tiered) | L1/L2(/L3) composer with read-promotion + cross-process invalidation |\n| [`cache-memcached`](https://github.com/ubgo/cache-memcached) | Memcached (partial — protocol-limited) |\n| [`cache-cluster`](https://github.com/ubgo/cache-cluster) | client-side sharding across nodes |\n| [`cache-cli`](https://github.com/ubgo/cache-cli) | inspector binary |"
+}

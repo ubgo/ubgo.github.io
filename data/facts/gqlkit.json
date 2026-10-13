@@ -1,0 +1,80 @@
+{
+ "name": "gqlkit",
+ "module": "github.com/khanakia/graphqlclient_go",
+ "go": "1.25.5",
+ "coreDeps": 1,
+ "license": "MIT",
+ "latestTag": "",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/khanakia/graphqlclient_go",
+   "deps": 1
+  },
+  {
+   "dir": "example-go-chat",
+   "module": "example-go-chat",
+   "deps": 0
+  },
+  {
+   "dir": "example-go-mockapi",
+   "module": "example-go-mockapi",
+   "deps": 1
+  },
+  {
+   "dir": "example-ts",
+   "module": "example-ts",
+   "deps": 1
+  },
+  {
+   "dir": "gqlkit",
+   "module": "github.com/khanakia/gqlkit/gqlkit",
+   "deps": 6
+  },
+  {
+   "dir": "gqlkit-sdl",
+   "module": "github.com/khanakia/gqlkit/gqlkit-sdl",
+   "deps": 2
+  },
+  {
+   "dir": "mockapi",
+   "module": "mockapi",
+   "deps": 2
+  }
+ ],
+ "contrib": [],
+ "packages": [
+  "gqlkit-sdl",
+  "mockapi"
+ ],
+ "ubgoDeps": [
+  {
+   "name": "goutil",
+   "from": "gqlkit"
+  }
+ ],
+ "examples": [
+  {
+   "title": "Quick Start — Go",
+   "code": "import (\n    \"gqlkit/pkg/graphqlclient\"\n    \"yourmodule/sdk/queries\"\n    \"yourmodule/sdk/fields\"\n)\n\nclient := graphqlclient.NewClient(\"https://your-api.example.com/graphql\",\n    graphqlclient.WithAuthToken(\"YOUR_TOKEN\"),\n)\n\nqr := queries.NewQueryRoot(client)\n\ntodos, err := qr.Todos().\n    Filter(&inputs.TodoFilter{Done: boolPtr(false)}).\n    Select(func(f *fields.TodoFields) {\n        f.ID().Text().Done().User(func(u *fields.UserFields) {\n            u.ID().Name()\n        })\n    }).\n    Execute(ctx)"
+  },
+  {
+   "title": "The duplicate types problem",
+   "code": "// GQLKit — one type, used everywhere\nusers, _ := qr.Users().Select(func(u *fields.UserFields) { u.ID().Name().Email() }).Execute(ctx)\nuser, _  := qr.User().ID(\"1\").Select(func(u *fields.UserFields) { u.ID().Name().Email() }).Execute(ctx)\n// Both return types.User"
+  },
+  {
+   "title": "Static queries vs. dynamic field selection",
+   "code": "// Lightweight list view — only fetch what you need\nqr.Todos().Select(func(f *fields.TodoFields) { f.ID().Text() }).Execute(ctx)\n\n// Detail view — same query, more fields, no codegen step\nqr.Todos().Select(func(f *fields.TodoFields) {\n    f.ID().Text().Done().Priority().Tags().User(func(u *fields.UserFields) {\n        u.ID().Name().Email().Role()\n    })\n}).Execute(ctx)"
+  }
+ ],
+ "features": [
+  "**Type-safe field selection** — only selected fields exist on the return type; unselected fields are compile-time errors",
+  "**Builder pattern** — fluent API for queries, mutations, arguments, and nested field selection",
+  "**Go + TypeScript** — generate SDKs for both languages from the same schema",
+  "**Single-request batching (Go + TypeScript)** — merge multiple builders into one GraphQL operation with aliases via `batch.RunQueries` (Go) / `batch()` (TS) — one HTTP round trip for N queries, partial-success aware",
+  "**Schema introspection** — fetch schemas from any GraphQL endpoint with `gqlkit-sdl`",
+  "**Custom scalar mappings** — configure how GraphQL scalars map to language types via `config.jsonc`",
+  "**Zero runtime overhead** — generated code with minimal dependencies"
+ ],
+ "table": "| **Output structure** | Organized packages (`queries/`, `fields/`, `types/`, etc.) | Single `generated.go` file | Varies by plugin; often one large file |\n| **Schema introspection** | Built-in (`gqlkit-sdl fetch`) | Not supported — must provide local SDL files | Supported via config |\n| **Runtime overhead** | Minimal — lightweight HTTP client | Minimal | Generated code includes duplicate query strings; needs Babel/SWC plugin to optimize |\n| **Languages** | Go + TypeScript from same schema | Go only | TypeScript/JavaScript only |"
+}

@@ -1,0 +1,43 @@
+{
+ "name": "dotenv",
+ "module": "github.com/ubgo/dotenv",
+ "go": "1.22",
+ "coreDeps": 0,
+ "license": "Apache-2.0",
+ "latestTag": "v0.1.1",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/dotenv",
+   "deps": 0
+  },
+  {
+   "dir": "cli",
+   "module": "github.com/ubgo/dotenv/cli",
+   "deps": 4
+  }
+ ],
+ "contrib": [],
+ "packages": [],
+ "ubgoDeps": [],
+ "examples": [
+  {
+   "title": "Reading",
+   "code": "f, err := dotenv.Open(\".env\")     // a missing file is not an error\nif err != nil {\n\treturn err\n}\n\nv, ok := f.Get(\"DATABASE_URL\")\nf.Has(\"DATABASE_URL\")\nf.Keys()      // active keys, in file order, deduplicated\nf.Pairs()     // active pairs, in file order, duplicates included\nf.Map()       // effective view: last occurrence wins"
+  },
+  {
+   "title": "Writing",
+   "code": "created := f.Set(\"API_KEY\", \"secret\")   // updates in place, or appends\nf.Unset(\"OLD_KEY\", false)               // comments it out — reversible\nf.Unset(\"OLD_KEY\", true)                // removes it outright\nerr := f.Save()                         // atomic"
+  },
+  {
+   "title": "Generating a file",
+   "code": "f := dotenv.Parse(\"\")\nf.Append(\n    dotenv.NewComment(\"------------------\", \"DATABASE\", \"------------------\"),\n    dotenv.NewPair(\"DB_HOST\", \"localhost\"),\n    dotenv.NewPair(\"DB_PORT\", \"5432\"),\n    dotenv.NewBlank(),\n    dotenv.NewComment(\"------------------\", \"AUTH\", \"------------------\"),\n    dotenv.NewPair(\"AUTH_SECRET\", \"change me\"),\n)\nf.Path = \".env.example\"\nf.Save()"
+  },
+  {
+   "title": "Disabled settings",
+   "code": "for _, e := range f.Entries() {\n    switch e.Kind {\n    case dotenv.KindPair:         // active\n    case dotenv.KindDisabledPair: // turned off, but Key and Value are readable\n    case dotenv.KindComment:      // prose\n    case dotenv.KindBlank:\n    case dotenv.KindOther:        // unrecognised, preserved verbatim\n    }\n}\n\nf.Disabled()   // []Pair of every commented-out setting, in file order"
+  }
+ ],
+ "features": [],
+ "table": "| Drift matrix + contract CI gate across envs | ✅ `matrix`, exit-code gates | ❌ | ❌ | ❌ |\n| Selection-based secret sync (GitHub / Vercel) | ✅ with placeholder guards | ❌ | ⚠️ own model | ❌ hand-rolled loops |\n| Leaves `os.Environ` alone | ✅ by design, test-pinned | ❌ loading is the point | ⚠️ | — |"
+}

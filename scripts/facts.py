@@ -1,0 +1,180 @@
+#!/usr/bin/env python3
+"""Extracts per-library facts from local clones of the public ubgo repos.
+
+Usage: facts.py <clones-dir> <libraries.yaml> <out-dir>
+
+<clones-dir> holds one shallow clone per repo (named like the repo) and a
+<name>.tags file with `git ls-remote --tags` output; `task facts` prepares both.
+For every library in libraries.yaml it writes <out-dir>/<name>.json with facts
+read from the repo itself, never guessed:
+
+  module      root go.mod module path ("" when the repo has no root go.mod)
+  go          Go version from the root go.mod
+  license     license name detected from the LICENSE file
+  latestTag   highest root vX.Y.Z tag ("" when there is none)
+  coreDeps    number of direct requires in the root go.mod
+  modules     every go.mod in the repo: {dir, module, deps}
+  contrib     contrib/<name> folders: {name, module, deps, summary}
+  packages    top-level Go package folders (backends like lock/redislock)
+  ubgoDeps    other ubgo libraries required by any go.mod: {name, from}
+  examples    up to 4 short Go code blocks from the README: {title, code}
+  features    bullet points from the README's feature section
+  table       first README table about backends/adapters, as markdown
+"""
+import json
+import os
+import re
+import sys
+
+ROOT, LIBS, OUT = sys.argv[1:4]
+NAMES = re.findall(r"^  - name: ([a-z0-9-]+)", open(LIBS, encoding="utf-8").read(), re.M)
+# Module path prefixes that refer to a ubgo library (some repos moved from khanakia).
+PREFIXES = ("github.com/ubgo/", "github.com/khanakia/")
+SKIP_DIRS = {"internal", "cmd", "contrib", "examples", "example", "docs", "testdata", "scripts", "brand", "vendor", ".github", "node_modules"}
+
+
+def parse_gomod(path):
+    text = open(path, encoding="utf-8").read()
+    module = (re.search(r"^module\s+(\S+)", text, re.M) or [None, ""])[1]
+    go = (re.search(r"^go\s+(\S+)", text, re.M) or [None, ""])[1]
+    reqs = []
+    for block in re.findall(r"^require\s*\((.*?)^\)", text, re.M | re.S):
+        reqs += [l for l in block.splitlines() if l.strip() and not l.strip().startswith("//")]
+    reqs += re.findall(r"^require\s+([^\s(].*)$", text, re.M)
+    direct = [r.split()[0] for r in reqs if "// indirect" not in r]
+    return module, go, direct
+
+
+def license_name(repo):
+    for f in os.listdir(repo):
+        if f.upper().startswith(("LICENSE", "COPYING")):
+            t = open(os.path.join(repo, f), encoding="utf-8", errors="replace").read(3000)
+            for pat, name in (("Apache License", "Apache-2.0"), ("MIT License", "MIT"), ("PolyForm Perimeter License 1.0.0", "PolyForm Perimeter 1.0.0"), ("BSD 3-Clause", "BSD-3-Clause")):
+                if pat in t:
+                    return name
+            return "see LICENSE"
+    return ""
+
+
+def latest_tag(name):
+    p = os.path.join(ROOT, f"{name}.tags")
+    if not os.path.exists(p):
+        return ""
+    tags = re.findall(r"refs/tags/(v\d+\.\d+\.\d+)$", open(p).read(), re.M)
+    return max(tags, key=lambda t: tuple(int(x) for x in t[1:].split(".")), default="")
+
+
+def plain(md):
+    """Markdown inline -> plain text, keeping `code`; drops links and images."""
+    md = re.sub(r"!\[[^\]]*\]\([^)]*\)", "", md)
+    md = re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", md)
+    md = re.sub(r"<[^>]+>", "", md)
+    return re.sub(r"\s+", " ", md).strip()
+
+
+def readme_parts(repo):
+    p = next((os.path.join(repo, f) for f in os.listdir(repo) if f.lower() == "readme.md"), None)
+    if not p:
+        return [], [], ""
+    lines = open(p, encoding="utf-8").read().splitlines()
+    examples, features, table = [], [], ""
+    heading, in_code, lang, buf = "", False, "", []
+    feat_section, feat_done = False, False
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        if line.startswith("```"):
+            if not in_code:
+                in_code, lang, buf = True, line[3:].strip().lower(), []
+            else:
+                in_code = False
+                code = "\n".join(buf).rstrip()
+                n = len(buf)
+                if lang == "go" and 4 <= n <= 32 and len(examples) < 4 and "..." not in code[:20]:
+                    title = plain(heading) or "Example"
+                    if title not in [e["title"] for e in examples]:
+                        examples.append({"title": title, "code": code})
+            i += 1
+            continue
+        if in_code:
+            buf.append(line)
+            i += 1
+            continue
+        m = re.match(r"^(#{2,4})\s+(.*)", line)
+        if m:
+            heading = m.group(2).strip()
+            if features:
+                feat_done = True
+            feat_section = not feat_done and bool(re.search(r"feature|what it does|highlight|at a glance|what you get|why ", heading, re.I))
+        elif feat_section and re.match(r"^\s{0,1}[-*]\s+\S", line) and len(features) < 10:
+            features.append(plain(re.sub(r"^\s*[-*]\s+", "", line)))
+        elif not table and line.startswith("|") and re.search(r"backend|adapter|contrib|support|matrix|famil|packag|module|checker|driver|source|codec", heading + " " + line, re.I):
+            rows = []
+            while i < len(lines) and lines[i].startswith("|"):
+                rows.append(re.sub(r"\[([^\]]+)\]\((?!https?://)[^)]*\)", r"\1", re.sub(r"!\[[^\]]*\]\([^)]*\)", "", lines[i])))
+                i += 1
+            if len(rows) >= 3:
+                table = "\n".join(rows)
+            continue
+        i += 1
+    return examples, features, table
+
+
+def main():
+    os.makedirs(OUT, exist_ok=True)
+    name_of = {}
+    for n in NAMES:  # module path -> library name, from every go.mod in every repo
+        repo = os.path.join(ROOT, n)
+        for d, dirs, files in os.walk(repo):
+            dirs[:] = [x for x in dirs if x not in {".git", "node_modules", "testdata"}]
+            if "go.mod" in files:
+                name_of[parse_gomod(os.path.join(d, "go.mod"))[0]] = n
+    for n in NAMES:
+        repo = os.path.join(ROOT, n)
+        f = {"name": n, "module": "", "go": "", "coreDeps": 0, "license": license_name(repo), "latestTag": latest_tag(n),
+             "modules": [], "contrib": [], "packages": [], "ubgoDeps": []}
+        seen = set()
+        for d, dirs, files in os.walk(repo):
+            dirs[:] = sorted(x for x in dirs if x not in {".git", "node_modules", "testdata"})
+            if "go.mod" not in files:
+                continue
+            module, go, direct = parse_gomod(os.path.join(d, "go.mod"))
+            rel = os.path.relpath(d, repo)
+            f["modules"].append({"dir": rel, "module": module, "deps": len(direct)})
+            if rel == ".":
+                f.update(module=module, go=go, coreDeps=len(direct))
+            for r in direct:
+                target = name_of.get(r)
+                if target is None and r.startswith(PREFIXES):
+                    target = next((x for x in NAMES if r.split("/")[2] == x), None)
+                if target and target != n and target not in seen and not rel.startswith(("examples", "example")):
+                    seen.add(target)
+                    f["ubgoDeps"].append({"name": target, "from": rel})
+        cdir = os.path.join(repo, "contrib")
+        if os.path.isdir(cdir):
+            for c in sorted(os.listdir(cdir)):
+                cp = os.path.join(cdir, c)
+                if not os.path.isdir(cp):
+                    continue
+                gm = os.path.join(cp, "go.mod")
+                module, _, direct = parse_gomod(gm) if os.path.exists(gm) else ("", "", [])
+                summary = ""
+                rp = os.path.join(cp, "README.md")
+                if os.path.exists(rp):
+                    for line in open(rp, encoding="utf-8").read().splitlines()[1:]:
+                        if line.strip() and not line.startswith(("#", "[!", "!", "<", "|", "```", ">")):
+                            summary = plain(line)[:160]
+                            break
+                f["contrib"].append({"name": c, "module": module, "deps": len(direct), "summary": summary})
+        for c in sorted(os.listdir(repo)):
+            cp = os.path.join(repo, c)
+            if os.path.isdir(cp) and c not in SKIP_DIRS and not c.startswith(".") and any(x.endswith(".go") and not x.endswith("_test.go") for x in os.listdir(cp)):
+                f["packages"].append(c)
+        f["examples"], f["features"], f["table"] = readme_parts(repo)
+        with open(os.path.join(OUT, f"{n}.json"), "w", encoding="utf-8") as fh:
+            json.dump(f, fh, indent=1, ensure_ascii=False)
+            fh.write("\n")
+    print(f"facts: wrote {len(NAMES)} files to {OUT}")
+
+
+main()

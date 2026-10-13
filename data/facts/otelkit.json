@@ -1,0 +1,59 @@
+{
+ "name": "otelkit",
+ "module": "github.com/ubgo/otelkit",
+ "go": "1.25.0",
+ "coreDeps": 14,
+ "license": "Apache-2.0",
+ "latestTag": "",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/otelkit",
+   "deps": 14
+  },
+  {
+   "dir": "contrib/otelkit-grpc",
+   "module": "github.com/ubgo/otelkit/contrib/otelkit-grpc",
+   "deps": 8
+  },
+  {
+   "dir": "examples",
+   "module": "github.com/ubgo/otelkit/examples",
+   "deps": 4
+  }
+ ],
+ "contrib": [
+  {
+   "name": "otelkit-grpc",
+   "module": "github.com/ubgo/otelkit/contrib/otelkit-grpc",
+   "deps": 8,
+   "summary": "**OTLP/gRPC exporter support for `github.com/ubgo/otelkit`.**"
+  }
+ ],
+ "packages": [],
+ "ubgoDeps": [],
+ "examples": [
+  {
+   "title": "Quick start",
+   "code": "package main\n\nimport (\n\t\"context\"\n\t\"log\"\n\n\t\"github.com/ubgo/otelkit\"\n)\n\nfunc main() {\n\tctx := context.Background()\n\n\ttel, err := otelkit.Init(ctx,\n\t\totelkit.WithService(\"checkout\", \"1.4.2\"),\n\t\totelkit.WithEnvironment(\"prod\"),\n\t\totelkit.WithPreset(otelkit.PresetHyperDX(\"<ingestion-key>\", \"\")),\n\t)\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\ttel.SetGlobal()\n\tdefer tel.Shutdown(ctx)\n\n\t// ... run your service; create spans/metrics via the OTEL globals ...\n}"
+  },
+  {
+   "title": "Diagnostics — see failures instead of empty dashboards",
+   "code": "tel, err := otelkit.Init(ctx,\n\totelkit.WithPreset(otelkit.PresetHoneycomb(key, \"metrics\", \"\")),\n\totelkit.WithSelfTest(),                 // send one span synchronously; error if the backend is unreachable\n\totelkit.WithErrorHandler(myLogger),     // route export failures into your logs (default: stderr)\n)"
+  },
+  {
+   "title": "gRPC",
+   "code": "import (\n\t\"github.com/ubgo/otelkit\"\n\t_ \"github.com/ubgo/otelkit/contrib/otelkit-grpc\" // blank import enables gRPC\n)\n\ntel, _ := otelkit.Init(ctx,\n\totelkit.WithPreset(otelkit.PresetCollector(\"localhost:4317\", otelkit.TransportGRPC)),\n)"
+  }
+ ],
+ "features": [
+  "**Spec-compliant** — honors the standard `OTEL_*` environment variables and defaults.",
+  "**Vendor presets as data** — switch backends in one line; the preset encodes the endpoint, auth header name/format, path quirk, and metric temporality.",
+  "**Loud, not silent** — an export-error handler, a connectivity probe, a dry-run mode, and an opt-in boot self-test turn silent misconfiguration into a specific startup error.",
+  "**One knob, no footguns** — `otelkit` owns all port + `/v1/` path construction.",
+  "**One handle, one ordered `Shutdown`** + a ready-made signal helper; a real no-op on `OTEL_SDK_DISABLED`.",
+  "**Future-proof** — delegates to the now-stable declarative config (`otelconf`) when `OTEL_CONFIG_FILE` is set.",
+  "**Zero application dependencies.**"
+ ],
+ "table": "| Module | Import |\n|---|---|\n| **core** | [`github.com/ubgo/otelkit`](https://pkg.go.dev/github.com/ubgo/otelkit) |\n| **gRPC exporters** | [`github.com/ubgo/otelkit/contrib/otelkit-grpc`](https://pkg.go.dev/github.com/ubgo/otelkit/contrib/otelkit-grpc) |"
+}

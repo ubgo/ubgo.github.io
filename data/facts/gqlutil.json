@@ -1,0 +1,21 @@
+{
+ "name": "gqlutil",
+ "module": "github.com/ubgo/gqlutil",
+ "go": "1.17",
+ "coreDeps": 2,
+ "license": "",
+ "latestTag": "v0.0.4",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/gqlutil",
+   "deps": 2
+  }
+ ],
+ "contrib": [],
+ "packages": [],
+ "ubgoDeps": [],
+ "examples": [],
+ "features": [],
+ "table": ""
+}

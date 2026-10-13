@@ -1,0 +1,50 @@
+{
+ "name": "cache-mem",
+ "module": "github.com/ubgo/cache-mem",
+ "go": "1.24",
+ "coreDeps": 1,
+ "license": "PolyForm Perimeter 1.0.0",
+ "latestTag": "v0.1.0",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/cache-mem",
+   "deps": 1
+  }
+ ],
+ "contrib": [],
+ "packages": [],
+ "ubgoDeps": [
+  {
+   "name": "cache",
+   "from": "."
+  }
+ ],
+ "examples": [
+  {
+   "title": "Quick start",
+   "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n\n\tmemcache \"github.com/ubgo/cache-mem\"\n)\n\nfunc main() {\n\tc := memcache.New(\n\t\tmemcache.WithMaxEntries(100_000),\n\t\tmemcache.WithMaxBytes(256<<20),\n\t)\n\tdefer c.Close()\n\n\tctx := context.Background()\n\t_ = c.Set(ctx, \"user:1\", []byte(\"alice\"), 5*time.Minute)\n\n\tv, err := c.Get(ctx, \"user:1\")\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(string(v)) // alice\n}"
+  },
+  {
+   "title": "Construction: `New` and options",
+   "code": "c := memcache.New(\n\tmemcache.WithShards(32),\n\tmemcache.WithMaxEntries(1_000_000),\n\tmemcache.WithMaxBytes(512<<20),\n\tmemcache.WithPolicy(memcache.AdaptiveWTinyLFU),\n)\ndefer c.Close()"
+  },
+  {
+   "title": "`WithWeigher(w Weigher)`",
+   "code": "c := memcache.New(\n\tmemcache.WithMaxBytes(64<<20),\n\tmemcache.WithWeigher(func(v []byte) int64 { return int64(len(v)) + 48 }),\n)"
+  },
+  {
+   "title": "Eviction policy types",
+   "code": "type Policy int\n\nconst (\n\tLRU Policy = iota\n\tAdaptiveWTinyLFU\n)"
+  }
+ ],
+ "features": [
+  "**No network, no serialization tax.** Values live in process memory; reads are a sharded map lookup plus a defensive copy.",
+  "**High hit rates out of the box.** The default policy is Adaptive W-TinyLFU, which resists one-hit-wonder floods and scan-heavy access patterns far better than plain LRU.",
+  "**Low lock contention.** Keys are hashed across N independent shards, each with its own mutex and its own policy state.",
+  "**Survives restarts when you want it to.** Choose periodic checkpoints (cheap, lossy to the last checkpoint) or AOF (fsync per write, near-zero loss), or both.",
+  "**Size-aware.** Cap by entry count, by weighed byte size, or both, with a custom weigher.",
+  "**Conformance-tested.** The same suite that validates every ubgo cache backend validates this one."
+ ],
+ "table": ""
+}

@@ -1,0 +1,59 @@
+{
+ "name": "lath",
+ "module": "",
+ "go": "",
+ "coreDeps": 0,
+ "license": "MIT",
+ "latestTag": "",
+ "modules": [
+  {
+   "dir": "cmd/lath",
+   "module": "github.com/ubgo/lath/cmd/lath",
+   "deps": 2
+  },
+  {
+   "dir": "example",
+   "module": "example",
+   "deps": 0
+  },
+  {
+   "dir": "example/.lath",
+   "module": "deploydef",
+   "deps": 3
+  },
+  {
+   "dir": "kit",
+   "module": "github.com/ubgo/lath/kit",
+   "deps": 0
+  },
+  {
+   "dir": "pipeline",
+   "module": "github.com/ubgo/lath/pipeline",
+   "deps": 0
+  },
+  {
+   "dir": "steps",
+   "module": "github.com/ubgo/lath/steps",
+   "deps": 2
+  }
+ ],
+ "contrib": [],
+ "packages": [
+  "kit",
+  "pipeline",
+  "steps"
+ ],
+ "ubgoDeps": [],
+ "examples": [
+  {
+   "title": "The command model",
+   "code": "func Name()\nfunc Name() error\nfunc Name(ctx context.Context) error\nfunc Name(args ...string) error\nfunc Name(ctx context.Context, args ...string) error"
+  },
+  {
+   "title": "Adding your own step",
+   "code": "pipeline.Func{\n    Label:      \"record-deploy\",\n    Needs:      []pipeline.Key{common.KeyImage},\n    Idempotent: true, // safe to replay under `lath tui`\n    Do: func(ctx context.Context, s *pipeline.State) error {\n        image, err := pipeline.Get[string](s, common.KeyImage)\n        if err != nil { return err }\n        s.Detailf(\"appended %s to the deploy log\", image)\n        return nil\n    },\n}"
+  }
+ ],
+ "features": [],
+ "table": "| Custom logic without shelling out | ✅ Go values | ❌ embedded bash | ⚠️ hooks | ⚠️ modules |\n| Shows the exact commands before running | ✅ dry run | ❌ | ⚠️ | ⚠️ |\n| Zero-config for an ordinary deploy | ❌ you assemble it | ⚠️ | ✅ | ❌ |\n| Needs a daemon, account or control plane | ❌ none | ⚠️ the CI provider | ❌ none | ❌ none |"
+}

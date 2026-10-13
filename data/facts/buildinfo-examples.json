@@ -1,0 +1,88 @@
+{
+ "name": "buildinfo-examples",
+ "module": "",
+ "go": "",
+ "coreDeps": 0,
+ "license": "Apache-2.0",
+ "latestTag": "",
+ "modules": [
+  {
+   "dir": "01-basic",
+   "module": "github.com/ubgo/buildinfo-examples/01-basic",
+   "deps": 1
+  },
+  {
+   "dir": "02-ldflags-stamping",
+   "module": "github.com/ubgo/buildinfo-examples/02-ldflags-stamping",
+   "deps": 1
+  },
+  {
+   "dir": "03-modules-list",
+   "module": "github.com/ubgo/buildinfo-examples/03-modules-list",
+   "deps": 1
+  },
+  {
+   "dir": "04-http-nethttp",
+   "module": "github.com/ubgo/buildinfo-examples/04-http-nethttp",
+   "deps": 1
+  },
+  {
+   "dir": "04b-http-gin",
+   "module": "github.com/ubgo/buildinfo-examples/04b-http-gin",
+   "deps": 2
+  },
+  {
+   "dir": "04c-http-chi",
+   "module": "github.com/ubgo/buildinfo-examples/04c-http-chi",
+   "deps": 2
+  },
+  {
+   "dir": "04d-http-echo",
+   "module": "github.com/ubgo/buildinfo-examples/04d-http-echo",
+   "deps": 2
+  },
+  {
+   "dir": "04e-http-fiber",
+   "module": "github.com/ubgo/buildinfo-examples/04e-http-fiber",
+   "deps": 2
+  },
+  {
+   "dir": "05-with-otel-resource",
+   "module": "github.com/ubgo/buildinfo-examples/05-with-otel-resource",
+   "deps": 3
+  },
+  {
+   "dir": "06-with-zap",
+   "module": "github.com/ubgo/buildinfo-examples/06-with-zap",
+   "deps": 2
+  },
+  {
+   "dir": "07-with-slog",
+   "module": "github.com/ubgo/buildinfo-examples/07-with-slog",
+   "deps": 1
+  }
+ ],
+ "contrib": [],
+ "packages": [
+  "01-basic",
+  "02-ldflags-stamping",
+  "03-modules-list",
+  "04-http-nethttp",
+  "04b-http-gin",
+  "04c-http-chi",
+  "04d-http-echo",
+  "04e-http-fiber",
+  "05-with-otel-resource",
+  "06-with-zap",
+  "07-with-slog"
+ ],
+ "ubgoDeps": [
+  {
+   "name": "buildinfo",
+   "from": "01-basic"
+  }
+ ],
+ "examples": [],
+ "features": [],
+ "table": ""
+}

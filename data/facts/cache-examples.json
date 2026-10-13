@@ -1,0 +1,98 @@
+{
+ "name": "cache-examples",
+ "module": "",
+ "go": "",
+ "coreDeps": 0,
+ "license": "PolyForm Perimeter 1.0.0",
+ "latestTag": "",
+ "modules": [
+  {
+   "dir": "01-basic",
+   "module": "github.com/ubgo/cache-examples/01-basic",
+   "deps": 2
+  },
+  {
+   "dir": "02-remember",
+   "module": "github.com/ubgo/cache-examples/02-remember",
+   "deps": 2
+  },
+  {
+   "dir": "03-generics",
+   "module": "github.com/ubgo/cache-examples/03-generics",
+   "deps": 2
+  },
+  {
+   "dir": "04-decorators",
+   "module": "github.com/ubgo/cache-examples/04-decorators",
+   "deps": 2
+  },
+  {
+   "dir": "05-tiered",
+   "module": "github.com/ubgo/cache-examples/05-tiered",
+   "deps": 6
+  },
+  {
+   "dir": "06-codecs",
+   "module": "github.com/ubgo/cache-examples/06-codecs",
+   "deps": 4
+  },
+  {
+   "dir": "07-locker",
+   "module": "github.com/ubgo/cache-examples/07-locker",
+   "deps": 2
+  },
+  {
+   "dir": "08-cluster",
+   "module": "github.com/ubgo/cache-examples/08-cluster",
+   "deps": 2
+  },
+  {
+   "dir": "09-observability",
+   "module": "github.com/ubgo/cache-examples/09-observability",
+   "deps": 6
+  },
+  {
+   "dir": "10-admin",
+   "module": "github.com/ubgo/cache-examples/10-admin",
+   "deps": 2
+  }
+ ],
+ "contrib": [],
+ "packages": [
+  "01-basic",
+  "02-remember",
+  "03-generics",
+  "04-decorators",
+  "05-tiered",
+  "06-codecs",
+  "07-locker",
+  "08-cluster",
+  "09-observability",
+  "10-admin"
+ ],
+ "ubgoDeps": [
+  {
+   "name": "cache",
+   "from": "01-basic"
+  },
+  {
+   "name": "cache-mem",
+   "from": "01-basic"
+  },
+  {
+   "name": "cache-redis",
+   "from": "05-tiered"
+  },
+  {
+   "name": "cache-tiered",
+   "from": "05-tiered"
+  },
+  {
+   "name": "cache-cluster",
+   "from": "08-cluster"
+  }
+ ],
+ "examples": [],
+ "features": [],
+ "table": "| `06-codecs` | `contrib/codec-msgpack`, `contrib/codec-zstd` wrapping JSON, and `cache.EncryptedCodec` (AES-GCM) via `cache.WithCodec`. |\n| `07-locker` | `cache.NewLock` cron-singleton: two lockers contend, one wins, `Refresh`, `Release`. |\n| `08-cluster` | `cache-cluster`: 3 in-process nodes via `httptest`, owner routing + single-flight peer fill (loader runs once cluster-wide). |\n| `09-observability` | `contrib/cache-prom` (gather + print a metric) and `contrib/cache-otel` (manual reader) via `cache.Instrument`. |\n| `10-admin` | `cache/admin`: mount `Handler` on an `httptest` server, GET `/cache/stats` and `/cache/key`, show auth-gated evict. |"
+}

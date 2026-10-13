@@ -12,6 +12,15 @@
 #   kind     library (default) | examples | cli | deprecated
 #   featured true to show on the home page
 #   related  optional list of other library names
+#   family       parent library this repo belongs to (backends, CLIs, examples)
+#   examplesRepo name of the repo with runnable examples for this library
+#   interop      library this one is byte-compatible with (crypt <-> crypt-ts)
+#   replacedBy   successor of a deprecated library
+#   suite        shared conformance suite: {name, passes, fails, note}; every
+#                name in passes/fails has a test file calling the suite (checked
+#                in the repos on 2026-10-13)
+# Generated per-library facts (go version, deps, contrib, README examples)
+# live in data/facts/<name>.json; refresh them with `task facts`.
 #
 # Only PUBLIC repos may appear here.
 
@@ -73,6 +82,12 @@ libraries:
 
   # Caching
   - name: cache
+    examplesRepo: cache-examples
+    suite:
+      name: cachetest
+      passes: [cache-mem, cache-redis, cache-pg, cache-tiered]
+      fails: [cache-memcached]
+      note: cache-memcached does not pass by design, because Memcached cannot read a key's TTL, scan by prefix or list keys.
     area: caching
     summary: The core cache interface with generics, single-flight Remember, a distributed locker and a shared conformance suite.
     lang: Go
@@ -81,6 +96,7 @@ libraries:
     featured: true
     related: [cache-mem, cache-redis, cache-pg, cache-memcached, cache-tiered, cache-cluster, cache-examples]
   - name: cache-mem
+    family: cache
     area: caching
     summary: Sharded in-memory backend for cache with W-TinyLFU or LRU eviction and optional snapshots.
     lang: Go
@@ -88,6 +104,7 @@ libraries:
     docs: https://pkg.go.dev/github.com/ubgo/cache-mem
     related: [cache]
   - name: cache-redis
+    family: cache
     area: caching
     summary: Redis 6+ backend for cache with prefix isolation and Pub/Sub invalidation across processes.
     lang: Go
@@ -95,6 +112,7 @@ libraries:
     docs: https://pkg.go.dev/github.com/ubgo/cache-redis
     related: [cache]
   - name: cache-pg
+    family: cache
     area: caching
     summary: Postgres and SQLite backend for cache over database/sql, with Migrate and Vacuum.
     lang: Go
@@ -102,6 +120,7 @@ libraries:
     docs: https://pkg.go.dev/github.com/ubgo/cache-pg
     related: [cache]
   - name: cache-memcached
+    family: cache
     area: caching
     summary: Memcached backend for cache, covering the parts of the interface Memcached supports.
     lang: Go
@@ -109,6 +128,7 @@ libraries:
     docs: https://pkg.go.dev/github.com/ubgo/cache-memcached
     related: [cache]
   - name: cache-tiered
+    family: cache
     area: caching
     summary: Stacks cache backends into L1/L2/L3 tiers with read promotion and per-tier TTL.
     lang: Go
@@ -116,6 +136,7 @@ libraries:
     docs: https://pkg.go.dev/github.com/ubgo/cache-tiered
     related: [cache]
   - name: cache-cluster
+    family: cache
     area: caching
     summary: Peer-aware distributed cache with a consistent-hash ring and HTTP peer fill, on any cache backend.
     lang: Go
@@ -123,6 +144,10 @@ libraries:
     docs: https://pkg.go.dev/github.com/ubgo/cache-cluster
     related: [cache]
   - name: cache-obj
+    family: cache
+    suite:
+      name: objtest
+      passes: [cache-obj]
     area: caching
     summary: In-process cache that holds live Go objects by reference, with TTL and LRU and no serialization.
     lang: Go
@@ -130,6 +155,7 @@ libraries:
     docs: https://pkg.go.dev/github.com/ubgo/cache-obj
     related: [cache]
   - name: cache-cli
+    family: cache
     area: caching
     summary: Command-line cache inspector (get, set, del, stats, keys) with JSON output, built on cache.
     lang: Go
@@ -138,6 +164,7 @@ libraries:
     kind: cli
     related: [cache]
   - name: cache-examples
+    family: cache
     area: caching
     summary: Runnable examples for the cache family, one self-contained program per feature.
     lang: Go
@@ -146,6 +173,7 @@ libraries:
     kind: examples
     related: [cache]
   - name: threadsafecache
+    replacedBy: cache-obj
     area: caching
     summary: Generic thread-safe LRU and TTL cache. Deprecated; use cache-obj instead.
     lang: Go
@@ -156,6 +184,9 @@ libraries:
 
   # Config and env
   - name: cfgkit
+    suite:
+      name: cfgkittest
+      passes: [format-ini, format-properties, format-toml, format-yaml]
     area: config-env
     summary: Typed config from env, .env, JSON, YAML, TOML, flags and secret stores into one validated struct.
     lang: Go
@@ -173,6 +204,9 @@ libraries:
 
   # SQL and data
   - name: sqlb
+    suite:
+      name: sqlbtest
+      passes: [driver-pgx, driver-mysql, driver-sqlite]
     area: sql-data
     summary: Typed SQL builder with compile-checked columns and joins, Postgres and ClickHouse packages and a driver conformance suite.
     lang: Go
@@ -259,6 +293,7 @@ libraries:
 
   # HTTP and services
   - name: health
+    examplesRepo: health-examples
     area: http-services
     summary: Thread-safe health and readiness registry with k8s-style probes, framework adapters and ready-made checkers.
     lang: Go
@@ -267,6 +302,7 @@ libraries:
     featured: true
     related: [health-examples, shutdown]
   - name: shutdown
+    examplesRepo: shutdown-examples
     area: http-services
     summary: Phased graceful shutdown for services, parallel within a phase, with a watchdog and telemetry hooks.
     lang: Go
@@ -280,6 +316,7 @@ libraries:
     install: go get github.com/ubgo/httpreq
     docs: https://pkg.go.dev/github.com/ubgo/httpreq
   - name: buildinfo
+    examplesRepo: buildinfo-examples
     area: http-services
     summary: Version, commit, build time and module info for Go binaries, from runtime/debug with -ldflags overrides.
     lang: Go
@@ -287,6 +324,7 @@ libraries:
     docs: https://pkg.go.dev/github.com/ubgo/buildinfo
     related: [buildinfo-examples]
   - name: health-examples
+    family: health
     area: http-services
     summary: Runnable example apps for health, covering every HTTP framework adapter and observability.
     lang: Go
@@ -295,6 +333,7 @@ libraries:
     kind: examples
     related: [health]
   - name: shutdown-examples
+    family: shutdown
     area: http-services
     summary: Runnable examples for shutdown.
     lang: Go
@@ -303,6 +342,7 @@ libraries:
     kind: examples
     related: [shutdown]
   - name: buildinfo-examples
+    family: buildinfo
     area: http-services
     summary: Runnable example apps for buildinfo, from ldflags stamping to HTTP, OpenTelemetry, Zap and slog.
     lang: Go
@@ -319,6 +359,7 @@ libraries:
 
   # Crypto
   - name: crypt
+    interop: crypt-ts
     area: crypto
     summary: Go crypto with safe defaults (AES-GCM, ChaCha20-Poly1305, argon2id, HMAC, Ed25519, key rotation), byte-compatible with crypt-ts.
     lang: Go
@@ -327,6 +368,7 @@ libraries:
     featured: true
     related: [crypt-ts]
   - name: crypt-ts
+    interop: crypt
     area: crypto
     summary: TypeScript and Node.js crypto with safe defaults over node:crypto, byte-compatible with the Go crypt.
     lang: TypeScript

@@ -1,0 +1,123 @@
+{
+ "name": "buildinfo",
+ "module": "github.com/ubgo/buildinfo",
+ "go": "1.24",
+ "coreDeps": 0,
+ "license": "Apache-2.0",
+ "latestTag": "v0.1.2",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/buildinfo",
+   "deps": 0
+  },
+  {
+   "dir": "contrib/buildinfo-chi",
+   "module": "github.com/ubgo/buildinfo/contrib/buildinfo-chi",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/buildinfo-echo",
+   "module": "github.com/ubgo/buildinfo/contrib/buildinfo-echo",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/buildinfo-fiber",
+   "module": "github.com/ubgo/buildinfo/contrib/buildinfo-fiber",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/buildinfo-gin",
+   "module": "github.com/ubgo/buildinfo/contrib/buildinfo-gin",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/buildinfo-nethttp",
+   "module": "github.com/ubgo/buildinfo/contrib/buildinfo-nethttp",
+   "deps": 1
+  },
+  {
+   "dir": "contrib/buildinfo-otel",
+   "module": "github.com/ubgo/buildinfo/contrib/buildinfo-otel",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/buildinfo-slog",
+   "module": "github.com/ubgo/buildinfo/contrib/buildinfo-slog",
+   "deps": 1
+  },
+  {
+   "dir": "contrib/buildinfo-zap",
+   "module": "github.com/ubgo/buildinfo/contrib/buildinfo-zap",
+   "deps": 2
+  }
+ ],
+ "contrib": [
+  {
+   "name": "buildinfo-chi",
+   "module": "github.com/ubgo/buildinfo/contrib/buildinfo-chi",
+   "deps": 2,
+   "summary": "Chi adapter for `github.com/ubgo/buildinfo` — exposes build metadata via a stdlib-compatible `http.Handler` and a Chi-native `Mount` helper that registers the r"
+  },
+  {
+   "name": "buildinfo-echo",
+   "module": "github.com/ubgo/buildinfo/contrib/buildinfo-echo",
+   "deps": 2,
+   "summary": "Echo adapter for `github.com/ubgo/buildinfo` — exposes build metadata via an `echo.HandlerFunc` and a `Mount` helper that registers the route with optional midd"
+  },
+  {
+   "name": "buildinfo-fiber",
+   "module": "github.com/ubgo/buildinfo/contrib/buildinfo-fiber",
+   "deps": 2,
+   "summary": "Fiber adapter for `github.com/ubgo/buildinfo` — exposes build metadata via a `fiber.Handler` and a `Mount` helper that registers the route with optional middlew"
+  },
+  {
+   "name": "buildinfo-gin",
+   "module": "github.com/ubgo/buildinfo/contrib/buildinfo-gin",
+   "deps": 2,
+   "summary": "Gin adapter for `github.com/ubgo/buildinfo` — exposes build metadata via a `gin.HandlerFunc` and a `Mount` helper that registers the route with optional middlew"
+  },
+  {
+   "name": "buildinfo-nethttp",
+   "module": "github.com/ubgo/buildinfo/contrib/buildinfo-nethttp",
+   "deps": 1,
+   "summary": "Stdlib `net/http` adapter for `github.com/ubgo/buildinfo` — exposes build metadata via an `http.Handler` and a `Mount` helper that registers the route with opti"
+  },
+  {
+   "name": "buildinfo-otel",
+   "module": "github.com/ubgo/buildinfo/contrib/buildinfo-otel",
+   "deps": 2,
+   "summary": "OpenTelemetry adapter for `github.com/ubgo/buildinfo` — exposes build metadata as `[]attribute.KeyValue` suitable for use in an OTEL `resource.Resource`."
+  },
+  {
+   "name": "buildinfo-slog",
+   "module": "github.com/ubgo/buildinfo/contrib/buildinfo-slog",
+   "deps": 1,
+   "summary": "Stdlib `log/slog` adapter for `github.com/ubgo/buildinfo` — exposes build metadata as `[]slog.Attr` (flat) or as a single grouped `slog.Attr` (nested under a `b"
+  },
+  {
+   "name": "buildinfo-zap",
+   "module": "github.com/ubgo/buildinfo/contrib/buildinfo-zap",
+   "deps": 2,
+   "summary": "Zap adapter for `github.com/ubgo/buildinfo` — exposes build metadata as `[]zap.Field` (flat) or as a single grouped `zap.Field` (nested under a `build` namespac"
+  }
+ ],
+ "packages": [],
+ "ubgoDeps": [],
+ "examples": [
+  {
+   "title": "Quick start",
+   "code": "package main\n\nimport (\n    \"log\"\n\n    \"github.com/ubgo/buildinfo\"\n)\n\nfunc main() {\n    info := buildinfo.Get()\n    log.Printf(\"starting %s commit=%s go=%s\",\n        info.Version, info.Commit, info.GoVersion)\n}"
+  },
+  {
+   "title": "Provenance — which input won",
+   "code": "info := buildinfo.Get()\nlog.Printf(\"starting %s (%s)\", info.Version, info.Source)\n\nif !info.HasVersion() {\n    log.Println(\"warning: unstamped build\")\n}"
+  },
+  {
+   "title": "API",
+   "code": "// Auto-populated, cached after first call.\ninfo := buildinfo.Get()\n\n// Flat string-only map for simple renderers.\nm := buildinfo.Map()\n\n// JSON-marshalled bytes for HTTP / log payloads.\nb, _ := info.JSON()"
+  }
+ ],
+ "features": [],
+ "table": "| `Source` | Meaning |\n|----------|---------|\n| `SourceLdflags` | stamped at build time by the release pipeline |\n| `SourceModule` | resolved by `go install <pkg>@<version>` |\n| `SourceUnknown` | plain `go build` / `go run` / `go test` — `Version` is the `DevVersion` placeholder |"
+}

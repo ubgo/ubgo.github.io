@@ -1,0 +1,136 @@
+{
+ "name": "sqlb",
+ "module": "github.com/ubgo/sqlb",
+ "go": "1.24",
+ "coreDeps": 0,
+ "license": "Apache-2.0",
+ "latestTag": "v0.1.1",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/sqlb",
+   "deps": 0
+  },
+  {
+   "dir": "contrib/debug",
+   "module": "github.com/ubgo/sqlb/contrib/debug",
+   "deps": 1
+  },
+  {
+   "dir": "contrib/driver-mysql",
+   "module": "github.com/ubgo/sqlb/contrib/driver-mysql",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/driver-pgx",
+   "module": "github.com/ubgo/sqlb/contrib/driver-pgx",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/driver-sqlite",
+   "module": "github.com/ubgo/sqlb/contrib/driver-sqlite",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/migrate",
+   "module": "github.com/ubgo/sqlb/contrib/migrate",
+   "deps": 1
+  },
+  {
+   "dir": "contrib/structbind",
+   "module": "github.com/ubgo/sqlb/contrib/structbind",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/vet",
+   "module": "github.com/ubgo/sqlb/contrib/vet",
+   "deps": 5
+  }
+ ],
+ "contrib": [
+  {
+   "name": "debug",
+   "module": "github.com/ubgo/sqlb/contrib/debug",
+   "deps": 1,
+   "summary": "import \"github.com/ubgo/sqlb/contrib/debug\""
+  },
+  {
+   "name": "driver-mysql",
+   "module": "github.com/ubgo/sqlb/contrib/driver-mysql",
+   "deps": 2,
+   "summary": "Opens MySQL databases for `github.com/ubgo/sqlb`, and proves the core on a real MySQL 8."
+  },
+  {
+   "name": "driver-pgx",
+   "module": "github.com/ubgo/sqlb/contrib/driver-pgx",
+   "deps": 2,
+   "summary": "Opens Postgres for `github.com/ubgo/sqlb` through `github.com/jackc/pgx/v5`'s `database/sql` adapter, and is where the `pg` package is **executed** rather than "
+  },
+  {
+   "name": "driver-sqlite",
+   "module": "github.com/ubgo/sqlb/contrib/driver-sqlite",
+   "deps": 2,
+   "summary": "`driver-sqlite` opens SQLite databases for `github.com/ubgo/sqlb`, with the pragmas a library-owned schema needs already applied."
+  },
+  {
+   "name": "migrate",
+   "module": "github.com/ubgo/sqlb/contrib/migrate",
+   "deps": 1,
+   "summary": "import \"github.com/ubgo/sqlb/contrib/migrate\""
+  },
+  {
+   "name": "structbind",
+   "module": "github.com/ubgo/sqlb/contrib/structbind",
+   "deps": 2,
+   "summary": "import \"github.com/ubgo/sqlb/contrib/structbind\""
+  },
+  {
+   "name": "vet",
+   "module": "github.com/ubgo/sqlb/contrib/vet",
+   "deps": 5,
+   "summary": "The analyzers behind `sqlb vet`: the checks the compiler cannot make, as standard `golang.org/x/tools/go/analysis` values, runnable from a CLI or from an applic"
+  }
+ ],
+ "packages": [
+  "bind",
+  "ch",
+  "ddl",
+  "exec",
+  "expr",
+  "mysql",
+  "pg",
+  "render",
+  "scan",
+  "schema",
+  "sqlbtest",
+  "sqlite",
+  "stmt"
+ ],
+ "ubgoDeps": [],
+ "examples": [
+  {
+   "title": "Checked three times, not claimed once",
+   "code": "dist := vector.L2(embedding, vector.ParamVector(query))\n\n_, err := sqlb.NewSelect(sqlb.SQLiteDialect{}).Columns(sqlb.Bind(dist, &d)).From(docs).Build()\n// err: sqlb: construct is not supported by this dialect\n//      vector.L2 under dialect \"sqlite\""
+  },
+  {
+   "title": "1. Declare your tables",
+   "code": "package users\n\nimport (\n\t\"time\"\n\n\t\"github.com/ubgo/sqlb\"\n)\n\nvar Table = sqlb.Table{Name: \"app_user\", Alias: \"u\"}\n\nvar (\n\tID        = sqlb.Col[string](Table, \"id\")\n\tEmail     = sqlb.Col[string](Table, \"email\")\n\tCreatedAt = sqlb.Col[time.Time](Table, \"created_at\")\n)"
+  },
+  {
+   "title": "2. Open a database",
+   "code": "import driverpgx \"github.com/ubgo/sqlb/contrib/driver-pgx\"\n\ndb, err := driverpgx.Open(\"postgres://user:pass@localhost:5432/app?sslmode=disable\")\nif err != nil {\n\treturn err\n}\ndefer db.Close()"
+  },
+  {
+   "title": "3. Fix the dialect once",
+   "code": "import \"github.com/ubgo/sqlb/pg\"\n\nq, err := pg.Select().Columns(sqlb.Bind(users.Email, &email)).\n\tFrom(users.Table).\n\tWhere(sqlb.Eq(users.ID, \"usr_1\")).\n\tBuild()"
+  }
+ ],
+ "features": [
+  "**A column is an `Expr[T]`.** Comparing it with the wrong type, joining it to a mismatched column, or binding it to the wrong pointer is a compile error, not a runtime surprise.",
+  "**A query carries its own scan targets.** The column list and the destinations come from one slice, so inserting a column in the middle cannot silently shift a scan.",
+  "**Zero third-party dependencies in the core**, enforced by a gate rather than by good intentions. Embedding `sqlb` adds no driver, no cgo and no version conflict.",
+  "**Engine packages carry what one engine spells differently.** JSONB, arrays, ranges, full-text search, `DISTINCT ON`, `ON CONFLICT`, `MERGE` and `RETURNING` in `pg`; JSON1, FTS5 and both upsert forms in `sqlite`; `PREWHERE`, `FINAL` and `LIMIT BY` in `ch`. The `pg` surface is the large one — about five hundred constructs to the core's two hundred and sixty, which is what the universality rule produces: almost nothing is spelled identically by four engines.",
+  "**Extensions are sub-packages over exported guarded constructors**, so adding pgvector support, or the next extension nobody has written yet, never edits the engine package."
+ ],
+ "table": ""
+}
