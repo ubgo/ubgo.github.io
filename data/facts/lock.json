@@ -5,6 +5,7 @@
  "coreDeps": 0,
  "license": "Apache-2.0",
  "latestTag": "v0.1.0",
+ "branch": "main",
  "modules": [
   {
    "dir": ".",
@@ -83,11 +84,11 @@
   }
  ],
  "features": [
-  "**One contract.** All five backends satisfy `lock.Locker`. Your",
-  "**Production-grade defaults.** Crash recovery, fencing tokens,",
-  "**No-surprise semantics.** Every backend's `Acquire` is",
-  "**Tested across platforms.** Linux, macOS, Windows in CI. Real",
-  "**Minimal cores.** The interface module has zero deps. Each"
+  "**One contract.** All five backends satisfy `lock.Locker`. Your service code accepts `lock.Locker` and you swap concrete factories at startup. `flock` for local dev → `pglock` in staging → `etcdlock` in prod, with zero application-code changes.",
+  "**Production-grade defaults.** Crash recovery, fencing tokens, observability hooks, structured logging, periodic stale cleanup. Things every \"tutorial\" lock library forgets.",
+  "**No-surprise semantics.** Every backend's `Acquire` is non-blocking and returns `lock.ErrLocked` on contention — same sentinel everywhere. No backend silently waits, no backend uses a custom error type. Predictable.",
+  "**Tested across platforms.** Linux, macOS, Windows in CI. Real Postgres + real etcd in CI service containers. Unit tests run in milliseconds via `memlock`.",
+  "**Minimal cores.** The interface module has zero deps. Each backend has only the deps it needs (e.g. `pglock` has pgx, `redislock` has go-redis — never both)."
  ],
  "table": "| Concern | filelock | flock | redislock | pglock | etcdlock |\n|---|---|---|---|---|---|\n| **Scope** | single-host | single-host | multi-host | multi-host | multi-host |\n| **Crash recovery** | PID probe + stale window + Sweep | Kernel — instant on fd close | TTL expiry | Session close | Lease expiry |\n| **Need extra infra** | none | none | Redis | Postgres | etcd cluster |\n| **TTL to tune** | optional | none | yes | none | yes |\n| **Reentrant** | no | no | no | **yes** (PG native) | no |\n| **Fencing tokens** | per-name sidecar | per-name sidecar | per-name INCR | per-session txid | **mod_revision (global)** |\n| **Semaphore (`WithMaxConcurrent`)** | ✅ | ✅ | ✅ | ✅ | ✅ |\n| **Sweep** | ✅ | n/a (kernel cleans) | n/a (TTL cleans) | n/a (session cleans) | n/a (lease cleans) |\n| **Operator visibility** | rich marker fields | none | `redis-cli GET <key>` | `pg_locks` view | `etcdctl get <key>` |\n| **Observability hooks** | ✅ slog/metrics/spans | ✅ same | ✅ same | ✅ same | ✅ same |\n| **TraceID propagation** | marker debug field | slog field | embedded in SET value | via `application_name` | in lock key value |\n| **Strong consistency** | local-fs only | local-fs only | weakly (AP) | ACID single primary | ✅ Raft |"
 }

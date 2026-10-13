@@ -5,6 +5,7 @@
  "coreDeps": 0,
  "license": "Apache-2.0",
  "latestTag": "v0.1.1",
+ "branch": "main",
  "modules": [
   {
    "dir": ".",
@@ -39,5 +40,5 @@
   }
  ],
  "features": [],
- "table": "| Drift matrix + contract CI gate across envs | ✅ `matrix`, exit-code gates | ❌ | ❌ | ❌ |\n| Selection-based secret sync (GitHub / Vercel) | ✅ with placeholder guards | ❌ | ⚠️ own model | ❌ hand-rolled loops |\n| Leaves `os.Environ` alone | ✅ by design, test-pinned | ❌ loading is the point | ⚠️ | — |"
+ "table": "| Family | Semantics | Use for |\n|---|---|---|\n| `Set`, `SetAfter`, `SetBefore` | **upsert** — guarantees one active entry; updates in place if the key exists | editing |\n| `Append`, `InsertAfter`, `InsertBefore` | **literal** — places exactly what you pass, duplicates included | generating |"
 }

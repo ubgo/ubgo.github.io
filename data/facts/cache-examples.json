@@ -5,6 +5,7 @@
  "coreDeps": 0,
  "license": "PolyForm Perimeter 1.0.0",
  "latestTag": "",
+ "branch": "main",
  "modules": [
   {
    "dir": "01-basic",
@@ -94,5 +95,5 @@
  ],
  "examples": [],
  "features": [],
- "table": "| `06-codecs` | `contrib/codec-msgpack`, `contrib/codec-zstd` wrapping JSON, and `cache.EncryptedCodec` (AES-GCM) via `cache.WithCodec`. |\n| `07-locker` | `cache.NewLock` cron-singleton: two lockers contend, one wins, `Refresh`, `Release`. |\n| `08-cluster` | `cache-cluster`: 3 in-process nodes via `httptest`, owner routing + single-flight peer fill (loader runs once cluster-wide). |\n| `09-observability` | `contrib/cache-prom` (gather + print a metric) and `contrib/cache-otel` (manual reader) via `cache.Instrument`. |\n| `10-admin` | `cache/admin`: mount `Handler` on an `httptest` server, GET `/cache/stats` and `/cache/key`, show auth-gated evict. |"
+ "table": ""
 }

@@ -1,0 +1,115 @@
+# Decision tree for /picker/ ("Which package do I need?"). Every answer must be
+# backed by the named README section; `source` records where. Node ids are unique.
+# A node is either a question (`q` + `options`) or a result (`result`).
+start: need
+nodes:
+  need:
+    q: What do you need?
+    options:
+      - { label: "A cache", hint: "In-memory, Redis, Postgres, Memcached, tiered or clustered", next: cache-where }
+      - { label: "A lock", hint: "Run something once, on one host or across many", next: lock-host }
+      - { label: "Configuration", hint: "Typed config or .env files", next: config-what }
+      - { label: "Errors, logging or telemetry", next: obs-what }
+      - { label: "Service lifecycle", hint: "Health probes, graceful shutdown, build info", next: svc-what }
+      - { label: "SQL and data types", next: sql-what }
+      - { label: "Encryption or signing", next: crypto-where }
+
+  cache-where:
+    q: Where should cached values live?
+    options:
+      - { label: "Only inside this process", next: cache-inproc }
+      - { label: "In a shared store", hint: "Several processes or servers see the same cache", next: cache-store }
+      - { label: "Both", hint: "A fast local copy in front of a shared store", next: r-cache-tiered }
+      - { label: "Spread across my app's own instances", hint: "No separate cache server", next: r-cache-cluster }
+  cache-inproc:
+    q: What kind of values?
+    options:
+      - { label: "Serializable values", hint: "Structs, strings, bytes", next: r-cache-mem }
+      - { label: "Live objects", hint: "A *regexp.Regexp, *http.Client or an open connection", next: r-cache-obj }
+  cache-store:
+    q: Which store do you already run?
+    options:
+      - { label: "Redis", next: r-cache-redis }
+      - { label: "Postgres or SQLite", next: r-cache-pg }
+      - { label: "Memcached", next: r-cache-memcached }
+
+  lock-host:
+    q: Does the lock need to work across several hosts?
+    options:
+      - { label: "No, a single host", next: lock-single }
+      - { label: "Yes, several hosts", next: lock-infra }
+  lock-single:
+    q: Do you need operator-readable lock markers, a semaphore or fencing tokens?
+    options:
+      - { label: "Yes", next: r-filelock }
+      - { label: "No, keep it small", next: r-flock }
+  lock-infra:
+    q: What are you already running?
+    options:
+      - { label: "Postgres", next: r-pglock }
+      - { label: "Redis", next: r-redislock }
+      - { label: "etcd", next: r-etcdlock }
+
+  config-what:
+    q: What do you want to do?
+    options:
+      - { label: "Load config into a typed struct", hint: "From env, files, flags or secret stores", next: r-cfgkit }
+      - { label: "Read or edit .env files", hint: "Keep comments and order", next: r-dotenv }
+
+  obs-what:
+    q: What do you want?
+    options:
+      - { label: "Structured errors", next: r-errx }
+      - { label: "Structured logging", next: r-logger }
+      - { label: "OpenTelemetry traces, metrics and logs", next: r-otelkit }
+
+  svc-what:
+    q: What does your service need?
+    options:
+      - { label: "Health and readiness probes", next: r-health }
+      - { label: "Graceful shutdown", next: r-shutdown }
+      - { label: "Version and build info", next: r-buildinfo }
+      - { label: "JSON calls to other HTTP APIs", next: r-httpreq }
+
+  sql-what:
+    q: What are you working on?
+    options:
+      - { label: "Building SQL queries in Go", next: r-sqlb }
+      - { label: "JSON columns", next: r-json }
+      - { label: "ent and gqlgen", next: r-ent }
+      - { label: "Public IDs for URLs", next: r-publicid }
+
+  crypto-where:
+    q: Where does your code run?
+    options:
+      - { label: "Go only", next: r-crypt }
+      - { label: "Go and Node.js or TypeScript", hint: "Data encrypted on one side, read on the other", next: r-crypt-both }
+
+  # Results: libs are library names; why is one plain sentence from the README.
+  r-cache-mem: { result: { libs: [cache, cache-mem], why: "cache gives you one Cache interface with typed generics and single-flight Remember; cache-mem is its sharded in-memory backend with W-TinyLFU or LRU eviction.", source: "cache-obj README (when to use cache + cache-mem); cache-mem README" } }
+  r-cache-obj: { result: { libs: [cache-obj], why: "cache-obj holds live objects by reference with TTL and LRU, for values that would not survive a codec round-trip. For serializable values the README points to cache + cache-mem instead.", source: "cache-obj README" } }
+  r-cache-redis: { result: { libs: [cache, cache-redis], why: "cache-redis is the Redis 6+ backend for cache, with prefix isolation and Pub/Sub invalidation, and it passes the shared cachetest suite.", source: "cache-redis README" } }
+  r-cache-pg: { result: { libs: [cache, cache-pg], why: "cache-pg is the SQL backend for cache over database/sql (Postgres or SQLite), with Migrate and Vacuum, and it passes cachetest.", source: "cache-pg README" } }
+  r-cache-memcached: { result: { libs: [cache, cache-memcached], why: "cache-memcached works, but Memcached cannot read a key's TTL, delete by prefix or list keys, so it does not pass cachetest. The README suggests cache-redis if you need those.", source: "cache-memcached README, Why doesn't it pass the conformance suite?" } }
+  r-cache-tiered: { result: { libs: [cache-tiered, cache-mem, cache-redis], why: "cache-tiered stacks backends into L1/L2 tiers with read promotion, per-tier TTL and cross-process invalidation, for example in-memory in front of Redis.", source: "cache-tiered README" } }
+  r-cache-cluster: { result: { libs: [cache-cluster, cache], why: "cache-cluster adds a consistent-hash ring and HTTP peer fill (groupcache-style) on top of any cache backend, so your instances share one cache.", source: "cache-cluster README" } }
+  r-filelock: { result: { libs: [lock], pkg: filelock, why: "Single host with operator-readable markers, semaphores or fencing tokens: the lock README picks filelock.", source: "lock README, Pick a backend in 30 seconds" } }
+  r-flock: { result: { libs: [lock], pkg: flock, why: "Single host with a smaller API: the lock README picks flock, which the kernel releases as soon as its file handle closes.", source: "lock README, Pick a backend in 30 seconds" } }
+  r-pglock: { result: { libs: [lock], pkg: pglock, why: "Already on Postgres: pglock uses Postgres advisory locks, tied to the session, with no TTL.", source: "lock README, Pick a backend in 30 seconds" } }
+  r-redislock: { result: { libs: [lock], pkg: redislock, why: "Already on Redis: redislock, with a TTL you tune.", source: "lock README, Pick a backend in 30 seconds" } }
+  r-etcdlock: { result: { libs: [lock], pkg: etcdlock, why: "Already on etcd: etcdlock, a lease-based lock fenced by mod_revision.", source: "lock README, Pick a backend in 30 seconds" } }
+  r-cfgkit: { result: { libs: [cfgkit], why: "cfgkit loads env vars, .env, JSON, YAML, TOML, flags and secret stores into one validated struct, and tells you which source set each field.", source: "cfgkit README" } }
+  r-dotenv: { result: { libs: [dotenv], why: "dotenv edits any entry while keeping every other byte (comments, blank lines, order, quoting), and ships the dotenvctl CLI.", source: "dotenv README" } }
+  r-errx: { result: { libs: [errx], why: "errx gives one structured error with a stable identity, a class, redactable fields and a wire codec, with adapters in contrib/.", source: "errx README" } }
+  r-logger: { result: { libs: [logger], why: "logger is slog-native structured logging with sampling, redaction, OpenTelemetry and FingersCrossed debug-on-error.", source: "logger README" } }
+  r-otelkit: { result: { libs: [otelkit], why: "otelkit sets up traces, metrics and logs from one constructor, with presets for common backends.", source: "otelkit README" } }
+  r-health: { result: { libs: [health], why: "health is a thread-safe health and readiness registry with k8s-style probes, framework adapters and checkers for Postgres, Redis, NATS, HTTP and DNS.", source: "health README" } }
+  r-shutdown: { result: { libs: [shutdown], why: "shutdown runs shutdown in phases, parallel within a phase, with a watchdog and a forced exit on a second signal.", source: "shutdown README" } }
+  r-buildinfo: { result: { libs: [buildinfo], why: "buildinfo reads version, commit, build time and modules from runtime/debug, with -ldflags overrides and HTTP adapters.", source: "buildinfo README" } }
+  r-httpreq: { result: { libs: [httpreq], why: "httpreq is one function with options over net/http for JSON calls, with typed errors and no dependencies.", source: "httpreq README" } }
+  r-sqlb: { result: { libs: [sqlb], why: "sqlb is a typed SQL builder: a wrong column type or a mismatched join is a compile error, with Postgres and ClickHouse packages.", source: "sqlb README" } }
+  r-json: { result: { libs: [jsontype, jsonslice], why: "jsontype and jsonslice round-trip JSON through SQL drivers (and jsonslice through gqlgen scalars) without extra dependencies.", source: "jsontype and jsonslice READMEs" } }
+  r-ent: { result: { libs: [entkit, entx], why: "entkit adds column types and field helpers for ent and gqlgen; entx adds ent extensions like polymorphic relations and cascade delete.", source: "entkit and entx READMEs" } }
+  r-publicid: { result: { libs: [publicid], why: "publicid makes URL-safe, non-sequential public IDs.", source: "publicid README" } }
+  r-crypt: { result: { libs: [crypt], why: "crypt gives safe-default AES-GCM and ChaCha20-Poly1305 encryption, argon2id passwords, HMAC and Ed25519 signing and key rotation.", source: "crypt README" } }
+  r-crypt-both: { result: { libs: [crypt, crypt-ts], why: "crypt and crypt-ts are byte-for-byte compatible, so data encrypted or signed in Go can be read in TypeScript and the other way round.", source: "crypt and crypt-ts READMEs" } }

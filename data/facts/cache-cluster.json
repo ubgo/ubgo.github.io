@@ -5,6 +5,7 @@
  "coreDeps": 1,
  "license": "PolyForm Perimeter 1.0.0",
  "latestTag": "v0.1.0",
+ "branch": "main",
  "modules": [
   {
    "dir": ".",
@@ -41,5 +42,5 @@
   "**No third-party dependencies.** Standard library HTTP plus the ubgo/cache contract. The core and this module are dependency-free.",
   "**Explicit, predictable membership.** Peers are configured, not gossiped — no surprise topology changes."
  ],
- "table": "| Local backend | Any `cache.Cache` (pluggable) | Built-in LRU only |\n| Writes (`Set`/`Del`) | Owner-routed, supported | Read-mostly (no general writes) |\n| Peer transport | HTTP (`/_cache`) | HTTP / protobuf |\n| Membership | Explicit `WithPeers` | Explicit peer list |"
+ "table": ""
 }

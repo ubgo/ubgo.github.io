@@ -56,3 +56,59 @@
   .lib-chip { @apply h-6 px-2 rounded border border-slate-200 dark:border-slate-700 text-[12px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800; }
   .lib-chip[aria-pressed="true"] { @apply bg-brand-600 border-brand-600 text-white hover:bg-brand-700 dark:bg-brand-600 dark:border-brand-600; }
 }
+
+/* Architecture diagrams (layouts/_partials/arch-diagram.html). */
+.arch-wire { fill: none; stroke: #94a3b8; stroke-width: 1.25; stroke-opacity: .55; }
+.dark .arch-wire { stroke: #475569; stroke-opacity: .9; }
+.arch-flow { stroke: #0891b2; stroke-opacity: .7; stroke-dasharray: 3 5; animation: arch-flow 1.6s linear infinite; }
+.dark .arch-flow { stroke: #22d3ee; stroke-opacity: .55; }
+@keyframes arch-flow { to { stroke-dashoffset: -16; } }
+.arch-node rect { fill: #fff; stroke: #cbd5e1; transition: stroke .15s, fill .15s; }
+.arch-node text { fill: #0f172a; }
+.dark .arch-node rect { fill: #0f172a; stroke: #334155; }
+.dark .arch-node text { fill: #e2e8f0; }
+.arch a:hover .arch-node rect, .arch a:focus-visible .arch-node rect { stroke: #0891b2; fill: #ecfeff; }
+.dark .arch a:hover .arch-node rect, .dark .arch a:focus-visible .arch-node rect { stroke: #22d3ee; fill: #083344; }
+.arch-pass rect { stroke: #10b981; }
+.arch-fail rect { stroke: #f59e0b; stroke-dasharray: 4 3; }
+@media (prefers-reduced-motion: reduce) { .arch-flow { animation: none; stroke-dasharray: none; } }
+
+/* Code tabs on library pages. */
+.codetab { @apply border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white; }
+.codetab[aria-selected="true"] { @apply border-brand-500 text-slate-900 dark:text-white font-medium; }
+.codepanel pre { @apply m-0 p-4 overflow-x-auto text-[12.5px] leading-relaxed font-mono; background: transparent !important; }
+.codepanel pre code { font-family: inherit; }
+
+/* README tables rendered from data. */
+.md-table table { @apply w-full text-[12.5px] border-collapse; }
+.md-table th { @apply text-left font-semibold text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-900/60 px-3 py-2 border-b border-slate-200 dark:border-slate-800 whitespace-nowrap; }
+.md-table td { @apply px-3 py-1.5 border-b border-slate-100 dark:border-slate-800/70 align-top text-slate-600 dark:text-slate-300; }
+.md-table tr:last-child td { @apply border-b-0; }
+.md-table code { @apply whitespace-nowrap; }
+.md-table code, .feature-item code { @apply font-mono text-[11.5px] bg-slate-100 dark:bg-slate-800 rounded px-1 py-px text-slate-800 dark:text-slate-200; }
+.feature-item strong { @apply text-slate-900 dark:text-white font-semibold; }
+.md-table a { @apply text-brand-700 dark:text-brand-400 underline-offset-2 hover:underline; }
+
+/* Command palette (assets/js/palette.js). */
+.palette { @apply m-0 p-0 bg-transparent max-w-none max-h-none w-full h-full; }
+.palette::backdrop { background: rgb(2 6 23 / .45); backdrop-filter: blur(3px); }
+.palette[open] .palette-box { animation: pal-in .14s ease-out; }
+@keyframes pal-in { from { opacity: 0; transform: translateY(-6px) scale(.985); } }
+@media (prefers-reduced-motion: reduce) { .palette[open] .palette-box { animation: none; } }
+.palette-box { @apply mx-auto mt-[12vh] w-[min(640px,calc(100vw-32px))] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden; }
+.palette-input-row { @apply flex items-center gap-2 px-3 h-12 border-b border-slate-200 dark:border-slate-800; }
+.palette-input-row input { @apply flex-1 min-w-0 bg-transparent outline-none text-[14px] text-slate-900 dark:text-white placeholder:text-slate-400; }
+.palette-list { @apply max-h-[min(60vh,440px)] overflow-y-auto p-1.5; }
+.palette-list li[role="option"] { @apply flex items-center gap-3 px-2.5 py-2 rounded-lg cursor-pointer; }
+.palette-list li[aria-selected="true"] { @apply bg-brand-50 dark:bg-brand-500/15; }
+.palette-type { @apply shrink-0 w-[68px] text-[10.5px] font-semibold uppercase tracking-wide text-slate-400; }
+.palette-title { @apply block font-mono text-[13px] font-medium text-slate-900 dark:text-white truncate; }
+.palette-text { @apply block text-[12px] text-slate-500 dark:text-slate-400 truncate; }
+.palette-meta { @apply hidden sm:block shrink-0 text-[11px] text-slate-400; }
+.palette-empty { @apply px-3 py-6 text-center text-[13px] text-slate-500; }
+.palette-foot { @apply hidden sm:flex gap-4 px-3 h-9 items-center border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-500; }
+.palette-kbd { @apply inline-flex items-center justify-center min-w-5 h-5 px-1 mr-0.5 rounded border border-slate-300 dark:border-slate-600 font-mono text-[10.5px] text-slate-500 dark:text-slate-400; }
+
+/* Brand page. */
+.dl-btn { @apply inline-flex items-center h-7 px-2.5 rounded-md border border-slate-300 dark:border-slate-700 font-medium text-slate-700 dark:text-slate-200 hover:border-brand-500 hover:text-brand-700 dark:hover:text-brand-400; }
+.swatch.copied [data-swatch-label] { @apply text-emerald-600 dark:text-emerald-400; }

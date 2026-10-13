@@ -1,0 +1,18 @@
+{{- /* Search index for the command palette (assets/js/palette.js). */ -}}
+{{- $d := hugo.Data.libraries -}}
+{{- $items := slice -}}
+{{- $areaTitle := dict -}}
+{{- range $d.areas }}{{ $areaTitle = merge $areaTitle (dict .key .title) }}{{ end -}}
+{{- range $d.libraries -}}
+  {{- $items = $items | append (dict "type" "Library" "title" .name "text" .summary "meta" (index $areaTitle .area) "url" (printf "/libraries/%s/" .name | relURL)) -}}
+{{- end -}}
+{{- range $d.areas -}}
+  {{- $items = $items | append (dict "type" "Area" "title" .title "text" .blurb "meta" (printf "%d libraries" (len (where $d.libraries "area" .key))) "url" (printf "/libraries/?area=%s" .key | relURL)) -}}
+{{- end -}}
+{{- range where site.RegularPages "Section" "explainers" -}}
+  {{- $items = $items | append (dict "type" "Explainer" "title" .Title "text" .Description "meta" .Params.library "url" .RelPermalink) -}}
+{{- end -}}
+{{- range slice (dict "t" "Library map" "u" "/map/" "x" "Every library and how they connect") (dict "t" "Which package do I need?" "u" "/picker/" "x" "Answer a few questions, get the right library") (dict "t" "Explainers" "u" "/explainers/" "x" "Step-through diagrams of how the main libraries work") (dict "t" "All libraries" "u" "/libraries/" "x" "Search and filter every library") (dict "t" "Brand" "u" "/brand/" "x" "Logo, colours, type and downloads") (dict "t" "About" "u" "/about/" "x" "What ubgo is and who maintains it") (dict "t" "Home" "u" "/" "x" "ubgo home page") -}}
+  {{- $items = $items | append (dict "type" "Page" "title" .t "text" .x "meta" "" "url" (.u | relURL)) -}}
+{{- end -}}
+{{- dict "items" $items | jsonify -}}

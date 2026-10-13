@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ site.Language.Locale }}">
+<html lang="{{ site.Language.Locale }}" data-search-index="{{ "index.json" | relURL }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,7 +15,7 @@
 </head>
 <body class="min-h-screen flex flex-col">
   {{ partial "header.html" . }}
-  <main id="main" class="flex-1 w-full max-w-5xl mx-auto px-4">
+  <main id="main" class="flex-1 w-full max-w-6xl mx-auto px-4">
     {{ block "main" . }}{{ end }}
   </main>
   {{ partial "footer.html" . }}

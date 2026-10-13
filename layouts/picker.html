@@ -1,0 +1,26 @@
+{{ define "main" }}
+{{- $p := hugo.Data.picker }}
+{{- $libs := dict }}
+{{- range hugo.Data.libraries.libraries }}{{ $libs = merge $libs (dict .name (dict "summary" .summary "install" .install "lang" .lang)) }}{{ end }}
+<div class="relative">
+<div aria-hidden="true" class="pointer-events-none absolute inset-x-0 -top-10 h-64 bg-[radial-gradient(ellipse_at_top,rgba(8,145,178,0.16),transparent_60%)] dark:bg-[radial-gradient(ellipse_at_top,rgba(34,211,238,0.12),transparent_60%)]"></div>
+<div class="relative pt-10 pb-4 max-w-3xl">
+  <p class="text-[12px] font-semibold uppercase tracking-wider text-brand-700 dark:text-brand-400">Picker</p>
+  <h1 class="mt-1 font-display font-bold text-[30px] sm:text-[36px] tracking-tight text-slate-900 dark:text-white">Which package do I need?</h1>
+  <p class="mt-2 text-[15px] text-slate-600 dark:text-slate-400">Answer two or three questions. Every answer comes from what that library's README says it is for, and names the README it is based on.</p>
+</div>
+
+<div class="relative max-w-3xl" data-picker>
+  <ol class="flex flex-wrap items-center gap-1 text-[12px] min-h-7" data-picker-trail aria-label="Your answers"></ol>
+  <div class="mt-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/50 backdrop-blur p-4 sm:p-6 shadow-sm" data-picker-stage aria-live="polite">
+    <noscript><p class="text-[13px] text-slate-600 dark:text-slate-400">The picker needs JavaScript. Browse the <a class="underline" href="{{ "/libraries/" | relURL }}">library index</a> instead.</p></noscript>
+  </div>
+  <div class="mt-3 flex items-center gap-2 text-[12.5px]">
+    <button type="button" data-picker-back class="h-8 px-3 rounded-md border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:pointer-events-none">← Back</button>
+    <button type="button" data-picker-restart class="h-8 px-3 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">Start over</button>
+    <span class="ml-auto text-slate-400 hidden sm:inline">Keys: <kbd class="palette-kbd">1</kbd>–<kbd class="palette-kbd">7</kbd> choose · <kbd class="palette-kbd">Backspace</kbd> back</span>
+  </div>
+</div>
+</div>
+<script type="application/json" id="picker-data">{{ dict "tree" $p "libs" $libs "base" ("/" | relURL) | jsonify | safeJS }}</script>
+{{ end }}

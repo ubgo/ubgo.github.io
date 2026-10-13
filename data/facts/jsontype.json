@@ -5,6 +5,7 @@
  "coreDeps": 0,
  "license": "Apache-2.0",
  "latestTag": "v0.1.0",
+ "branch": "main",
  "modules": [
   {
    "dir": ".",
@@ -22,5 +23,5 @@
   }
  ],
  "features": [],
- "table": "| `Value() (driver.Value, error)` | `database/sql/driver.Valuer`. Empty JSON → SQL NULL. |\n| `Scan(value any) error` | `database/sql.Scanner`. Accepts `[]byte`, `string`, `nil` (→ JSON `null` literal). |\n| `MarshalJSON() ([]byte, error)` | Returns raw JSON bytes (no base64 wrapping). |\n| `UnmarshalJSON(b []byte) error` | Validates input via `json.Valid` before storing. |\n| `MarshalGQL(w io.Writer)` | gqlgen Marshaler. Duck-typed; jsontype does not import gqlgen. |\n| `UnmarshalGQL(input any) error` | Accepts `string`, `[]byte`, or `map[string]any`. |\n| `From(v any) (*JSON, error)` | Marshal an arbitrary value into a `*JSON`. |"
+ "table": ""
 }

@@ -20,12 +20,16 @@ tasks:
       - '{{.BIN}}/tailwindcss --help | grep -q "v{{.TAILWIND_VERSION}}"'
 
   brand:
-    desc: Copy the logo, favicons, social card and logo options from ../brand into the site
+    desc: Copy the logo, favicons, social card, brand.json and every brand asset from ../brand into the site
     cmds:
       - cp {{.BRAND}}/favicon.ico {{.BRAND}}/favicon.svg {{.BRAND}}/icon.svg static/
       - cp {{.BRAND}}/png/apple-touch-icon.png {{.BRAND}}/png/og-card.png {{.BRAND}}/png/ubgo-icon-512.png static/
-      - mkdir -p content-preview/preview
+      - mkdir -p content-preview/preview static/brand/png
       - cp {{.BRAND}}/concepts/*.svg {{.BRAND}}/ubgo-lockup.svg {{.BRAND}}/ubgo-lockup-dark.svg {{.BRAND}}/og-card.svg {{.BRAND}}/og-card-light.svg content-preview/preview/
+      - cp {{.BRAND}}/*.svg {{.BRAND}}/favicon.ico static/brand/
+      - cp {{.BRAND}}/png/*.png static/brand/png/
+      - cp {{.BRAND}}/brand.json data/brand.json
+      - python3 -I scripts/brand-zip.py {{.BRAND}} static/brand/ubgo-brand.zip
 
   facts:
     desc: Refresh data/facts/*.json from shallow clones of every public repo (needs network)
@@ -37,6 +41,13 @@ tasks:
         grep -oE '^  - name: [a-z0-9-]+' data/libraries.yaml | awk '{print $3}' | \
           GIT_TERMINAL_PROMPT=0 xargs -P 4 -I{} sh -c 'cd {{.CLONES}} && ( [ -d {} ] && git -C {} pull -q --depth 1 || git clone -q --depth 1 https://github.com/ubgo/{}.git {} ) && git ls-remote --tags https://github.com/ubgo/{}.git > {}.tags'
       - python3 -I scripts/facts.py {{.CLONES}} data/libraries.yaml data/facts
+
+  og:
+    desc: Regenerate static/og/<library>.png social cards from data/libraries.yaml and data/brand.json (needs Node)
+    dir: scripts/og
+    cmds:
+      - npm ci --no-audit --no-fund --silent
+      - node gen-og.mjs
 
   css:
     desc: Build assets/css/site.css with the Tailwind CLI

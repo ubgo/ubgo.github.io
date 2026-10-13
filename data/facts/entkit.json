@@ -5,6 +5,7 @@
  "coreDeps": 0,
  "license": "Apache-2.0",
  "latestTag": "",
+ "branch": "main",
  "modules": [
   {
    "dir": "encryptedtype",
@@ -92,5 +93,5 @@
   }
  ],
  "features": [],
- "table": "| `database/sql/driver.Valuer` + `sql.Scanner` | Method signatures |\n| `encoding/json.Marshaler` / `Unmarshaler` | Method signatures |\n| gqlgen scalar (`MarshalGQL` / `UnmarshalGQL`) | **Duck typing** — entkit does not import gqlgen |"
+ "table": "| Sub-module | Type | What it stores | Deps |\n|------------|------|---------------|------|\n| `jsonmap` | `JsonMap` | Dynamic JSON object (`{...}`) | stdlib only |\n| `passwordtype` | `HashedPassword` | One-way argon2id hash for user authentication | `github.com/ubgo/crypt` |\n| `encryptedtype` | `EncryptedString` | Two-way AES-256-GCM (with transparent CBC fallback on reads) | `github.com/ubgo/crypt` |"
 }

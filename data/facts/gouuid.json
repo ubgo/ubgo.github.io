@@ -5,6 +5,7 @@
  "coreDeps": 1,
  "license": "",
  "latestTag": "v0.0.2",
+ "branch": "main",
  "modules": [
   {
    "dir": ".",

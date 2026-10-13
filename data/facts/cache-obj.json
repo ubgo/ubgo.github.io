@@ -5,6 +5,7 @@
  "coreDeps": 2,
  "license": "Apache-2.0",
  "latestTag": "v0.1.0",
+ "branch": "main",
  "modules": [
   {
    "dir": ".",
@@ -52,5 +53,5 @@
   "**Thread-safe.** Every operation is safe for concurrent use, verified under `-race`.",
   "**A conformance suite.** `objtest.Run` *is* the contract; the built-in implementation passes it, and so must any alternative."
  ],
- "table": "| The same value over Redis / Postgres / tiered | `ubgo/cache` + a network backend |\n| A `*regexp.Regexp`, `*http.Client`, open connection, `func`, `chan` | **`cache-obj`** |\n| An object with unexported state that must survive intact (e.g. an ORM entity you traverse/mutate) | **`cache-obj`** |"
+ "table": ""
 }

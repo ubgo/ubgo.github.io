@@ -1,0 +1,89 @@
+{{- /*
+  Architecture diagram for one library: the core on top, then one band per group
+  of adapters/backends/packages, wired to the core. Server-rendered SVG, so it
+  works without JS. Context: dict
+    core    library name
+    sub     small text under the core name (e.g. "core · 0 direct deps")
+    groups  slice of dict {label, nodes: slice of dict {name, href, mark}}
+            mark is "pass" | "fail" | "" (conformance suite result)
+    suite   suite name or ""
+    cols    nodes per row (2 for phones, 3 for desktop)
+    width   viewBox width (340 phones, 720 desktop)
+*/ -}}
+{{- $W := .width -}}
+{{- $cols := .cols -}}
+{{- $pad := 12 -}}
+{{- $gap := 10 -}}
+{{- $nodeH := cond (lt $W 400) 30 34 -}}
+{{- $font := cond (lt $W 400) 10.5 12.5 -}}
+{{- $nodeW := div (sub (sub $W (mul 2 $pad)) (mul (sub $cols 1) $gap)) $cols -}}
+{{- $coreW := cond (lt $W 400) 200 260 -}}
+{{- $coreH := 54 -}}
+{{- $coreX := div (sub $W $coreW) 2 -}}
+{{- $cx := div $W 2 -}}
+{{- /* first pass: compute total height */ -}}
+{{- $y := add $pad $coreH 26 -}}
+{{- range .groups -}}
+  {{- $rows := math.Ceil (div (float (len .nodes)) $cols) -}}
+  {{- $y = add $y 22 (mul $rows (add $nodeH $gap)) 14 -}}
+{{- end -}}
+{{- $H := add $y $pad -}}
+<svg viewBox="0 0 {{ $W }} {{ $H }}" width="100%" role="img" aria-label="Architecture of {{ .core }}: the core and its {{ range $i, $g := .groups }}{{ if $i }}, {{ end }}{{ lower $g.label }}{{ end }}" class="arch block w-full h-auto select-none">
+  <defs>
+    <linearGradient id="arch-core-{{ $W }}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0891B2"/><stop offset="1" stop-color="#155E75"/></linearGradient>
+  </defs>
+  {{- /* core */}}
+  <g>
+    <rect x="{{ $coreX }}" y="{{ $pad }}" width="{{ $coreW }}" height="{{ $coreH }}" rx="12" fill="url(#arch-core-{{ $W }})"/>
+    <g transform="translate({{ add $coreX 12 }},{{ add $pad 11 }}) scale(0.0625)">
+      <path d="M176 140 V276 a80 80 0 0 0 160 0 V140" stroke="#fff" stroke-width="76" stroke-linecap="round" fill="none"/>
+      <rect x="222" y="196" width="68" height="68" rx="14" fill="#FBBF24"/>
+    </g>
+    <text x="{{ add $coreX 52 }}" y="{{ add $pad 24 }}" fill="#fff" font-family="JetBrains Mono, monospace" font-weight="600" font-size="{{ add $font 2 }}">{{ .core }}</text>
+    <text x="{{ add $coreX 52 }}" y="{{ add $pad 42 }}" fill="#CFFAFE" font-family="Inter, sans-serif" font-size="{{ sub $font 1 }}">{{ .sub }}</text>
+  </g>
+  {{- $y = add $pad $coreH 26 -}}
+  {{- $prevBottom := add $pad $coreH -}}
+  {{- range $gi, $g := .groups }}
+  {{- $n := len $g.nodes }}
+  {{- $rows := int (math.Ceil (div (float $n) $cols)) }}
+  <text x="{{ $pad }}" y="{{ add $y 10 }}" class="fill-slate-500 dark:fill-slate-400" font-family="Inter, sans-serif" font-size="{{ sub $font 1 }}" font-weight="600" letter-spacing=".04em">{{ upper $g.label }}{{ if and $.suite (eq $gi 0) }}{{ end }}</text>
+  {{- $top := add $y 20 }}
+  {{- /* trunk: first band hangs straight off the core; later bands are fed down the
+       left gutter so the wire never crosses the nodes of the bands above. */}}
+  {{- if eq $gi 0 }}
+  <path d="M{{ $cx }} {{ $prevBottom }} V{{ sub $top 6 }}" class="arch-wire" />
+  {{- else }}
+  <path d="M{{ $coreX }} {{ add $pad (div $coreH 2) }} H4 V{{ sub $top 6 }} H{{ $cx }}" class="arch-wire" />
+  {{- end }}
+  {{- /* one wire per column, drawn first so the nodes sit on top of it and it
+       reads as a chain from the rail through every node in that column */}}
+  {{- range $c := seq 0 (sub $cols 1) }}
+    {{- if lt $c $n }}
+    {{- $inCol := int (math.Ceil (div (float (sub $n $c)) $cols)) }}
+    {{- $mx := add $pad (mul $c (add $nodeW $gap)) (div $nodeW 2) }}
+    {{- $endY := add $top (mul (sub $inCol 1) (add $nodeH $gap)) (div $nodeH 2) }}
+    <path d="M{{ $cx }} {{ sub $top 6 }} H{{ $mx }} V{{ $endY }}" class="arch-wire arch-flow" style="animation-delay: {{ mul $c 0.2 }}s"/>
+    {{- end }}
+  {{- end }}
+  {{- range $i, $node := $g.nodes }}
+    {{- $col := mod $i $cols }}
+    {{- $row := div $i $cols }}
+    {{- $nx := add $pad (mul $col (add $nodeW $gap)) }}
+    {{- $ny := add $top (mul $row (add $nodeH $gap)) }}
+    <a href="{{ $node.href }}"{{ if hasPrefix $node.href "http" }} rel="noopener"{{ end }}>
+      <g class="arch-node{{ with $node.mark }} arch-{{ . }}{{ end }}">
+        <rect x="{{ $nx }}" y="{{ $ny }}" width="{{ $nodeW }}" height="{{ $nodeH }}" rx="8"/>
+        <text x="{{ add $nx 10 }}" y="{{ add $ny (div $nodeH 2) 4 }}" font-family="JetBrains Mono, monospace" font-size="{{ $font }}">{{ $node.name }}</text>
+        {{- if eq $node.mark "pass" }}
+        <g transform="translate({{ sub (add $nx $nodeW) 22 }},{{ sub (add $ny (div $nodeH 2)) 7 }})"><circle cx="7" cy="7" r="7" fill="#10B981"/><path d="M3.8 7.2 6 9.3 10.3 4.8" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+        {{- else if eq $node.mark "fail" }}
+        <g transform="translate({{ sub (add $nx $nodeW) 22 }},{{ sub (add $ny (div $nodeH 2)) 7 }})"><circle cx="7" cy="7" r="7" fill="#F59E0B"/><path d="M7 3.6v4.2M7 10.2v.1" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></g>
+        {{- end }}
+        <title>{{ $node.name }}{{ if eq $node.mark "pass" }} (passes {{ $.suite }}){{ else if eq $node.mark "fail" }} (does not pass {{ $.suite }}){{ end }}</title>
+      </g>
+    </a>
+  {{- end }}
+  {{- $y = add $top (mul $rows (add $nodeH $gap)) 14 }}
+  {{- end }}
+</svg>

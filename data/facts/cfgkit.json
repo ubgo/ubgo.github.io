@@ -5,6 +5,7 @@
  "coreDeps": 1,
  "license": "Apache-2.0",
  "latestTag": "v0.1.0",
+ "branch": "main",
  "modules": [
   {
    "dir": ".",
@@ -257,5 +258,5 @@
   }
  ],
  "features": [],
- "table": "| Which source set this value | ✅ `Explain` | ❌ | ❌ | ❌ |\n| Secret masking | ✅ structural | ❌ | ❌ | ❌ |\n| Validate without booting | ✅ `Check` | ❌ | ❌ | ❌ |\n| Generate `.env.example` | ✅ `Document` | ❌ | ❌ | ❌ |\n| Valid config with zero input | ✅ pinned by a test | ❌ | ❌ | ⚠️ |\n| Flag defaults cannot beat a file | ✅ | ❌ [#671](https://github.com/spf13/viper/issues/671) | ✅ | ⚠️ |\n| Reload without a caller-side mutex | ✅ `Watcher` | ❌ | ❌ | ❌ |\n| Dependencies | 1 | many | few | several |"
+ "table": "| Module | Adds | Guide |\n|---|---|---|\n| `contrib/format-hcl` | HCL documents and files | README |\n| `contrib/format-ini` | INI documents and files — **flat** | README |\n| `contrib/format-properties` | Java `.properties` — **flat** | README |\n| `contrib/format-toml` | TOML documents and files | README |\n| `contrib/format-yaml` | YAML documents and files | README |\n| `contrib/flags-pflag` | cobra / pflag flag sets | README |\n| `contrib/source-azurekeyvault` | Azure Key Vault — **no dependencies** | README |\n| `contrib/source-consul` | Consul KV prefixes — **no dependencies** | README |\n| `contrib/source-etcd` | etcd v3 prefixes, via its HTTP gateway — **no dependencies** | README |\n| `contrib/source-gcpsecrets` | Google Secret Manager — **no dependencies** | README |\n| `contrib/source-k8s` | Kubernetes ConfigMaps and Secrets — **no dependencies** | README |\n| `contrib/source-vault` | HashiCorp Vault KV secrets — **no dependencies** | README |\n| `contrib/source-appconfig` | AWS AppConfig profiles | README |\n| `contrib/source-s3` | a config document in an S3 object | README |\n| `contrib/source-secretsmanager` | AWS Secrets Manager | README |\n| `contrib/source-ssm` | AWS Parameter Store | README |\n| `contrib/source-kiln` | kiln-encrypted env files — the one source whose file is **safe to commit** | README |\n| `contrib/source-nats` | NATS JetStream key/value buckets | README |"
 }

@@ -5,6 +5,7 @@
  "coreDeps": 0,
  "license": "Apache-2.0",
  "latestTag": "v0.1.0",
+ "branch": "main",
  "modules": [
   {
    "dir": ".",
@@ -163,5 +164,5 @@
   }
  ],
  "features": [],
- "table": "| **Checker** *(writes to registry)* | `health-postgres`, `health-redis`, `health-nats`, `health-httpprobe`, `health-dns` | Ping a real dependency over the network. Implement `health.Checker`. |\n| **Renderer** *(reads from registry)* | `health-nethttp`, `health-gin`, `health-chi`, `health-echo`, `health-fiber` | Take the registry snapshot and expose `/healthz` / `/readyz` / `/startupz` as HTTP. No I/O against dependencies. |\n| **Observer** *(subscribes to registry, async)* | `health-otel`, `health-prom` | React to every check result — emit a span, increment a counter. No HTTP exposure of their own. |\n| **Core** *(the registry itself)* | [`github.com/ubgo/health`](https://github.com/ubgo/health) | Stores results, aggregates probes, fires observers. Stdlib only, no third-party deps. |"
+ "table": "| Adapter | Module path |\n|---------|-------------|\n| `health-nethttp` | `github.com/ubgo/health/contrib/health-nethttp` |\n| `health-gin` | `github.com/ubgo/health/contrib/health-gin` |\n| `health-chi` | `github.com/ubgo/health/contrib/health-chi` |\n| `health-echo` | `github.com/ubgo/health/contrib/health-echo` |\n| `health-fiber` | `github.com/ubgo/health/contrib/health-fiber` |"
 }

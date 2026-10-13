@@ -5,6 +5,7 @@
  "coreDeps": 0,
  "license": "MIT",
  "latestTag": "",
+ "branch": "main",
  "modules": [
   {
    "dir": "cmd/lath",
@@ -55,5 +56,5 @@
   }
  ],
  "features": [],
- "table": "| Custom logic without shelling out | ✅ Go values | ❌ embedded bash | ⚠️ hooks | ⚠️ modules |\n| Shows the exact commands before running | ✅ dry run | ❌ | ⚠️ | ⚠️ |\n| Zero-config for an ordinary deploy | ❌ you assemble it | ⚠️ | ✅ | ❌ |\n| Needs a daemon, account or control plane | ❌ none | ⚠️ the CI provider | ❌ none | ❌ none |"
+ "table": "| Module | Depends on | Why it is separate |\n|---|---|---|\n| `github.com/ubgo/lath/pipeline` | nothing of ours | the engine is domain-free: no Docker, no SSH, no notion of a deploy. Reusable for any staged process. |\n| `github.com/ubgo/lath/steps` | `github.com/ubgo/lath/pipeline` | the deploy primitives. A project can swap these wholesale without touching execution semantics. |\n| `github.com/ubgo/lath/cmd/lath` | `kit`, `pipeline`, for the debugger only | the runner compiles a definition; it never imports one, and links no deploy library. The two exceptions are the step debugger's transport, which both ends must agree on. |\n| `deploydef` | `pipeline`, `steps`, never the runner | the definition. A nested module outside `go.work`, so its dependencies never enter the application's module graph. |"
 }

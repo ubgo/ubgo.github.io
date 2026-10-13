@@ -5,6 +5,7 @@
  "coreDeps": 4,
  "license": "PolyForm Perimeter 1.0.0",
  "latestTag": "v0.1.0",
+ "branch": "main",
  "modules": [
   {
    "dir": ".",
