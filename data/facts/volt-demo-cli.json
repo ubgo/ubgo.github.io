@@ -3,7 +3,7 @@
  "module": "github.com/ubgo/volt-demo-cli",
  "go": "1.26.4",
  "coreDeps": 2,
- "license": "",
+ "license": "Apache-2.0",
  "latestTag": "v0.2.0",
  "streamTags": {},
  "branch": "main",
