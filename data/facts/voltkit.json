@@ -3,14 +3,14 @@
  "module": "",
  "go": "",
  "coreDeps": 0,
- "license": "",
+ "license": "Apache-2.0",
  "latestTag": "",
  "streamTags": {
   "appdir": "v0.2.0",
   "output": "v0.2.0",
   "skillcmd": "v0.2.0",
-  "versioncmd": "v0.2.0",
-  "volt": "v0.3.0"
+  "versioncmd": "v0.2.1",
+  "volt": "v0.3.1"
  },
  "branch": "main",
  "modules": [

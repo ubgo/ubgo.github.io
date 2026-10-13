@@ -18,6 +18,11 @@
    "deps": 1
   },
   {
+   "dir": "example-cli/programmatic",
+   "module": "example-cli/programmatic",
+   "deps": 2
+  },
+  {
    "dir": "example-go-chat",
    "module": "example-go-chat",
    "deps": 0
@@ -40,7 +45,7 @@
   {
    "dir": "gqlkit-sdl",
    "module": "github.com/ubgo/gqlkit/gqlkit-sdl",
-   "deps": 2
+   "deps": 3
   },
   {
    "dir": "mockapi",
@@ -63,7 +68,7 @@
   {
    "title": "Quick Start — Go",
    "lang": "go",
-   "code": "import (\n    \"gqlkit/pkg/graphqlclient\"\n    \"yourmodule/sdk/queries\"\n    \"yourmodule/sdk/fields\"\n)\n\nclient := graphqlclient.NewClient(\"https://your-api.example.com/graphql\",\n    graphqlclient.WithAuthToken(\"YOUR_TOKEN\"),\n)\n\nqr := queries.NewQueryRoot(client)\n\ntodos, err := qr.Todos().\n    Filter(&inputs.TodoFilter{Done: boolPtr(false)}).\n    Select(func(f *fields.TodoFields) {\n        f.ID().Text().Done().User(func(u *fields.UserFields) {\n            u.ID().Name()\n        })\n    }).\n    Execute(ctx)"
+   "code": "import (\n    \"yourmodule/sdk/fields\"\n    \"yourmodule/sdk/graphqlclient\"\n    \"yourmodule/sdk/inputs\"\n    \"yourmodule/sdk/queries\"\n)\n\nclient := graphqlclient.NewClient(\"https://your-api.example.com/graphql\",\n    graphqlclient.WithAuthToken(\"YOUR_TOKEN\"),\n)\n\nqr := queries.NewQueryRoot(client)\n\nboolPtr := func(b bool) *bool { return &b } // optional input fields are pointers\n\ntodos, err := qr.Todos().\n    Filter(&inputs.TodoFilter{Done: boolPtr(false)}).\n    Select(func(f *fields.TodoFields) {\n        f.ID().Text().Done().User(func(u *fields.UserFields) {\n            u.ID().Name()\n        })\n    }).\n    Execute(ctx)"
   },
   {
    "title": "Quick Start — TypeScript",
@@ -82,13 +87,13 @@
   }
  ],
  "features": [
-  "**Type-safe field selection** — only selected fields exist on the return type; unselected fields are compile-time errors",
+  "**Type-safe field selection** — every field and argument you select is checked against the schema at compile time, in both languages. In TypeScript the result type is also narrowed to the selection, so reading an unselected field is a compile error; in Go the result is the full struct and unselected fields hold zero values",
   "**Builder pattern** — fluent API for queries, mutations, arguments, and nested field selection",
   "**Go + TypeScript** — generate SDKs for both languages from the same schema",
-  "**Single-request batching (Go + TypeScript)** — merge multiple builders into one GraphQL operation with aliases via `batch.RunQueries` (Go) / `batch()` (TS) — one HTTP round trip for N queries, partial-success aware",
+  "**Single-request batching (Go + TypeScript)** — merge multiple query or mutation builders into one aliased GraphQL operation via `batch.RunQueries` / `batch.RunMutations` (Go) or `batch()` (TS) — one HTTP round trip for N operations, partial-success aware",
   "**Schema introspection** — fetch schemas from any GraphQL endpoint with `gqlkit-sdl`",
   "**Custom scalar mappings** — configure how GraphQL scalars map to language types via `config.jsonc`",
-  "**Zero runtime overhead** — generated code with minimal dependencies"
+  "**Zero runtime overhead** — generated code with minimal dependencies; the Go SDK imports only the standard library plus any package a scalar binding names (such as `github.com/google/uuid`)"
  ],
- "table": "| Module | Statement coverage | Command |\n|---|---|---|\n| `gqlkit` | **91.7%** | `cd gqlkit && GOWORK=off go test -cover ./...` |\n| `gqlkit-sdl` | **96.6%** | `cd gqlkit-sdl && GOWORK=off go test -cover ./...` |"
+ "table": "| Module | Statement coverage | Command |\n|---|---|---|\n| `gqlkit` | **94.9%** | `cd gqlkit && GOWORK=off go test -cover ./...` |\n| `gqlkit-sdl` | **96.0%** | `cd gqlkit-sdl && GOWORK=off go test -cover ./...` |"
 }
