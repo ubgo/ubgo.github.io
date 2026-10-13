@@ -37,7 +37,7 @@ tasks:
     cmds:
       - task: css
       - rm -rf public
-      - '{{.BIN}}/hugo --minify --environment production'
+      - '{{.BIN}}/hugo --minify --environment production --panicOnWarning'
 
   serve:
     desc: Preview server through portless at https://ubgo.shipd.fyi (owner login only)
