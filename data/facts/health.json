@@ -5,6 +5,20 @@
  "coreDeps": 0,
  "license": "Apache-2.0",
  "latestTag": "v0.1.0",
+ "streamTags": {
+  "contrib/health-chi": "v0.1.0",
+  "contrib/health-dns": "v0.1.0",
+  "contrib/health-echo": "v0.1.0",
+  "contrib/health-fiber": "v0.1.0",
+  "contrib/health-gin": "v0.1.0",
+  "contrib/health-httpprobe": "v0.1.0",
+  "contrib/health-nats": "v0.1.0",
+  "contrib/health-nethttp": "v0.1.0",
+  "contrib/health-otel": "v0.1.0",
+  "contrib/health-postgres": "v0.1.0",
+  "contrib/health-prom": "v0.1.0",
+  "contrib/health-redis": "v0.1.0"
+ },
  "branch": "main",
  "modules": [
   {

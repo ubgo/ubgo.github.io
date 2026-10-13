@@ -5,11 +5,12 @@
 <p align="center"><img src="ubgo-icon-512.png" alt="ubgo logo: a bold lowercase u holding one amber block" width="72" height="72"></p>
 <h1 align="center">ubgo</h1>
 <p align="center"><strong>Batteries included for Go, one module at a time.</strong></p>
-<p align="center">Focused Go libraries, plus a few TypeScript ones, for errors, logging, caching, config, SQL, GraphQL, HTTP services, crypto and tooling.</p>
+<p align="center">Open-source Go libraries, plus a few TypeScript ones, for errors, logging, caching, config, SQL, GraphQL, HTTP services, crypto and tooling.</p>
 <p align="center">
   <a href="{{ $site }}"><img src="https://img.shields.io/badge/site-ubgo.github.io-0891B2" alt="Website: ubgo.github.io"></a>
   <img src="https://img.shields.io/badge/public%20libraries-{{ len $d.libraries }}-0891B2" alt="{{ len $d.libraries }} public libraries">
-  <img src="https://img.shields.io/badge/language-Go%20%C2%B7%20TypeScript-0891B2" alt="Languages: Go and TypeScript">
+  <img src="https://img.shields.io/badge/language-Go%20%C2%B7%20TypeScript-0891B2" alt="Languages: Go and TypeScript">{{ if eq (partial "license-summary.html" .) "Every library is open source under Apache-2.0." }}
+  <img src="https://img.shields.io/badge/license-Apache--2.0-0891B2" alt="License: Apache-2.0">{{ end }}
 </p>
 
 ubgo is an ecosystem for building Go apps, in the spirit of the components Laravel ships for caching, logging and configuration. Every piece is its own Go module, so a service imports only what it uses: structured errors and logging, caching with Redis, Postgres, Memcached and in-memory backends, typed configuration and .env files, SQL building, GraphQL and ent helpers, health checks, graceful shutdown and crypto. The main libraries share one shape, a small core with adapters outside it and a shared test suite, so learning one teaches you the next.
@@ -63,7 +64,7 @@ Most libraries install with:
 go get github.com/ubgo/<name>
 ```
 
-A few use a sub-module or a different module path. Each repo's README, and its page on [{{ replace $site "https://" "" }}]({{ $site }}/libraries/), gives the exact line.
+Some are split into sub-modules or ship a CLI to `go install`. Each repo's README, and its page on [{{ replace $site "https://" "" }}]({{ $site }}/libraries/), gives the exact line.
 
 ## FAQ
 
@@ -71,6 +72,6 @@ A few use a sub-module or a different module path. Each repo's README, and its p
 
 **Where are the docs?** Each repository's README, plus its page on pkg.go.dev (or npm for the TypeScript ones). The [library index]({{ $site }}/libraries/) links to both.
 
-**What license are they under?** Each repository has its own LICENSE file. Today: {{ $byLicense := dict }}{{ range $d.libraries }}{{ $f := index hugo.Data.facts .name }}{{ $k := or $f.license "no LICENSE file" }}{{ $byLicense = merge $byLicense (dict $k (add (index $byLicense $k | default 0) 1)) }}{{ end }}{{ $i := 0 }}{{ range $k, $n := $byLicense }}{{ if $i }}, {{ end }}{{ $k }} ({{ $n }}){{ $i = add $i 1 }}{{ end }}. Check the LICENSE file before you use a library.
+**What license are they under?** {{ partial "license-summary.html" . }} The LICENSE file in each repository is the source of truth.
 
 **Where do I report a bug?** Open an issue in that library's repository.

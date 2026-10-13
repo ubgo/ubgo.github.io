@@ -3,7 +3,7 @@
     <div>
       <a href="{{ "/" | relURL }}" class="inline-flex items-center gap-2 font-display font-bold text-[17px] text-slate-900 dark:text-white"><img src="{{ "icon.svg" | relURL }}" alt="" width="24" height="24" class="size-6">ubgo</a>
       <p class="mt-2 max-w-xs text-slate-500 dark:text-slate-400">{{ site.Params.tagline }} Maintained by <a class="underline-offset-2 hover:underline hover:text-slate-800 dark:hover:text-white" href="https://github.com/khanakia">Aman Bansal</a>.</p>
-      <p class="mt-3 text-[12px] text-slate-400">Each repo has its own license; see <a class="underline-offset-2 hover:underline" href="{{ "/about/" | relURL }}#licenses">About</a>.</p>
+      <p class="mt-3 text-[12px] text-slate-400"><a class="underline-offset-2 hover:underline" href="{{ "/about/" | relURL }}#licenses">{{ partial "license-summary.html" . }}</a></p>
     </div>
     {{- range slice
       (dict "h" "Explore" "l" (slice (dict "t" "All libraries" "u" "/libraries/") (dict "t" "Library map" "u" "/map/") (dict "t" "Explainers" "u" "/explainers/") (dict "t" "Which package?" "u" "/picker/") (dict "t" "volt" "u" "/volt/")))

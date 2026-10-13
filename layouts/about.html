@@ -6,7 +6,7 @@
   <p class="text-[12px] font-semibold uppercase tracking-wider text-brand-700 dark:text-brand-400">About</p>
   <h1 class="mt-1 font-display font-bold text-[34px] sm:text-[44px] leading-[1.05] tracking-tight text-slate-900 dark:text-white">Why ubgo exists</h1>
   <p class="mt-4 text-[16.5px] leading-relaxed text-slate-700 dark:text-slate-300">Building an app means solving the same problems again and again: errors, logs, caching, configuration, locks, health checks, shutting down cleanly. Laravel answers that for PHP with components for caching, logging, configuration and more that come with the framework. ubgo is that kind of ecosystem for Go, batteries included to build apps.</p>
-  <p class="mt-3 text-[16.5px] leading-relaxed text-slate-700 dark:text-slate-300">The difference is how it is packaged. Every piece is its own Go module, so a service imports only what it uses. The main libraries share the same conventions, a small core, adapters outside it and a shared test suite, so learning one teaches you the next.</p>
+  <p class="mt-3 text-[16.5px] leading-relaxed text-slate-700 dark:text-slate-300">The difference is how it is packaged. Every piece is its own open-source Go module, so a service imports only what it uses. The main libraries share the same conventions, a small core, adapters outside it and a shared test suite, so learning one teaches you the next.</p>
 </header>
 
 <section class="relative py-6" aria-labelledby="compare">
@@ -33,14 +33,18 @@
   <h2 id="licenses">Licenses</h2>
   {{- $byLicense := dict }}
   {{- range $d.libraries }}{{ $f := index hugo.Data.facts .name }}{{ $k := or $f.license "No LICENSE file" }}{{ $byLicense = merge $byLicense (dict $k ((index $byLicense $k | default slice) | append .name)) }}{{ end }}
+  {{- if eq (len $byLicense) 1 }}
+  <p>{{ partial "license-summary.html" . }} This is read from the LICENSE file in each of the {{ len $d.libraries }} repositories.</p>
+  {{- else }}
   <p>Each repository has its own license. Read the LICENSE file in the repo before you use it; this list is read from those files.</p>
   <ul>
   {{- range $k, $names := $byLicense }}
     <li><strong>{{ $k }}</strong> ({{ len $names }}): {{ range $i, $n := $names }}{{ if $i }}, {{ end }}<a href="{{ printf "/libraries/%s/" $n | relURL }}">{{ $n }}</a>{{ end }}</li>
   {{- end }}
   </ul>
+  {{- end }}
   <h2>Install</h2>
-  <p>Go libraries install with <code>go get github.com/ubgo/&lt;name&gt;</code>. A few repos use a different module path or a sub-module; each library page shows the exact line from its README.</p>
+  <p>Go libraries install with <code>go get github.com/ubgo/&lt;name&gt;</code>. Some are split into sub-modules or ship a CLI to <code>go install</code>; each library page shows the exact line from its README.</p>
 </article>
 </div>
 {{ end }}

@@ -1,36 +1,36 @@
 {
  "name": "volt-demo-clis",
- "module": "github.com/khanakia/volt-demo-clis",
+ "module": "github.com/ubgo/volt-demo-clis",
  "go": "1.22",
  "coreDeps": 0,
  "license": "",
- "latestTag": "v0.1.0",
+ "latestTag": "v0.2.0",
  "streamTags": {
   "notes": "v0.2.1",
-  "pkg/mathx": "v0.1.0",
-  "pkg/textutil": "v0.1.0",
+  "pkg/mathx": "v0.2.0",
+  "pkg/textutil": "v0.2.0",
   "snap": "v0.1.0"
  },
  "branch": "main",
  "modules": [
   {
    "dir": ".",
-   "module": "github.com/khanakia/volt-demo-clis",
+   "module": "github.com/ubgo/volt-demo-clis",
    "deps": 0
   },
   {
    "dir": "pkg/mathx",
-   "module": "github.com/khanakia/volt-demo-clis/pkg/mathx",
+   "module": "github.com/ubgo/volt-demo-clis/pkg/mathx",
    "deps": 0
   },
   {
    "dir": "pkg/testutil",
-   "module": "github.com/khanakia/volt-demo-clis/pkg/testutil",
+   "module": "github.com/ubgo/volt-demo-clis/pkg/testutil",
    "deps": 0
   },
   {
    "dir": "pkg/textutil",
-   "module": "github.com/khanakia/volt-demo-clis/pkg/textutil",
+   "module": "github.com/ubgo/volt-demo-clis/pkg/textutil",
    "deps": 0
   }
  ],

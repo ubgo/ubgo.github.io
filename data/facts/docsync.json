@@ -5,6 +5,13 @@
  "coreDeps": 0,
  "license": "Apache-2.0",
  "latestTag": "v0.1.6",
+ "streamTags": {
+  "cli": "v0.1.8",
+  "ds": "v0.1.8",
+  "ext/records/sqlite": "v0.1.1",
+  "ext/structured": "v0.1.2",
+  "ext/treesitter": "v0.1.2"
+ },
  "branch": "main",
  "modules": [
   {

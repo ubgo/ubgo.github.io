@@ -3,8 +3,13 @@
  "module": "github.com/khanakia/graphqlclient_go",
  "go": "1.25.5",
  "coreDeps": 1,
- "license": "MIT",
+ "license": "Apache-2.0",
  "latestTag": "",
+ "streamTags": {
+  "gqlkit": "v0.13.0",
+  "gqlkit-sdl": "v0.11.0",
+  "gqlkit-ts": "v0.2.0"
+ },
  "branch": "main",
  "modules": [
   {
@@ -29,12 +34,12 @@
   },
   {
    "dir": "gqlkit",
-   "module": "github.com/khanakia/gqlkit/gqlkit",
+   "module": "github.com/ubgo/gqlkit/gqlkit",
    "deps": 6
   },
   {
    "dir": "gqlkit-sdl",
-   "module": "github.com/khanakia/gqlkit/gqlkit-sdl",
+   "module": "github.com/ubgo/gqlkit/gqlkit-sdl",
    "deps": 2
   },
   {

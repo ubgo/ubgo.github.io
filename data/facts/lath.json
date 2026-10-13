@@ -3,8 +3,14 @@
  "module": "",
  "go": "",
  "coreDeps": 0,
- "license": "MIT",
+ "license": "Apache-2.0",
  "latestTag": "",
+ "streamTags": {
+  "cmd/lath": "v0.1.1",
+  "kit": "v0.1.1",
+  "pipeline": "v0.1.0",
+  "steps": "v0.1.0"
+ },
  "branch": "main",
  "modules": [
   {

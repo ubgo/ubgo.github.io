@@ -1,16 +1,16 @@
 {
  "name": "volt-demo-lib",
- "module": "github.com/khanakia/volt-demo-lib",
+ "module": "github.com/ubgo/volt-demo-lib",
  "go": "1.22",
  "coreDeps": 0,
  "license": "",
- "latestTag": "v0.1.0",
+ "latestTag": "v0.2.0",
  "streamTags": {},
  "branch": "main",
  "modules": [
   {
    "dir": ".",
-   "module": "github.com/khanakia/volt-demo-lib",
+   "module": "github.com/ubgo/volt-demo-lib",
    "deps": 0
   }
  ],

@@ -178,7 +178,7 @@ libraries:
     summary: Generic thread-safe LRU and TTL cache. Deprecated; use cache-obj instead.
     lang: Go
     install: go get github.com/ubgo/threadsafecache
-    docs: ""  # not on pkg.go.dev yet (checked 2026-10-13)
+    docs: https://pkg.go.dev/github.com/ubgo/threadsafecache
     kind: deprecated
     related: [cache-obj]
 
@@ -255,8 +255,8 @@ libraries:
     area: graphql-ent
     summary: Generates typed GraphQL client SDKs for Go and TypeScript with compile-checked field selection.
     lang: Go
-    install: go get github.com/khanakia/gqlkit/gqlkit
-    docs: https://pkg.go.dev/github.com/khanakia/gqlkit/gqlkit
+    install: go get github.com/ubgo/gqlkit/gqlkit
+    docs: ""  # github.com/ubgo/gqlkit/gqlkit not on pkg.go.dev yet (checked 2026-10-13)
     featured: true
   - name: entkit
     area: graphql-ent
@@ -269,8 +269,8 @@ libraries:
     area: graphql-ent
     summary: Extensions for ent such as polymorphic relations, cascade delete and per-API GraphQL schemas.
     lang: Go
-    install: go get github.com/khanakia/entx/entpoly
-    docs: https://pkg.go.dev/github.com/khanakia/entx/entpoly
+    install: go get github.com/ubgo/entx/entpoly
+    docs: ""  # github.com/ubgo/entx/entpoly not on pkg.go.dev yet (checked 2026-10-13)
     related: [entkit]
   - name: gqlutil
     area: graphql-ent
@@ -395,8 +395,8 @@ libraries:
     area: tooling
     summary: Generates TypeScript types, enums, constants and interfaces from Go source.
     lang: Go
-    install: go install github.com/khanakia/gots/cmd/cli@latest
-    docs: ""  # not on pkg.go.dev yet (checked 2026-10-13)
+    install: go install github.com/ubgo/gots/cmd/cli@latest
+    docs: ""  # github.com/ubgo/gots not on pkg.go.dev yet (checked 2026-10-13)
     kind: cli
   - name: goutil
     area: tooling

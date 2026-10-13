@@ -1,7 +1,7 @@
 {
   "name": "ubgo",
   "tagline": "Batteries included for Go, one module at a time.",
-  "description": "An ecosystem of Go libraries, plus a few TypeScript ones, batteries included to build apps: errors, logging, caching, config, SQL, GraphQL, HTTP services, crypto and tooling. Every library is its own Go module.",
+  "description": "An ecosystem of open-source Go libraries, plus a few TypeScript ones, batteries included to build apps: errors, logging, caching, config, SQL, GraphQL, HTTP services, crypto and tooling. Every library is its own Go module.",
   "areasLine": "errors · logging · caching · config · sql · graphql · crypto",
   "org": "https://github.com/ubgo",
   "site": "https://ubgo.github.io",

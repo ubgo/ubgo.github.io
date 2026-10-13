@@ -3,8 +3,9 @@
  "module": "",
  "go": "",
  "coreDeps": 0,
- "license": "PolyForm Perimeter 1.0.0",
+ "license": "Apache-2.0",
  "latestTag": "",
+ "streamTags": {},
  "branch": "main",
  "modules": [
   {

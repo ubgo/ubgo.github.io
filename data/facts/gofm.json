@@ -3,8 +3,21 @@
  "module": "",
  "go": "",
  "coreDeps": 0,
- "license": "",
+ "license": "Apache-2.0",
  "latestTag": "",
+ "streamTags": {
+  "cache": "v0.0.4",
+  "cacherdbms": "v0.0.8",
+  "cli": "v0.0.7",
+  "core": "v0.0.8",
+  "db": "v0.0.9",
+  "ginserver": "v0.1.0",
+  "gormdb": "v0.0.9",
+  "gqlgin": "v0.1.0",
+  "grecaptcha": "v0.0.5",
+  "logger": "v0.0.9",
+  "publicid": "v0.0.2"
+ },
  "branch": "main",
  "modules": [
   {
