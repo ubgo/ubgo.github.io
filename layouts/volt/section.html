@@ -13,10 +13,10 @@
 <section class="relative pt-14 sm:pt-20 pb-8 grid gap-10 lg:grid-cols-[1fr_440px] items-center [&>*]:min-w-0">
   <div>
     <p class="inline-flex items-center gap-2 h-7 px-3 rounded-full border border-amber-300/60 dark:border-amber-500/30 bg-amber-50/80 dark:bg-amber-500/10 text-[12px] font-medium text-amber-800 dark:text-amber-200">
-      <svg viewBox="0 0 24 24" class="size-3.5" fill="currentColor" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>volt, now part of ubgo
+      <svg viewBox="0 0 24 24" class="size-3.5" fill="currentColor" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>Volt, now part of ubgo
     </p>
     <h1 class="mt-4 font-display font-bold text-[38px] sm:text-[54px] leading-[1.04] tracking-tight text-slate-900 dark:text-white">Build, release and ship Go CLIs, in any repo layout.</h1>
-    <p class="mt-4 max-w-xl text-[16px] leading-relaxed text-slate-600 dark:text-slate-400">volt is the layer on top of ubgo. The <span class="font-mono text-[14px]">volt</span> tool scaffolds a CLI, runs the CI gate, builds for every platform and makes tagged releases it checks after publishing. The kit modules give your CLI the parts every CLI needs, one <span class="font-mono text-[14px]">go get</span> at a time.</p>
+    <p class="mt-4 max-w-xl text-[16px] leading-relaxed text-slate-600 dark:text-slate-400">Volt is the layer on top of ubgo. The <span class="font-mono text-[14px]">volt</span> tool scaffolds a CLI, runs the CI gate, builds for every platform and makes tagged releases it checks after publishing. The kit modules give your CLI the parts every CLI needs, one <span class="font-mono text-[14px]">go get</span> at a time.</p>
     <div class="mt-6 max-w-md">{{ partial "install.html" $v.install }}</div>
     <div class="mt-4 flex flex-wrap gap-2 text-[13.5px]">
       <a href="{{ "/volt/voltkit/" | relURL }}" class="h-10 px-5 inline-flex items-center rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-medium hover:opacity-90">voltkit</a>
@@ -42,13 +42,13 @@ built notes_v0.2.1_darwin_arm64.tar.gz ... (5 platforms)
 </section>
 
 <section class="py-8" aria-labelledby="layers">
-  <h2 id="layers" class="font-display font-semibold text-[22px] text-slate-900 dark:text-white">Where volt sits</h2>
-  <p class="mt-1 mb-4 max-w-2xl text-[14px] text-slate-600 dark:text-slate-400">ubgo libraries are the parts your code runs on. volt is the tooling that turns your code into a released, installable program. Your app sits on top of both.</p>
+  <h2 id="layers" class="font-display font-semibold text-[22px] text-slate-900 dark:text-white">Where Volt sits</h2>
+  <p class="mt-1 mb-4 max-w-2xl text-[14px] text-slate-600 dark:text-slate-400">ubgo libraries are the parts your code runs on. Volt is the tooling that turns your code into a released, installable program. Your app sits on top of both.</p>
   {{ partial "layers-diagram.html" (dict "compact" false) }}
 </section>
 
 <section class="py-8" aria-labelledby="commands">
-  <h2 id="commands" class="font-display font-semibold text-[22px] text-slate-900 dark:text-white">The volt tool</h2>
+  <h2 id="commands" class="font-display font-semibold text-[22px] text-slate-900 dark:text-white">The Volt tool</h2>
   <p class="mt-1 mb-4 text-[14px] text-slate-600 dark:text-slate-400">Every command, as the voltkit README lists it.{{ with index $vk.streamTags "volt" }} Latest release of the tool: <span class="font-mono">volt/{{ . }}</span>.{{ end }}</p>
   <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3" data-volt-commands>
     {{- range slice
@@ -132,7 +132,7 @@ pkg/textutil     library  v0.1.0    <span class="text-emerald-400">up to date</s
   </div>
   <div>
     <h2 class="font-display font-semibold text-[22px] text-slate-900 dark:text-white">Run it in CI</h2>
-    <p class="mt-1 text-[14px] text-slate-600 dark:text-slate-400"><a class="font-mono underline-offset-2 hover:underline" href="{{ "/volt/volt-action/" | relURL }}">volt-action</a> installs the released volt binary, checksum-verified, and runs one command. It has no logic of its own; the pipeline lives in the binary.</p>
+    <p class="mt-1 text-[14px] text-slate-600 dark:text-slate-400"><a class="font-mono underline-offset-2 hover:underline" href="{{ "/volt/volt-action/" | relURL }}">volt-action</a> installs the released Volt binary, checksum-verified, and runs one command. It has no logic of its own; the pipeline lives in the binary.</p>
     <div class="mt-3 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-slate-50 dark:bg-[#0d1117] codepanel">{{ transform.Highlight "- uses: ubgo/volt-action@v1\n  with: { args: ci }" "yaml" "" }}</div>
     <p class="mt-2 text-[12px] text-slate-500">From the volt-action README. A release hook can stop a release before anything is created, as the volt-demo-clis README shows:</p>
     <div class="mt-2 rounded-xl border border-slate-800 bg-[#0b1220] overflow-hidden"><pre class="p-4 font-mono text-[12px] leading-relaxed text-slate-300 overflow-x-auto"><span class="text-slate-500">$</span> RELEASE_BLOCKED=1 volt release ./cmd/notes --bump patch
@@ -143,8 +143,8 @@ gate: releases are blocked (RELEASE_BLOCKED=1) — refusing notes/v0.2.1
 </section>
 
 <section class="py-8" aria-labelledby="repos">
-  <h2 id="repos" class="font-display font-semibold text-[22px] text-slate-900 dark:text-white">The volt repos</h2>
-  <p class="mt-1 mb-4 text-[14px] text-slate-600 dark:text-slate-400">The demos are real repos released with volt, and volt is tested against them.</p>
+  <h2 id="repos" class="font-display font-semibold text-[22px] text-slate-900 dark:text-white">The Volt repos</h2>
+  <p class="mt-1 mb-4 text-[14px] text-slate-600 dark:text-slate-400">The demos are real repos released with Volt, and Volt is tested against them.</p>
   <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
     {{- range $repos }}
     {{- $f := index hugo.Data.facts .name }}

@@ -32,12 +32,12 @@
   {{- /* Layer 2: voltkit */}}
   <div class="layer relative rounded-xl border border-brand-500/40 bg-gradient-to-br from-brand-50 to-white dark:from-brand-500/10 dark:to-slate-900/60 p-3 sm:p-4" data-layer="volt">
     <div class="flex flex-wrap items-baseline justify-between gap-2">
-      <p class="text-[11px] font-semibold uppercase tracking-wider text-brand-700 dark:text-brand-400">2 · volt tooling</p>
+      <p class="text-[11px] font-semibold uppercase tracking-wider text-brand-700 dark:text-brand-400">2 · Volt tooling</p>
       <a href="{{ "/volt/voltkit/" | relURL }}" class="font-mono text-[12px] text-brand-700 dark:text-brand-400 hover:underline">voltkit →</a>
     </div>
     <div class="mt-2 grid gap-2 sm:grid-cols-2">
       <div>
-        <p class="text-[12px] text-slate-500 dark:text-slate-400">The volt tool</p>
+        <p class="text-[12px] text-slate-500 dark:text-slate-400">The Volt tool</p>
         <div class="mt-1 flex flex-wrap gap-1.5">{{ range slice "new" "status" "ci" "cover" "build" "release" "gen" }}<span class="layer-chip font-mono">volt {{ . }}</span>{{ end }}</div>
       </div>
       <div>

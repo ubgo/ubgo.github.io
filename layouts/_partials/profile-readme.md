@@ -5,6 +5,7 @@
 <p align="center"><img src="ubgo-icon-512.png" alt="ubgo logo: a bold lowercase u holding one amber block" width="72" height="72"></p>
 <h1 align="center">ubgo</h1>
 <p align="center"><strong>Batteries included for Go, one module at a time.</strong></p>
+<p align="center"><em>Early alpha: ubgo is still being built and is not fully production-ready yet, so libraries and APIs may change.</em></p>
 <p align="center">Open-source Go libraries, plus a few TypeScript ones, for errors, logging, caching, config, SQL, GraphQL, HTTP services, crypto and tooling.</p>
 <p align="center">
   <a href="{{ $site }}"><img src="https://img.shields.io/badge/site-ubgo.github.io-0891B2" alt="Website: ubgo.github.io"></a>
@@ -16,7 +17,7 @@
 ubgo is an ecosystem for building Go apps, in the spirit of the components Laravel ships for caching, logging and configuration. Every piece is its own Go module, so a service imports only what it uses: structured errors and logging, caching with Redis, Postgres, Memcached and in-memory backends, typed configuration and .env files, SQL building, GraphQL and ent helpers, health checks, graceful shutdown and crypto. The main libraries share one shape, a small core with adapters outside it and a shared test suite, so learning one teaches you the next.
 
 - [Libraries by area](#libraries-by-area)
-- [volt](#volt)
+- [Volt](#volt)
 {{- if $d.principles }}
 - [Principles](#principles)
 {{- end }}
@@ -34,9 +35,9 @@ ubgo is an ecosystem for building Go apps, in the spirit of the components Larav
 {{- end }}
 More libraries are on the way.
 
-## volt
+## Volt
 
-volt is the layer on top of ubgo to build, release and ship Go CLIs and libraries: the `volt` tool (scaffold, CI gate, coverage, cross-platform builds, verified releases) plus importable kit modules for building the CLIs themselves.
+Volt is the layer on top of ubgo to build, release and ship Go CLIs and libraries: the `volt` tool (scaffold, CI gate, coverage, cross-platform builds, verified releases) plus importable kit modules for building the CLIs themselves.
 
 ```sh
 {{ $d.volt.install }}

@@ -6,7 +6,7 @@
       <p class="mt-3 text-[12px] text-slate-400"><a class="underline-offset-2 hover:underline" href="{{ "/about/" | relURL }}#licenses">{{ partial "license-summary.html" . }}</a></p>
     </div>
     {{- range slice
-      (dict "h" "Explore" "l" (slice (dict "t" "All libraries" "u" "/libraries/") (dict "t" "Library map" "u" "/map/") (dict "t" "Explainers" "u" "/explainers/") (dict "t" "Which package?" "u" "/picker/") (dict "t" "volt" "u" "/volt/")))
+      (dict "h" "Explore" "l" (slice (dict "t" "All libraries" "u" "/libraries/") (dict "t" "Library map" "u" "/map/") (dict "t" "Explainers" "u" "/explainers/") (dict "t" "Which package?" "u" "/picker/") (dict "t" "Volt" "u" "/volt/")))
       (dict "h" "Popular" "l" (slice (dict "t" "cache" "u" "/libraries/cache/") (dict "t" "errx" "u" "/libraries/errx/") (dict "t" "logger" "u" "/libraries/logger/") (dict "t" "sqlb" "u" "/libraries/sqlb/")))
       (dict "h" "ubgo" "l" (slice (dict "t" "About" "u" "/about/") (dict "t" "Brand" "u" "/brand/") (dict "t" "GitHub" "u" "https://github.com/ubgo")))
     }}

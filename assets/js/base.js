@@ -19,6 +19,15 @@ for (const btn of document.querySelectorAll("[data-theme-toggle]")) {
   })
 }
 
+// Early-alpha notice: dismissal is remembered. The head script already hides the bar before
+// first paint when it was dismissed; this only wires the button. Without storage the bar shows every time.
+for (const btn of document.querySelectorAll("[data-alpha-dismiss]")) {
+  btn.addEventListener("click", () => {
+    document.documentElement.classList.add("alpha-off")
+    store("alpha-notice", "dismissed")
+  })
+}
+
 // Copy buttons next to install lines.
 for (const btn of document.querySelectorAll("[data-copy]")) {
   btn.addEventListener("click", async () => {

@@ -16,14 +16,15 @@
 </section>
 
 <section class="relative py-6" aria-labelledby="volt">
-  <h2 id="volt" class="font-display font-semibold text-[22px] text-slate-900 dark:text-white">volt, the layer on top</h2>
-  <p class="mt-1 mb-4 max-w-2xl text-[14px] text-slate-600 dark:text-slate-400">ubgo libraries are the parts your code runs on. <a class="text-brand-700 dark:text-brand-400 hover:underline" href="{{ "/volt/" | relURL }}">volt</a> is the tooling that turns your code into a released, installable program.</p>
+  <h2 id="volt" class="font-display font-semibold text-[22px] text-slate-900 dark:text-white">Volt, the layer on top</h2>
+  <p class="mt-1 mb-4 max-w-2xl text-[14px] text-slate-600 dark:text-slate-400">ubgo libraries are the parts your code runs on. <a class="text-brand-700 dark:text-brand-400 hover:underline" href="{{ "/volt/" | relURL }}">Volt</a> is the tooling that turns your code into a released, installable program.</p>
   {{ partial "layers-diagram.html" (dict "compact" false) }}
 </section>
 
 <article class="relative pt-6 max-w-3xl prose-ubgo">
   <p class="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 px-4 py-3 not-prose">More libraries are on the way.</p>
-  <p>ubgo is maintained by <a href="https://github.com/khanakia">Aman Bansal</a>. There are {{ len $d.libraries }} public libraries across {{ len $d.areas }} areas, plus the volt repos. Issues and pull requests go to each repository.</p>
+  <p id="alpha">ubgo is in early alpha: it is still being built and is not fully production-ready yet, so libraries and APIs may change.</p>
+  <p>ubgo is maintained by <a href="https://github.com/khanakia">Aman Bansal</a>. There are {{ len $d.libraries }} public libraries across {{ len $d.areas }} areas, plus the Volt repos. Issues and pull requests go to each repository.</p>
   <h2>Principles</h2>
   <p>These are true of the libraries named under each one, as stated in their own READMEs. They are not promised for every library.</p>
   {{- range $d.principles }}

@@ -1,0 +1,9 @@
+{{- /* Early-alpha notice above the header. Its height is fixed (h-11 on phones, h-8 from sm up) and it is in the HTML from the start, so nothing shifts while the page loads; the head script adds .alpha-off before first paint when the visitor dismissed it earlier. Without storage it simply shows every time. */ -}}
+<div data-alpha-bar class="alpha-bar h-11 sm:h-8 bg-brand-50 dark:bg-brand-500/10 border-b border-brand-500/20 text-brand-800 dark:text-brand-100 text-[12px] leading-snug">
+  <div class="max-w-6xl mx-auto px-4 h-full flex items-center gap-2">
+    <p class="flex-1 min-w-0 text-left"><span class="font-semibold">ubgo is in early alpha:</span> libraries and APIs may still change.</p>
+    <button type="button" data-alpha-dismiss class="shrink-0 size-6 -mr-1 inline-flex items-center justify-center rounded text-brand-700 hover:bg-brand-500/15 dark:text-brand-300" aria-label="Dismiss the alpha notice">
+      <svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
+</div>

@@ -125,3 +125,6 @@
 @media (prefers-reduced-motion: reduce) { .layer-pulse { animation: none; stroke-dasharray: none; stroke-opacity: .6; } .layer, .layer:hover { transition: none; transform: none; } }
 .term-caret { display: inline-block; width: .55em; height: 1.05em; vertical-align: -0.15em; background: #22d3ee; animation: caret 1s steps(1) infinite; }
 @keyframes caret { 50% { opacity: 0; } }
+
+/* Early-alpha notice: hidden before first paint by the head script once dismissed. */
+.alpha-off [data-alpha-bar] { display: none; }
