@@ -65,3 +65,19 @@ tasks:
     cmds:
       - task: profile
       - task: linkcheck
+
+  publish:pages:
+    desc: 'Build and force-push public/ to the gh-pages branch of ubgo/ubgo.github.io (needs push access; no GitHub Actions)'
+    prompt: This pushes the production build to github.com/ubgo/ubgo.github.io (gh-pages). Continue?
+    cmds:
+      - task: check
+      - test -f public/.nojekyll
+      - rm -rf public/.git
+      - git -C public init -q -b gh-pages
+      - git -C public add -A
+      - git -C public commit -q -m "Build from {{.SRC_COMMIT}}"
+      - git -C public push -f git@github.com:ubgo/ubgo.github.io.git gh-pages
+      - rm -rf public/.git
+    vars:
+      SRC_COMMIT:
+        sh: git rev-parse --short HEAD
