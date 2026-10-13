@@ -8,12 +8,14 @@
     (function () {
       var t = null;
       try { t = localStorage.getItem("theme"); } catch (e) {}
+      try { if (localStorage.getItem("alpha-notice") === "dismissed") document.documentElement.classList.add("alpha-off"); } catch (e) {}
       if (t === "dark" || (t !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches)) document.documentElement.classList.add("dark");
     })();
   </script>
   {{ partial "css.html" . }}
 </head>
 <body class="min-h-screen flex flex-col">
+  {{ partial "alpha-bar.html" . }}
   {{ partial "header.html" . }}
   <main id="main" class="flex-1 w-full max-w-6xl mx-auto px-4">
     {{ block "main" . }}{{ end }}

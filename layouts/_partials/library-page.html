@@ -40,7 +40,7 @@
 {{- with $members }}
   {{- $nodes := slice }}
   {{- range sort . "name" }}{{ $nodes = $nodes | append (dict "name" .name "href" (index $urlOf .name) "mark" (index $mark .name | default "")) }}{{ end }}
-  {{- $groups = $groups | append (dict "label" (cond $isVolt "Repos in the volt family" "Backends and tools (own repos)") "nodes" $nodes) }}
+  {{- $groups = $groups | append (dict "label" (cond $isVolt "Repos in the Volt family" "Backends and tools (own repos)") "nodes" $nodes) }}
 {{- end }}
 {{- with $f.packages }}
   {{- $nodes := slice }}
@@ -57,7 +57,7 @@
 <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 -top-10 h-56 bg-[radial-gradient(ellipse_at_top,rgba(8,145,178,0.14),transparent_60%)] dark:bg-[radial-gradient(ellipse_at_top,rgba(34,211,238,0.12),transparent_60%)]"></div>
 <nav class="relative pt-6 text-[12px] text-slate-500" aria-label="Breadcrumb">
   {{- if $isVolt }}
-  <a href="{{ "/volt/" | relURL }}" class="hover:text-slate-800 dark:hover:text-white">volt</a>
+  <a href="{{ "/volt/" | relURL }}" class="hover:text-slate-800 dark:hover:text-white">Volt</a>
   {{- else }}
   <a href="{{ "/libraries/" | relURL }}" class="hover:text-slate-800 dark:hover:text-white">Libraries</a>
   <span aria-hidden="true" class="mx-1">/</span>
