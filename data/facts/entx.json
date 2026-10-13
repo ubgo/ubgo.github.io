@@ -1,0 +1,94 @@
+{
+ "name": "entx",
+ "module": "",
+ "go": "",
+ "coreDeps": 0,
+ "license": "",
+ "latestTag": "",
+ "modules": [
+  {
+   "dir": "entcascade",
+   "module": "github.com/khanakia/entx/entcascade",
+   "deps": 1
+  },
+  {
+   "dir": "entgqlmulti",
+   "module": "github.com/khanakia/entx/entgqlmulti",
+   "deps": 2
+  },
+  {
+   "dir": "entpoly",
+   "module": "github.com/khanakia/entx/entpoly",
+   "deps": 3
+  },
+  {
+   "dir": "entreadonly",
+   "module": "github.com/khanakia/entx/entreadonly",
+   "deps": 1
+  },
+  {
+   "dir": "entskiptable",
+   "module": "github.com/khanakia/entx/entskiptable",
+   "deps": 2
+  },
+  {
+   "dir": "enttui",
+   "module": "github.com/khanakia/entx/enttui",
+   "deps": 4
+  },
+  {
+   "dir": "testent",
+   "module": "github.com/khanakia/entx/testent",
+   "deps": 3
+  },
+  {
+   "dir": "testentgqlmulti",
+   "module": "github.com/khanakia/entx/testentgqlmulti",
+   "deps": 8
+  },
+  {
+   "dir": "testentpoly",
+   "module": "github.com/khanakia/entx/testentpoly",
+   "deps": 6
+  },
+  {
+   "dir": "testenttui",
+   "module": "github.com/khanakia/entx/testenttui",
+   "deps": 4
+  }
+ ],
+ "contrib": [],
+ "packages": [
+  "entcascade",
+  "entgqlmulti",
+  "entpoly",
+  "entreadonly",
+  "entskiptable",
+  "enttui",
+  "testent",
+  "testentgqlmulti",
+  "testentpoly",
+  "testenttui"
+ ],
+ "ubgoDeps": [],
+ "examples": [
+  {
+   "title": "entcascade",
+   "code": "// One annotation on the schema\nfunc (User) Annotations() []schema.Annotation {\n    return []schema.Annotation{\n        entcascade.Cascade(),\n    }\n}"
+  },
+  {
+   "title": "entgqlmulti",
+   "code": "// Schema annotation — expose Chatbot in dashboard API (full CRUD) and public API (read-only)\nfunc (Chatbot) Annotations() []schema.Annotation {\n    return []schema.Annotation{\n        entgqlmulti.ApiConfig(map[string][]entgqlmulti.ApiTarget{\n            \"apidash\": {{Query: true, Mutations: true, Filters: true}},\n            \"apipub\":  {{TypeName: \"PublicBot\", Fields: []string{\"name\", \"avatar\"}, Query: true}},\n        }),\n    }\n}"
+  },
+  {
+   "title": "entpoly",
+   "code": "// Comment can attach to any AllowedTypes parent (Post, Video, Image, …)\nfunc (Comment) Mixin() []ent.Mixin {\n    return []ent.Mixin{entpoly.MorphMixin(\"commentable\", entpoly.MixinAllowed(Post.Type, Video.Type))}\n}\n\nfunc (Comment) Edges() []ent.Edge {\n    return []ent.Edge{\n        entpoly.MorphTo(\"commentable\", Post.Type, Video.Type).\n            Required().     // hook rejects unset / cleared writes\n            Touch().        // bumps parent.updated_at on save\n            Cascade().      // deletes children when parent dies\n            SoftDelete().   // filters soft-deleted parents on read\n            GQL(),          // emits union Commentable = Post | Video for gqlgen\n    }\n}"
+  },
+  {
+   "title": "entreadonly",
+   "code": "// app's projection of authmgr's auth_users — read it, never write it\nfunc (User) Annotations() []schema.Annotation {\n    return []schema.Annotation{\n        entsql.Annotation{Table: \"auth_users\"},\n        entreadonly.ReadOnly(), // app.User.Create() etc. won't even exist\n    }\n}"
+  }
+ ],
+ "features": [],
+ "table": "| Package | Description |\n|---------|-------------|\n| entcascade | Generate cascade delete functions from schema annotations |\n| entgqlmulti | Generate per-API GraphQL schemas from a single ent schema |\n| entpoly | Laravel-style polymorphic relationships — MorphTo / MorphOne / MorphMany / MorphedByMany with compile-time + DB-level type safety + GraphQL union surface |\n| entreadonly | Make a schema read-only at codegen — strips Create/Update/Delete builders so writes fail to compile, while edges + queries + GraphQL stay intact |\n| entskiptable | Exclude externally-owned tables from ent auto-migration via a composable migration DiffHook (no DDL on tables you only read) |\n| enttui | Schema-driven terminal UI / admin browser for ent — a `k9s`-style keyboard-driven data explorer generated straight from your schema |"
+}

@@ -1,0 +1,96 @@
+{
+ "name": "entkit",
+ "module": "",
+ "go": "",
+ "coreDeps": 0,
+ "license": "Apache-2.0",
+ "latestTag": "",
+ "modules": [
+  {
+   "dir": "encryptedtype",
+   "module": "github.com/ubgo/entkit/encryptedtype",
+   "deps": 1
+  },
+  {
+   "dir": "ent_encryptedtype",
+   "module": "github.com/ubgo/entkit/ent_encryptedtype",
+   "deps": 2
+  },
+  {
+   "dir": "ent_jsonmap",
+   "module": "github.com/ubgo/entkit/ent_jsonmap",
+   "deps": 2
+  },
+  {
+   "dir": "ent_jsonslice",
+   "module": "github.com/ubgo/entkit/ent_jsonslice",
+   "deps": 2
+  },
+  {
+   "dir": "ent_jsontype",
+   "module": "github.com/ubgo/entkit/ent_jsontype",
+   "deps": 2
+  },
+  {
+   "dir": "ent_passwordtype",
+   "module": "github.com/ubgo/entkit/ent_passwordtype",
+   "deps": 2
+  },
+  {
+   "dir": "examples",
+   "module": "github.com/ubgo/entkit/examples",
+   "deps": 12
+  },
+  {
+   "dir": "jsonmap",
+   "module": "github.com/ubgo/entkit/jsonmap",
+   "deps": 0
+  },
+  {
+   "dir": "passwordtype",
+   "module": "github.com/ubgo/entkit/passwordtype",
+   "deps": 1
+  }
+ ],
+ "contrib": [],
+ "packages": [
+  "encryptedtype",
+  "ent_encryptedtype",
+  "ent_jsonmap",
+  "ent_jsonslice",
+  "ent_jsontype",
+  "ent_passwordtype",
+  "jsonmap",
+  "passwordtype"
+ ],
+ "ubgoDeps": [
+  {
+   "name": "crypt",
+   "from": "encryptedtype"
+  },
+  {
+   "name": "jsonslice",
+   "from": "ent_jsonslice"
+  },
+  {
+   "name": "jsontype",
+   "from": "ent_jsontype"
+  }
+ ],
+ "examples": [
+  {
+   "title": "Why one repo with many sub-modules",
+   "code": "// Service that only needs a password hash column\nimport (\n    \"github.com/ubgo/entkit/passwordtype\"\n    \"github.com/ubgo/entkit/ent_passwordtype\"\n)\n// → go.sum carries: ubgo/crypt, golang.org/x/crypto, entgo.io/ent\n// → does NOT carry: ubgo/jsontype, ubgo/jsonslice, gqlgen"
+  },
+  {
+   "title": "Quick start — full ent + gqlgen User entity",
+   "code": "// schema/user.go\npackage schema\n\nimport (\n    \"entgo.io/ent\"\n    \"entgo.io/ent/schema/field\"\n\n    entencryptedtype \"github.com/ubgo/entkit/ent_encryptedtype\"\n    entjsonmap       \"github.com/ubgo/entkit/ent_jsonmap\"\n    entpasswordtype  \"github.com/ubgo/entkit/ent_passwordtype\"\n)\n\ntype User struct{ ent.Schema }\n\nfunc (User) Fields() []ent.Field {\n    return []ent.Field{\n        field.String(\"email\").Unique(),\n\n        entjsonmap.Field(\"metadata\"),                // dynamic JSON object\n        entpasswordtype.Field(\"password\"),           // argon2id, redacts on output\n        entencryptedtype.Field(\"api_secret\").(...),  // AES-256-GCM\n    }\n}"
+  },
+  {
+   "title": "Boot wiring",
+   "code": "import \"github.com/ubgo/entkit/encryptedtype\"\n\nfunc main() {\n    if err := encryptedtype.SetKey([]byte(os.Getenv(\"ENCRYPTION_KEY\"))); err != nil {\n        log.Fatal(err)\n    }\n    // ...\n}"
+  }
+ ],
+ "features": [],
+ "table": "| `database/sql/driver.Valuer` + `sql.Scanner` | Method signatures |\n| `encoding/json.Marshaler` / `Unmarshaler` | Method signatures |\n| gqlgen scalar (`MarshalGQL` / `UnmarshalGQL`) | **Duck typing** — entkit does not import gqlgen |"
+}

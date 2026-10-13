@@ -1,0 +1,124 @@
+{
+ "name": "logger",
+ "module": "github.com/ubgo/logger",
+ "go": "1.24",
+ "coreDeps": 0,
+ "license": "Apache-2.0",
+ "latestTag": "",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/logger",
+   "deps": 0
+  },
+  {
+   "dir": "contrib/logr",
+   "module": "github.com/ubgo/logger/contrib/logr",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/logrus",
+   "module": "github.com/ubgo/logger/contrib/logrus",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/otel",
+   "module": "github.com/ubgo/logger/contrib/otel",
+   "deps": 3
+  },
+  {
+   "dir": "contrib/phuslu",
+   "module": "github.com/ubgo/logger/contrib/phuslu",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/sentry",
+   "module": "github.com/ubgo/logger/contrib/sentry",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/zap",
+   "module": "github.com/ubgo/logger/contrib/zap",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/zerolog",
+   "module": "github.com/ubgo/logger/contrib/zerolog",
+   "deps": 2
+  }
+ ],
+ "contrib": [
+  {
+   "name": "logr",
+   "module": "github.com/ubgo/logger/contrib/logr",
+   "deps": 2,
+   "summary": "`go-logr/logr` is the logging interface used across the Kubernetes ecosystem (controller-runtime, client-go, operator-sdk, klog). This module returns a `logr.Lo"
+  },
+  {
+   "name": "logrus",
+   "module": "github.com/ubgo/logger/contrib/logrus",
+   "deps": 2,
+   "summary": "`logrus` is in maintenance mode. This shim lets you keep every `logrus` call site while the engine becomes `ubgo/logger` — gaining zero-allocation performance, "
+  },
+  {
+   "name": "otel",
+   "module": "github.com/ubgo/logger/contrib/otel",
+   "deps": 3,
+   "summary": "Emit `ubgo/logger` records through the OpenTelemetry Logs SDK so your logs land in the same OTLP pipeline as traces and metrics — with automatic `trace_id`/`spa"
+  },
+  {
+   "name": "phuslu",
+   "module": "github.com/ubgo/logger/contrib/phuslu",
+   "deps": 2,
+   "summary": "Forward `ubgo/logger` records into a `phuslu/log` writer — for teams on phuslu (one of the fastest Go loggers) that want ubgo/logger's pipeline (FingersCrossed,"
+  },
+  {
+   "name": "sentry",
+   "module": "github.com/ubgo/logger/contrib/sentry",
+   "deps": 2,
+   "summary": "Ship `WARN`-and-above `ubgo/logger` records to Sentry as events: errors become Sentry exceptions, fields become event context, named events become tags. Sentry "
+  },
+  {
+   "name": "zap",
+   "module": "github.com/ubgo/logger/contrib/zap",
+   "deps": 2,
+   "summary": "A drop-in migration shim: keep every existing `*zap.Logger` call site, swap the engine to `ubgo/logger` so you gain FingersCrossed, redaction, sampling, rotatio"
+  },
+  {
+   "name": "zerolog",
+   "module": "github.com/ubgo/logger/contrib/zerolog",
+   "deps": 2,
+   "summary": "Forward `ubgo/logger` records through an existing `zerolog.Logger` — useful when a team has standardized shipping/encoding on zerolog but wants ubgo/logger's pi"
+  }
+ ],
+ "packages": [
+  "logtest"
+ ],
+ "ubgoDeps": [],
+ "examples": [
+  {
+   "title": "1. The simplest possible logger",
+   "code": "package main\n\nimport logger \"github.com/ubgo/logger\"\n\nfunc main() {\n\tlog := logger.New() // JSON to stderr at Info\n\tdefer log.Close()\n\n\tlog.Info(\"server started\", logger.String(\"addr\", \":8080\"), logger.Int(\"pid\", 4242))\n}"
+  },
+  {
+   "title": "2. Use a preset",
+   "code": "log := logger.Development() // pretty, colored, Debug, caller — for local dev\n// or\nlog := logger.Production()  // JSON, Info, async, sampled — for services\ndefer log.Close()"
+  },
+  {
+   "title": "4. Wire it as the standard `slog` logger (so all libraries benefit)",
+   "code": "import \"log/slog\"\n\nslog.SetDefault(log.NewSlog())\nslog.Info(\"now every slog call in your deps flows through ubgo/logger\")"
+  },
+  {
+   "title": "5. Build a production pipeline",
+   "code": "log := logger.New(\n\tlogger.WithLevel(logger.LevelInfo),\n\tlogger.WithProcessors(\n\t\tlogger.NewPathRedactor(logger.Mask, \"[REDACTED]\", \"*.password\", \"*.token\"),\n\t\tlogger.NewSampleProcessor(100, 100), // first 100, then 1/100 — never drops ERROR\n\t),\n\tlogger.WithTransport(logger.NewDisruptorTransport(\n\t\tlogger.NewWriterSink(os.Stderr, logger.NewJSONEncoder(), logger.LevelInfo),\n\t\t8192, logger.DropNewest,\n\t)),\n)\ndefer log.Close() // drains the async ring"
+  }
+ ],
+ "features": [
+  "✅ **slog-native** — it *is* a correct `slog.Handler` (passes the standard library's `testing/slogtest`). The entire slog ecosystem composes on top.",
+  "✅ **Zero-allocation** typed hot path (CI-enforced), competitive with `zap` and `zerolog`.",
+  "✅ **One extension seam** — a processor pipeline. Redaction, sampling, enrichment, dedup are all the same concept.",
+  "✅ **Batteries included** — rotation, redaction, sampling, OTEL correlation, FingersCrossed, audit, network/cloud sinks — built in, not 50 dependencies.",
+  "✅ **Drop-in migration** from zap, zerolog, logrus, std `log`, and `logr`."
+ ],
+ "table": "| From | How | Module |\n|---|---|---|\n| `log/slog` | `slog.SetDefault(log.NewSlog())` | core (no extra dep) |\n| std `log` | `logger.RedirectStdLog(log, logger.LevelInfo)` | core |\n| `uber-go/zap` | `zaplogger.New(core, zapcore.InfoLevel)` | `contrib/zap` |\n| `sirupsen/logrus` | `logruslogger.Attach(logrusLogger, core)` | `contrib/logrus` |\n| `rs/zerolog` | `zerologlogger.New(zl, logger.LevelInfo)` | `contrib/zerolog` |\n| `phuslu/log` | `phulogger.New(pl, logger.LevelInfo)` | `contrib/phuslu` |\n| `go-logr/logr` | `logrlogger.New(core)` | `contrib/logr` |"
+}

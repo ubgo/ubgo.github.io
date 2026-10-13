@@ -1,0 +1,42 @@
+{
+ "name": "cache-tiered",
+ "module": "github.com/ubgo/cache-tiered",
+ "go": "1.24",
+ "coreDeps": 2,
+ "license": "PolyForm Perimeter 1.0.0",
+ "latestTag": "v0.1.0",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/cache-tiered",
+   "deps": 2
+  }
+ ],
+ "contrib": [],
+ "packages": [],
+ "ubgoDeps": [
+  {
+   "name": "cache",
+   "from": "."
+  },
+  {
+   "name": "cache-mem",
+   "from": "."
+  }
+ ],
+ "examples": [
+  {
+   "title": "Method reference",
+   "code": "ctx := context.Background()\n\nb, err := tc.Get(ctx, \"k\")                       // probe + promote\nm, err := tc.GetMulti(ctx, []string{\"a\", \"b\"})   // per-key Get\nok, err := tc.Has(ctx, \"k\")                      // first tier that has it\nd, err := tc.TTL(ctx, \"k\")                       // first tier's reported TTL\n\nerr = tc.Set(ctx, \"k\", []byte(\"v\"), time.Minute) // write-through (per-tier TTL)\nerr = tc.SetMulti(ctx, map[string]cache.Item{\"a\": {Value: []byte(\"1\")}})\ncreated, err := tc.SetNX(ctx, \"k\", []byte(\"v\"), time.Minute) // L1 decides; mirrored down\nerr = tc.Expire(ctx, \"k\", time.Hour)             // cascades; per-tier not-found tolerated\nerr = tc.Touch(ctx, \"k\")\n\nn, err := tc.Incr(ctx, \"hits\", 1)                // L1 authoritative; deeper tiers mirrored to n\nn, err = tc.Decr(ctx, \"hits\", 2)\n\nerr = tc.Del(ctx, \"a\", \"b\")                      // cascade + publish per key\nerr = tc.DeleteByPrefix(ctx, \"user:\")            // cascade + publish InvalidateAll\nerr = tc.Flush(ctx)                              // cascade + publish InvalidateAll\n\nit := tc.Iterate(ctx, cache.IterateOpts{Prefix: \"user:\"}) // deepest tier (fullest view)\ndefer it.Close()\nfor it.Next() { _ = it.Key(); _ = it.Value() }\n\nerr = tc.Ping(ctx)                               // first unhealthy tier\ns := tc.Stats()                                  // hits/sets summed; entries from deepest tier\np := tc.Promotions()                             // deeper-hit-copied-upward count\nerr = tc.Close()                                 // idempotent; stops invalidation; closes each tier once"
+  }
+ ],
+ "features": [
+  "**Read-promote.** Probe L1→Ln; the first hit is copied into every shallower tier so the next read is faster. `Promotions()` exposes the count for observability.",
+  "**Write-through (default).** Writes go to every tier. The L1 error is authoritative; deeper-tier errors are best-effort so a cold/slow backend cannot break the hot path. `WriteOnlyL1` mode writes L1 only.",
+  "**Per-tier TTL.** Run a short L1 TTL (bounds cross-pod staleness) and a long L2 TTL from one `Set` call.",
+  "**Cross-process invalidation.** Plug any `cache.Invalidation` (e.g. Redis Pub/Sub from `cache-redis`); mutations publish, peers drop their local L1 copy.",
+  "**Atomic ops stay correct.** `SetNX`/`Incr`/`Decr` use L1 as the source of truth and mirror the result to deeper tiers.",
+  "**Drop-in.** It *is* a `cache.Cache`; swap any single backend for a tiered one with no call-site changes."
+ ],
+ "table": "| Adapter | Role | Latency | Cross-process invalidation | Best for |\n|---|---|---|---|---|\n| **cache-tiered** (this) | composes others | L1 ~ns, then L2/L3 | Yes (pluggable bus) | Hot-path latency + shared consistency |\n| [cache-redis](https://github.com/ubgo/cache-redis) | single backend | network | Yes (Pub/Sub source) | Shared L2 |\n| [cache-pg](https://github.com/ubgo/cache-pg) | single backend | network | No | Durable L3 |\n| [cache-memcached](https://github.com/ubgo/cache-memcached) | single backend | network | No | Memcached interop tier |"
+}

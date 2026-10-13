@@ -1,0 +1,127 @@
+{
+ "name": "shutdown",
+ "module": "github.com/ubgo/shutdown",
+ "go": "1.24",
+ "coreDeps": 0,
+ "license": "Apache-2.0",
+ "latestTag": "v0.2.0",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/shutdown",
+   "deps": 0
+  },
+  {
+   "dir": "contrib/shutdown-chi",
+   "module": "github.com/ubgo/shutdown/contrib/shutdown-chi",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/shutdown-echo",
+   "module": "github.com/ubgo/shutdown/contrib/shutdown-echo",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/shutdown-fiber",
+   "module": "github.com/ubgo/shutdown/contrib/shutdown-fiber",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/shutdown-gin",
+   "module": "github.com/ubgo/shutdown/contrib/shutdown-gin",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/shutdown-nethttp",
+   "module": "github.com/ubgo/shutdown/contrib/shutdown-nethttp",
+   "deps": 1
+  },
+  {
+   "dir": "contrib/shutdown-otel",
+   "module": "github.com/ubgo/shutdown/contrib/shutdown-otel",
+   "deps": 4
+  },
+  {
+   "dir": "contrib/shutdown-prom",
+   "module": "github.com/ubgo/shutdown/contrib/shutdown-prom",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/shutdown-zap",
+   "module": "github.com/ubgo/shutdown/contrib/shutdown-zap",
+   "deps": 2
+  }
+ ],
+ "contrib": [
+  {
+   "name": "shutdown-chi",
+   "module": "github.com/ubgo/shutdown/contrib/shutdown-chi",
+   "deps": 2,
+   "summary": "import ("
+  },
+  {
+   "name": "shutdown-echo",
+   "module": "github.com/ubgo/shutdown/contrib/shutdown-echo",
+   "deps": 2,
+   "summary": "Unlike gin/chi, Echo owns its server, so pass the engine directly:"
+  },
+  {
+   "name": "shutdown-fiber",
+   "module": "github.com/ubgo/shutdown/contrib/shutdown-fiber",
+   "deps": 2,
+   "summary": "Fiber sits on fasthttp; its `ShutdownWithContext` is wired directly:"
+  },
+  {
+   "name": "shutdown-gin",
+   "module": "github.com/ubgo/shutdown/contrib/shutdown-gin",
+   "deps": 2,
+   "summary": "Gin engines don't own a server — wrap your `gin.Engine` in a `*http.Server` you control:"
+  },
+  {
+   "name": "shutdown-nethttp",
+   "module": "github.com/ubgo/shutdown/contrib/shutdown-nethttp",
+   "deps": 1,
+   "summary": "go get github.com/ubgo/shutdown"
+  },
+  {
+   "name": "shutdown-otel",
+   "module": "github.com/ubgo/shutdown/contrib/shutdown-otel",
+   "deps": 4,
+   "summary": "go get github.com/ubgo/shutdown"
+  },
+  {
+   "name": "shutdown-prom",
+   "module": "github.com/ubgo/shutdown/contrib/shutdown-prom",
+   "deps": 2,
+   "summary": "go get github.com/ubgo/shutdown"
+  },
+  {
+   "name": "shutdown-zap",
+   "module": "github.com/ubgo/shutdown/contrib/shutdown-zap",
+   "deps": 2,
+   "summary": "The core's internal Logger uses `log/slog` by default; this adapter is for"
+  }
+ ],
+ "packages": [],
+ "ubgoDeps": [],
+ "examples": [
+  {
+   "title": "HTTP server with database and Redis",
+   "code": "mgr := shutdown.New(shutdown.WithBudget(30 * time.Second))\n\nsrv := &http.Server{Addr: \":8080\", Handler: r}\n_ = shutdownnethttp.Register(mgr, srv)\n\n_ = mgr.Register(\"db\",    closeFn(db.Close),  shutdown.WithPhase(shutdown.PhaseCloseClients))\n_ = mgr.Register(\"redis\", closeFn(rdb.Close), shutdown.WithPhase(shutdown.PhaseCloseClients))\n\ngo func() { _ = srv.ListenAndServe() }()\n_ = mgr.Listen(ctx)"
+  },
+  {
+   "title": "Background worker (actor pattern)",
+   "code": "stop := make(chan struct{})\n\nhandle, _ := mgr.RegisterActor(\"worker\", func(_ error) {\n    close(stop) // tell the run loop to exit\n}, shutdown.WithActorPhase(shutdown.PhaseDrainTraffic))\n\ngo func() {\n    err := worker.Run(stop) // blocks until stop is closed\n    handle.Done(err)         // tells the manager the actor finished\n}()"
+  },
+  {
+   "title": "Programmatic shutdown — no OS signals",
+   "code": "mux.HandleFunc(\"/admin/shutdown\", func(w http.ResponseWriter, r *http.Request) {\n    if !authorized(r) { w.WriteHeader(http.StatusForbidden); return }\n    go func() {\n        _ = mgr.Shutdown(context.Background()) // same execution path as a signal\n    }()\n    w.WriteHeader(http.StatusAccepted)\n})"
+  },
+  {
+   "title": "Reload signal (SIGHUP / SIGUSR1) — Gunicorn-style",
+   "code": "mgr.OnSignal(syscall.SIGHUP, func(ctx context.Context, _ os.Signal) {\n    if err := config.Reload(); err != nil {\n        log.Println(\"reload failed:\", err)\n    }\n})\nmgr.OnSignal(syscall.SIGUSR1, func(ctx context.Context, _ os.Signal) {\n    rotateLogFile()\n})"
+  }
+ ],
+ "features": [],
+ "table": "| `PhaseStopAccepting` | 0 | Close HTTP / gRPC listeners. | Don't drain in-flight here — that's the next phase. `srv.Shutdown` already does both, but contribs put it here so dependencies live to serve those drains. |\n| `PhaseDrainTraffic` | 100 | Wait for in-flight work to finish. NATS `Drain()`. Worker pools that own queue items. | Closing the DB here will fail in-flight requests. |\n| `PhaseFlushQueues` | 200 | Flush async producers (Kafka, log shippers, batchers). | Don't close the underlying client until next phase. |\n| `PhaseCloseClients` | 300 | Close DB / cache / messaging client connections. | Putting OTEL flush here loses spans for prior phases. |\n| `PhaseFlushLogs` | 400 | Flush logs and traces last so prior errors actually leave the process. | Closing the logger before this phase silences the rest of the shutdown. |\n| `PhasePostShutdown` | 500 | Final cleanup, exit-code reporting. | (Most apps don't need this.) |"
+}

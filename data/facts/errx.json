@@ -1,0 +1,147 @@
+{
+ "name": "errx",
+ "module": "github.com/ubgo/errx",
+ "go": "1.24",
+ "coreDeps": 0,
+ "license": "Apache-2.0",
+ "latestTag": "",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/errx",
+   "deps": 0
+  },
+  {
+   "dir": "contrib/connect",
+   "module": "github.com/ubgo/errx/contrib/connect",
+   "deps": 3
+  },
+  {
+   "dir": "contrib/goerr",
+   "module": "github.com/ubgo/errx/contrib/goerr",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/graphql",
+   "module": "github.com/ubgo/errx/contrib/graphql",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/grpc",
+   "module": "github.com/ubgo/errx/contrib/grpc",
+   "deps": 4
+  },
+  {
+   "dir": "contrib/httpx",
+   "module": "github.com/ubgo/errx/contrib/httpx",
+   "deps": 1
+  },
+  {
+   "dir": "contrib/otel",
+   "module": "github.com/ubgo/errx/contrib/otel",
+   "deps": 4
+  },
+  {
+   "dir": "contrib/prometheus",
+   "module": "github.com/ubgo/errx/contrib/prometheus",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/sentry",
+   "module": "github.com/ubgo/errx/contrib/sentry",
+   "deps": 2
+  }
+ ],
+ "contrib": [
+  {
+   "name": "connect",
+   "module": "github.com/ubgo/errx/contrib/connect",
+   "deps": 3,
+   "summary": "Convert any `errx` error into a **`*connect.Error`** (ConnectRPC) with a canonical Connect code and a typed **`google.rpc.ErrorInfo`** detail carrying the stabl"
+  },
+  {
+   "name": "goerr",
+   "module": "github.com/ubgo/errx/contrib/goerr",
+   "deps": 2,
+   "summary": "A **two-way migration bridge** between the thin, shipped `github.com/ubgo/goerr` and the full `github.com/ubgo/errx`. Adopt `errx` incrementally — package by pa"
+  },
+  {
+   "name": "graphql",
+   "module": "github.com/ubgo/errx/contrib/graphql",
+   "deps": 2,
+   "summary": "Render any `errx` error as a **GraphQL error** for gqlgen: the end-user-safe message becomes `message`, the stable identity and safe fields go under `extensions"
+  },
+  {
+   "name": "grpc",
+   "module": "github.com/ubgo/errx/contrib/grpc",
+   "deps": 4,
+   "summary": "Map any `errx` error to a canonical **gRPC `status.Status`** with **typed `google.rpc` error details** — `ErrorInfo` (the stable `(reason, domain)` identity), `"
+  },
+  {
+   "name": "httpx",
+   "module": "github.com/ubgo/errx/contrib/httpx",
+   "deps": 1,
+   "summary": "Render any `errx` error as a standards-compliant **RFC 9457 / RFC 7807 `application/problem+json`** HTTP response — the JSON error body every modern Go API is c"
+  },
+  {
+   "name": "otel",
+   "module": "github.com/ubgo/errx/contrib/otel",
+   "deps": 4,
+   "summary": "Bridge `errx` errors to OpenTelemetry: record the error as an **`exception` span event** using the official `exception.*` semantic conventions, set the span sta"
+  },
+  {
+   "name": "prometheus",
+   "module": "github.com/ubgo/errx/contrib/prometheus",
+   "deps": 2,
+   "summary": "Increment a Prometheus **`errx_errors_total`** counter from `errx` errors, labelled by the stable identity — `code`, `domain`, `severity`, `class`. Labels come "
+  },
+  {
+   "name": "sentry",
+   "module": "github.com/ubgo/errx/contrib/sentry",
+   "deps": 2,
+   "summary": "Report `errx` errors to Sentry with the **core deterministic fingerprint as the Sentry grouping key** — so the same logical bug groups identically in Sentry, Pr"
+  }
+ ],
+ "packages": [
+  "diag",
+  "errtest",
+  "result"
+ ],
+ "ubgoDeps": [
+  {
+   "name": "goerr",
+   "from": "contrib/goerr"
+  }
+ ],
+ "examples": [
+  {
+   "title": "Example",
+   "code": "err := errx.New(\"db: deadlock on user_orders\").\n    WithDomain(\"billing\").WithCode(\"TX_RETRY\").\n    WithPublic(\"Something went wrong, please retry\").\n    WithRetryable(0).\n    WithSafe(\"shard\", \"eu-1\")          // safe field — survives to logs/wire\n    // .With(\"token\", secret)          // unsafe field — auto-redacted at any boundary\n\nhttpx.Write(w, r, err)                  // → 503 application/problem+json\nslog.Error(\"request failed\", \"err\", err) // structured, redacted, fingerprinted"
+  },
+  {
+   "title": "Quick start",
+   "code": "package main\n\nimport (\n\t\"fmt\"\n\n\t\"github.com/ubgo/errx\"\n)\n\nfunc loadOrder(id string) error {\n\t// ... db call fails ...\n\treturn errx.New(\"db: no rows for order \" + id).\n\t\tWithDomain(\"orders\").\n\t\tWithCode(\"NOT_FOUND\").\n\t\tWithPublic(\"Order not found\").\n\t\tWithHint(\"verify the order id\").\n\t\tWithSafe(\"order_id\", id)\n}\n\nfunc main() {\n\terr := loadOrder(\"o-42\")\n\n\tfmt.Println(err.Error())                    // operator message (logs)\n\tfmt.Println(errx.Get(err).Public(\"error\"))  // end-user-safe message\n\tfmt.Println(errx.Code(err))                 // NOT_FOUND\n\tfmt.Println(errx.Get(err).Fingerprint())    // stable grouping key\n}"
+  },
+  {
+   "title": "Identity, class, severity",
+   "code": "errx.New(\"…\").\n    WithDomain(\"billing\").          // namespace\n    WithCode(\"CARD_DECLINED\").      // stable machine code\n    WithClass(errx.ClassExpected).  // ClassExpected | ClassDefect | ClassCancelled\n    WithSeverity(errx.SevWarn).     // SevDebug | SevInfo | SevWarn | SevError | SevFatal\n    WithRetryable(3 * time.Second). // retryable + suggested delay\n    WithOwner(\"payments\")           // routing/alerting"
+  },
+  {
+   "title": "Messages: operator vs end-user vs localized",
+   "code": "errx.New(\"pq: deadlock detected on user_orders\"). // operator (logs, .Error())\n    WithPublic(\"Something went wrong, please retry\"). // end-user-safe\n    WithLocalized(\"fr-FR\", \"Une erreur est survenue\"). // i18n (BCP-47)\n    WithLocalized(\"ja\", \"エラーが発生しました\")\n\ne := errx.Get(err)\ne.Public(\"fallback\")          // end-user message, never the operator detail\ne.Localized(\"fr-CA\", \"fb\")    // → French message via language fallback (fr-CA → fr-FR)"
+  }
+ ],
+ "features": [
+  "**Stable identity** — `domain` + `code`, separate from the human message, so dashboards and clients branch on it even when wording changes.",
+  "**Expected / Defect / Cancelled class** — middleware returns 4xx + retry, alerts on bugs, stays quiet on client-cancelled.",
+  "**Operator vs end-user message** — internal detail never leaks to clients.",
+  "**Typed structured fields with per-field redaction** — safe-by-default at any trust boundary; no redactable-string tax.",
+  "**Retry & severity on the error itself** — resilience and logging layers read it, not a type switch.",
+  "**Lazy single-alloc stack + return-trace** — ~15 ns capture, symbolized only when printed; plus *where the error traveled*.",
+  "**Suppressed errors** — a failing `defer Close()` never masks the real failure (a classic Go bug Go has no stdlib fix for).",
+  "**Two-mode accumulation** — collect *every* validation failure with field paths, not just the first.",
+  "**Deterministic fingerprint** — the same bug groups identically in Sentry, Prometheus, logs, and on the wire.",
+  "**Cross-service JSON codec** — serialize an error, reconstruct the typed error on the other side; identity survives, unsafe fields never serialize."
+ ],
+ "table": "| Module | Use it for | README |\n|---|---|---|\n| `contrib/httpx` | RFC 9457 `application/problem+json` HTTP responses (zero extra deps) | docs |\n| `contrib/grpc` | `google.rpc.Status` + `ErrorInfo`/`RetryInfo`/`LocalizedMessage`/`Help` | docs |\n| `contrib/connect` | ConnectRPC errors with typed details | docs |\n| `contrib/graphql` | gqlgen `ErrorPresenter` (`extensions.code`) | docs |\n| `contrib/sentry` | Sentry capture with the **core fingerprint as the grouping key** | docs |\n| `contrib/otel` | OpenTelemetry exception span events + trace/span correlation | docs |\n| `contrib/prometheus` | `errx_errors_total` metrics by stable identity | docs |\n| `contrib/goerr` | Incremental migration from `github.com/ubgo/goerr` | docs |"
+}

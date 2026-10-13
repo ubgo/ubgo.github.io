@@ -1,0 +1,45 @@
+{
+ "name": "cache-cluster",
+ "module": "github.com/ubgo/cache-cluster",
+ "go": "1.24",
+ "coreDeps": 1,
+ "license": "PolyForm Perimeter 1.0.0",
+ "latestTag": "v0.1.0",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/cache-cluster",
+   "deps": 1
+  }
+ ],
+ "contrib": [],
+ "packages": [],
+ "ubgoDeps": [
+  {
+   "name": "cache",
+   "from": "."
+  }
+ ],
+ "examples": [
+  {
+   "title": "Quick start",
+   "code": "package main\n\nimport (\n\t\"context\"\n\t\"net/http\"\n\n\tclustercache \"github.com/ubgo/cache-cluster\"\n\tmemcache \"github.com/ubgo/cache-mem\"\n)\n\nfunc main() {\n\tlocal := memcache.New()\n\n\tnode := clustercache.New(\"n1\", local,\n\t\tclustercache.WithPeers(map[string]string{\n\t\t\t\"n1\": \"http://10.0.0.1:8080\",\n\t\t\t\"n2\": \"http://10.0.0.2:8080\",\n\t\t\t\"n3\": \"http://10.0.0.3:8080\",\n\t\t}),\n\t\tclustercache.WithLoader(func(ctx context.Context, key string) ([]byte, error) {\n\t\t\treturn db.Load(ctx, key)\n\t\t}),\n\t)\n\tdefer node.Close()\n\n\thttp.Handle(\"/_cache\", node.Handler()) // peers reach each other here\n\tgo http.ListenAndServe(\":8080\", nil)\n\n\tv, err := node.Get(context.Background(), \"user:42\") // owner-routed, filled once\n\t_ = v\n\t_ = err\n}"
+  },
+  {
+   "title": "`WithPeers(peers map[string]string)`",
+   "code": "clustercache.WithPeers(map[string]string{\n\t\"n1\": \"http://10.0.0.1:8080\",\n\t\"n2\": \"http://10.0.0.2:8080\",\n})"
+  },
+  {
+   "title": "Operations: `Get` / `Set` / `Del` / `Has` / `Close`",
+   "code": "ctx := context.Background()\n_ = node.Set(ctx, \"k\", []byte(\"v\"))\nv, err := node.Get(ctx, \"k\")\nok, _ := node.Has(ctx, \"k\")\n_ = node.Del(ctx, \"k\")\n_ = v; _ = err; _ = ok"
+  }
+ ],
+ "features": [
+  "**One fill per hot key, cluster-wide.** Ownership routing plus single-flight at the owner collapses a thundering herd into a single backend load.",
+  "**Minimal reshuffle on membership change.** Consistent hashing means adding or removing a node only moves that node's share of keys, not the whole keyspace.",
+  "**Bring your own storage.** Any `cache.Cache` (in-memory, Redis, …) is the local backend; clustering is a thin layer on top.",
+  "**No third-party dependencies.** Standard library HTTP plus the ubgo/cache contract. The core and this module are dependency-free.",
+  "**Explicit, predictable membership.** Peers are configured, not gossiped — no surprise topology changes."
+ ],
+ "table": "| Local backend | Any `cache.Cache` (pluggable) | Built-in LRU only |\n| Writes (`Set`/`Del`) | Owner-routed, supported | Read-mostly (no general writes) |\n| Peer transport | HTTP (`/_cache`) | HTTP / protobuf |\n| Membership | Explicit `WithPeers` | Explicit peer list |"
+}

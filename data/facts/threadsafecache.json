@@ -1,0 +1,35 @@
+{
+ "name": "threadsafecache",
+ "module": "github.com/ubgo/threadsafecache",
+ "go": "1.24",
+ "coreDeps": 1,
+ "license": "Apache-2.0",
+ "latestTag": "v0.1.0",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/threadsafecache",
+   "deps": 1
+  }
+ ],
+ "contrib": [],
+ "packages": [],
+ "ubgoDeps": [],
+ "examples": [
+  {
+   "title": "Example",
+   "code": "import \"github.com/ubgo/threadsafecache\"\n\nc, _ := threadsafecache.New[string](\n    1024,                     // LRU size\n    5 * time.Minute,          // TTL (0 = disabled)\n)\n\nc.Set(\"user:42\", payload)\n\nif v, ok := c.Get(\"user:42\"); ok {\n    use(v)\n}"
+  },
+  {
+   "title": "Options",
+   "code": "threadsafecache.New[int](\n    1024, ttl,\n    threadsafecache.WithClock[int](myFakeClock),  // tests only\n)"
+  }
+ ],
+ "features": [
+  "**Generics.** Values are stored without boxing through `interface{}`.",
+  "**LRU bound.** When the cache fills, the least-recently-used entry is",
+  "**TTL.** Entries older than the TTL miss on `Get` and are evicted as a",
+  "**Lock everything.** All operations take the same `sync.Mutex` —"
+ ],
+ "table": ""
+}

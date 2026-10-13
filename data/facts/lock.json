@@ -1,0 +1,93 @@
+{
+ "name": "lock",
+ "module": "github.com/ubgo/lock",
+ "go": "1.24",
+ "coreDeps": 0,
+ "license": "Apache-2.0",
+ "latestTag": "v0.1.0",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/lock",
+   "deps": 0
+  },
+  {
+   "dir": "contrib/gocronlock",
+   "module": "github.com/ubgo/lock/contrib/gocronlock",
+   "deps": 4
+  },
+  {
+   "dir": "etcdlock",
+   "module": "github.com/ubgo/lock/etcdlock",
+   "deps": 2
+  },
+  {
+   "dir": "filelock",
+   "module": "github.com/ubgo/lock/filelock",
+   "deps": 1
+  },
+  {
+   "dir": "flock",
+   "module": "github.com/ubgo/lock/flock",
+   "deps": 1
+  },
+  {
+   "dir": "memlock",
+   "module": "github.com/ubgo/lock/memlock",
+   "deps": 1
+  },
+  {
+   "dir": "pglock",
+   "module": "github.com/ubgo/lock/pglock",
+   "deps": 2
+  },
+  {
+   "dir": "redislock",
+   "module": "github.com/ubgo/lock/redislock",
+   "deps": 3
+  }
+ ],
+ "contrib": [
+  {
+   "name": "gocronlock",
+   "module": "github.com/ubgo/lock/contrib/gocronlock",
+   "deps": 4,
+   "summary": ""
+  }
+ ],
+ "packages": [
+  "etcdlock",
+  "filelock",
+  "flock",
+  "memlock",
+  "pglock",
+  "redislock"
+ ],
+ "ubgoDeps": [],
+ "examples": [
+  {
+   "title": "60-second tour: code that works for every backend",
+   "code": "package payments\n\nimport (\n    \"context\"\n    \"errors\"\n\n    \"github.com/ubgo/lock\"\n)\n\ntype Service struct {\n    locks lock.Locker\n}\n\nfunc (s *Service) DailyExport(ctx context.Context) error {\n    h, err := s.locks.Acquire(ctx, \"daily-export\")\n    if errors.Is(err, lock.ErrLocked) {\n        return nil // another worker is on it; skip\n    }\n    if err != nil {\n        return err\n    }\n    defer h.Release()\n\n    return s.runExport(ctx)\n}"
+  },
+  {
+   "title": "1. Cron-singleton across N replicas of a service",
+   "code": "locks := redislock.NewFactory(rdb, redislock.WithTTL(10*time.Minute))\n\nerr := locks.WithLock(ctx, \"midnight-billing\", processBilling)\nif errors.Is(err, redislock.ErrLocked) {\n    log.Info(\"billing run already in progress on another replica\")\n    return nil\n}\nreturn err"
+  },
+  {
+   "title": "2. \"Skip if already running\" — single-host CLI",
+   "code": "fl := flock.New(\"nightly-import\", flock.WithDir(\"/var/run\"))\nholder, err := fl.Acquire(ctx)\nif errors.Is(err, flock.ErrLocked) {\n    log.Println(\"previous run still active; skipping\")\n    return\n}\ndefer holder.Release()\nrunImport(ctx)"
+  },
+  {
+   "title": "3. Fencing tokens — defend against the GC-pause scenario",
+   "code": "holder, _ := locks.Acquire(ctx, \"payment-export\")\ndefer holder.Release()\nfence := holder.Token()  // monotonic uint64\n\nif err := s3.PutWithFence(ctx, \"payments/today.csv\", data, fence); err != nil {\n    return err\n}"
+  }
+ ],
+ "features": [
+  "**One contract.** All five backends satisfy `lock.Locker`. Your",
+  "**Production-grade defaults.** Crash recovery, fencing tokens,",
+  "**No-surprise semantics.** Every backend's `Acquire` is",
+  "**Tested across platforms.** Linux, macOS, Windows in CI. Real",
+  "**Minimal cores.** The interface module has zero deps. Each"
+ ],
+ "table": "| Concern | filelock | flock | redislock | pglock | etcdlock |\n|---|---|---|---|---|---|\n| **Scope** | single-host | single-host | multi-host | multi-host | multi-host |\n| **Crash recovery** | PID probe + stale window + Sweep | Kernel — instant on fd close | TTL expiry | Session close | Lease expiry |\n| **Need extra infra** | none | none | Redis | Postgres | etcd cluster |\n| **TTL to tune** | optional | none | yes | none | yes |\n| **Reentrant** | no | no | no | **yes** (PG native) | no |\n| **Fencing tokens** | per-name sidecar | per-name sidecar | per-name INCR | per-session txid | **mod_revision (global)** |\n| **Semaphore (`WithMaxConcurrent`)** | ✅ | ✅ | ✅ | ✅ | ✅ |\n| **Sweep** | ✅ | n/a (kernel cleans) | n/a (TTL cleans) | n/a (session cleans) | n/a (lease cleans) |\n| **Operator visibility** | rich marker fields | none | `redis-cli GET <key>` | `pg_locks` view | `etcdctl get <key>` |\n| **Observability hooks** | ✅ slog/metrics/spans | ✅ same | ✅ same | ✅ same | ✅ same |\n| **TraceID propagation** | marker debug field | slog field | embedded in SET value | via `application_name` | in lock key value |\n| **Strong consistency** | local-fs only | local-fs only | weakly (AP) | ACID single primary | ✅ Raft |"
+}

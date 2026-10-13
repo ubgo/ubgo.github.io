@@ -1,0 +1,31 @@
+{
+ "name": "gormuuid",
+ "module": "github.com/ubgo/gormuuid",
+ "go": "1.17",
+ "coreDeps": 2,
+ "license": "",
+ "latestTag": "v0.0.4",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/gormuuid",
+   "deps": 2
+  }
+ ],
+ "contrib": [],
+ "packages": [],
+ "ubgoDeps": [
+  {
+   "name": "gouuid",
+   "from": "."
+  }
+ ],
+ "examples": [
+  {
+   "title": "How to use",
+   "code": "type User struct {\n  TagIDs gormuuid.UUIDArray  `gorm:\"type:uuid[]\"` // Column will take {} as default\n}\n\nvar tagIds gormuuid.UUIDArray = []uuid.UUID{uuid.New(), uuid.New()}\ndb.Create(&User{\n  TagIDs: tagIds,\n})"
+  }
+ ],
+ "features": [],
+ "table": ""
+}

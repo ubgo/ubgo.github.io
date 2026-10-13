@@ -1,0 +1,26 @@
+{
+ "name": "gqlgenfn",
+ "module": "github.com/ubgo/gqlgenfn",
+ "go": "1.17",
+ "coreDeps": 1,
+ "license": "",
+ "latestTag": "v0.0.5",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/gqlgenfn",
+   "deps": 1
+  }
+ ],
+ "contrib": [],
+ "packages": [],
+ "ubgoDeps": [],
+ "examples": [
+  {
+   "title": "GinContextFromContext(ctx context.Context) (*gin.Context, error)",
+   "code": "gc, err := gql_fn.GinContextFromContext(ctx)\nif err != nil {\n  return false\n}"
+  }
+ ],
+ "features": [],
+ "table": ""
+}

@@ -1,0 +1,26 @@
+{
+ "name": "jsonslice",
+ "module": "github.com/ubgo/jsonslice",
+ "go": "1.24",
+ "coreDeps": 0,
+ "license": "Apache-2.0",
+ "latestTag": "v0.1.0",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/jsonslice",
+   "deps": 0
+  }
+ ],
+ "contrib": [],
+ "packages": [],
+ "ubgoDeps": [],
+ "examples": [
+  {
+   "title": "Use",
+   "code": "import \"github.com/ubgo/jsonslice\"\n\ntype Event struct {\n    ID   string\n    Tags jsonslice.JsonSlice  // [\"urgent\", \"billing\", 42]\n}\n\n// Save → JSON column\ndb.Exec(`INSERT INTO events(id, tags) VALUES (?, ?)`, e.ID, e.Tags)\n\n// Load\nvar loaded Event\ndb.QueryRow(`SELECT id, tags FROM events WHERE id = ?`, \"x\").\n    Scan(&loaded.ID, &loaded.Tags)"
+  }
+ ],
+ "features": [],
+ "table": ""
+}

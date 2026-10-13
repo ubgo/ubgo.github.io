@@ -1,0 +1,40 @@
+{
+ "name": "crypt",
+ "module": "github.com/ubgo/crypt",
+ "go": "1.25.0",
+ "coreDeps": 1,
+ "license": "Apache-2.0",
+ "latestTag": "v0.2.0",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/crypt",
+   "deps": 1
+  }
+ ],
+ "contrib": [],
+ "packages": [],
+ "ubgoDeps": [],
+ "examples": [
+  {
+   "title": "Example",
+   "code": "import \"github.com/ubgo/crypt\"\n\nkey, _ := crypt.RandomBytes(crypt.AEADKeySize)\nct, _ := crypt.Seal(key, []byte(\"hello, world\"), nil)\npt, _ := crypt.Open(key, ct, nil)\n// pt == []byte(\"hello, world\")"
+  },
+  {
+   "title": "Encrypt a database column at rest",
+   "code": "sealer, _ := crypt.NewSealer(appKey) // 32 bytes from secrets manager\n\nenc, _ := sealer.Seal([]byte(secret), nil)\ndb.Exec(`UPDATE partners SET client_secret = $1 WHERE id = $2`, enc, id)\n\nplain, _ := sealer.Open(row.ClientSecret, nil)"
+  },
+  {
+   "title": "Bind a token to a user (so it can't be replayed for another)",
+   "code": "ct, _ := sealer.Seal(payload, []byte(\"user:\"+userID))\n\npt, err := sealer.Open(ct, []byte(\"user:\"+userID))\n// err == ErrTampered if userID differs from issue time"
+  }
+ ],
+ "features": [
+  "AES-CBC instead of GCM (no authentication).",
+  "A \"default\" key string committed to source.",
+  "`bytes.Equal` for HMAC verification (timing leak).",
+  "Argon2 with hand-tuned parameters that drift from OWASP recommendations.",
+  "A wire format that the Node sibling decodes wrong for any plaintext > 16 bytes."
+ ],
+ "table": ""
+}

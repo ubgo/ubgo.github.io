@@ -1,0 +1,76 @@
+{
+ "name": "health-examples",
+ "module": "",
+ "go": "",
+ "coreDeps": 0,
+ "license": "Apache-2.0",
+ "latestTag": "",
+ "modules": [
+  {
+   "dir": "01-basic",
+   "module": "github.com/ubgo/health-examples/01-basic",
+   "deps": 1
+  },
+  {
+   "dir": "02-http-nethttp",
+   "module": "github.com/ubgo/health-examples/02-http-nethttp",
+   "deps": 2
+  },
+  {
+   "dir": "02b-http-gin",
+   "module": "github.com/ubgo/health-examples/02b-http-gin",
+   "deps": 3
+  },
+  {
+   "dir": "02c-http-chi",
+   "module": "github.com/ubgo/health-examples/02c-http-chi",
+   "deps": 3
+  },
+  {
+   "dir": "02d-http-echo",
+   "module": "github.com/ubgo/health-examples/02d-http-echo",
+   "deps": 3
+  },
+  {
+   "dir": "02e-http-fiber",
+   "module": "github.com/ubgo/health-examples/02e-http-fiber",
+   "deps": 3
+  },
+  {
+   "dir": "06-with-otel",
+   "module": "github.com/ubgo/health-examples/06-with-otel",
+   "deps": 3
+  },
+  {
+   "dir": "07-with-prometheus",
+   "module": "github.com/ubgo/health-examples/07-with-prometheus",
+   "deps": 3
+  },
+  {
+   "dir": "08-custom-checker",
+   "module": "github.com/ubgo/health-examples/08-custom-checker",
+   "deps": 1
+  }
+ ],
+ "contrib": [],
+ "packages": [
+  "01-basic",
+  "02-http-nethttp",
+  "02b-http-gin",
+  "02c-http-chi",
+  "02d-http-echo",
+  "02e-http-fiber",
+  "06-with-otel",
+  "07-with-prometheus",
+  "08-custom-checker"
+ ],
+ "ubgoDeps": [
+  {
+   "name": "health",
+   "from": "01-basic"
+  }
+ ],
+ "examples": [],
+ "features": [],
+ "table": ""
+}

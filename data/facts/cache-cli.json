@@ -1,0 +1,36 @@
+{
+ "name": "cache-cli",
+ "module": "github.com/ubgo/cache-cli",
+ "go": "1.24",
+ "coreDeps": 4,
+ "license": "PolyForm Perimeter 1.0.0",
+ "latestTag": "v0.1.0",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/cache-cli",
+   "deps": 4
+  }
+ ],
+ "contrib": [],
+ "packages": [],
+ "ubgoDeps": [
+  {
+   "name": "cache",
+   "from": "."
+  },
+  {
+   "name": "cache-redis",
+   "from": "."
+  }
+ ],
+ "examples": [],
+ "features": [
+  "**Zero-glue debugging.** Inspect a production or local cache without embedding a debug endpoint in your service.",
+  "**Scriptable.** Exit codes (`0` / `1` / `2`) and `-json` make it safe to use in shell pipelines, health checks, and CI.",
+  "**Namespace-aware.** The `-ns` flag applies the same `cache.Namespaced` prefix your service uses, so keys line up exactly.",
+  "**Same semantics as your app.** It talks through `ubgo/cache`, so `ErrNotFound`, TTL handling, and prefix scans behave identically to your running code.",
+  "**Small surface.** Five commands, four flags. Nothing to learn."
+ ],
+ "table": ""
+}

@@ -1,0 +1,15 @@
+{
+ "name": "ubgo-skills",
+ "module": "",
+ "go": "",
+ "coreDeps": 0,
+ "license": "MIT",
+ "latestTag": "",
+ "modules": [],
+ "contrib": [],
+ "packages": [],
+ "ubgoDeps": [],
+ "examples": [],
+ "features": [],
+ "table": "| Role | Naming | What it does | Loaded when |\n|---|---|---|---|\n| **Rules** | `ubgo-<topic>` | The doctrine itself — read-side. Stack, anti-patterns, verbatim patterns. | Before any substantive work on that topic. |\n| **Train** | `ubgo-<topic>-train` | Maintenance loop — write-side. Captures universal lessons back into the canonical rules body. | When the user (or the agent itself) wants the rules to keep improving from real-session experience. |\n| **Learn** | `ubgo-<topic>-learn` | Bootstrap a per-repo overlay file (`<topic>-project.md`) that extends the universal rules with this repo's named constants, gotchas, workflow. | When standing up agent rules in a new repo or refreshing an existing overlay. |"
+}

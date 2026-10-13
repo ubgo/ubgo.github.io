@@ -1,0 +1,92 @@
+{
+ "name": "gofm",
+ "module": "",
+ "go": "",
+ "coreDeps": 0,
+ "license": "",
+ "latestTag": "",
+ "modules": [
+  {
+   "dir": "cache",
+   "module": "github.com/ubgo/gofm/cache",
+   "deps": 0
+  },
+  {
+   "dir": "cacherdbms",
+   "module": "github.com/ubgo/gofm/cacherdbms",
+   "deps": 4
+  },
+  {
+   "dir": "cli",
+   "module": "github.com/ubgo/gofm/cli",
+   "deps": 1
+  },
+  {
+   "dir": "core",
+   "module": "github.com/ubgo/gofm/core",
+   "deps": 4
+  },
+  {
+   "dir": "db",
+   "module": "github.com/ubgo/gofm/db",
+   "deps": 2
+  },
+  {
+   "dir": "ginserver",
+   "module": "github.com/ubgo/gofm/ginserver",
+   "deps": 2
+  },
+  {
+   "dir": "gormdb",
+   "module": "github.com/ubgo/gofm/gormdb",
+   "deps": 3
+  },
+  {
+   "dir": "gqlgin",
+   "module": "github.com/ubgo/gofm/gqlgin",
+   "deps": 5
+  },
+  {
+   "dir": "grecaptcha",
+   "module": "github.com/ubgo/gofm/grecaptcha",
+   "deps": 1
+  },
+  {
+   "dir": "logger",
+   "module": "github.com/ubgo/gofm/logger",
+   "deps": 3
+  },
+  {
+   "dir": "publicid",
+   "module": "github.com/ubgo/gofm/publicid",
+   "deps": 2
+  }
+ ],
+ "contrib": [],
+ "packages": [
+  "cache",
+  "cacherdbms",
+  "cli",
+  "core",
+  "db",
+  "ginserver",
+  "gormdb",
+  "gqlgin",
+  "grecaptcha",
+  "logger",
+  "publicid"
+ ],
+ "ubgoDeps": [
+  {
+   "name": "goutil",
+   "from": "cacherdbms"
+  },
+  {
+   "name": "gqlgenfn",
+   "from": "gqlgin"
+  }
+ ],
+ "examples": [],
+ "features": [],
+ "table": ""
+}

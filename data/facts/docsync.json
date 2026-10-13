@@ -1,0 +1,75 @@
+{
+ "name": "docsync",
+ "module": "github.com/ubgo/docsync",
+ "go": "1.26",
+ "coreDeps": 0,
+ "license": "Apache-2.0",
+ "latestTag": "v0.1.6",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/docsync",
+   "deps": 0
+  },
+  {
+   "dir": "cli",
+   "module": "github.com/ubgo/docsync/cli",
+   "deps": 7
+  },
+  {
+   "dir": "ext/records/sqlite",
+   "module": "github.com/ubgo/docsync/ext/records/sqlite",
+   "deps": 2
+  },
+  {
+   "dir": "ext/structured",
+   "module": "github.com/ubgo/docsync/ext/structured",
+   "deps": 4
+  },
+  {
+   "dir": "ext/treesitter",
+   "module": "github.com/ubgo/docsync/ext/treesitter",
+   "deps": 2
+  },
+  {
+   "dir": "integrations/hugo",
+   "module": "github.com/ubgo/docsync/integrations/hugo",
+   "deps": 0
+  }
+ ],
+ "contrib": [],
+ "packages": [
+  "block",
+  "check",
+  "cli",
+  "config",
+  "directive",
+  "extract",
+  "id",
+  "ledger",
+  "match",
+  "pick",
+  "procplugin",
+  "records",
+  "render",
+  "scan",
+  "sentence",
+  "workspace"
+ ],
+ "ubgoDeps": [],
+ "examples": [
+  {
+   "title": "Using the library",
+   "code": "sys, err := docsync.New(\n    docsync.WithFS(os.DirFS(repo)),\n    docsync.WithConfig(cfg),               // parsed by you; the library never reads files it was not given\n    docsync.WithPrevious(ledger, refs),    // the committed state to diff against; zero for a first run\n    docsync.WithAcks(acks),\n    docsync.WithOldContent(gitShow),       // func(ledger.Row) (string, bool): the body a previous row had, for diffs and change classes\n)\nreport, err := sys.Check(ctx, docsync.CheckOptions{})\nfor _, f := range report.Findings {\n    fmt.Println(f.State, f.Doc, f.Line, f.Remedy)\n}\nres, err := sys.Define(ctx, \"internal/store/write.go#Store.Persist\", docsync.DefineOptions{Owner: \"@auth\"})\n// res.Edit is a proposed change to the source file; you decide whether to apply it"
+  }
+ ],
+ "features": [
+  "**Cites by id, not by path and line.** A block is marked once in the file that owns it; the id travels with it through moves, renames and reformatting, so a doc keeps pointing at the right code.",
+  "**Nothing is copied.** Values, code snippets and permalinks are rendered from live source at build time, so a doc cannot hold a stale copy.",
+  "**Every finding says what to do.** Each one carries the diff since the sentence was last approved and the exact command to approve it or the place to edit it.",
+  "**An approval is for one sentence, and it is recorded.** An ack names the sentence, the block's hash, and who approved it; rewriting the sentence needs a new one. Over MCP an agent may ack only by naming the human who delegated it.",
+  "**Built for agents.** `ds mcp` gives agents `map`, `find`, `read`, `context`, `impact`, `check`, `def` and `ack`, with every payload fenced so repository text is never read as an instruction; `ds init --agents` wires it up.",
+  "**Boring core.** The library is Go's standard library only, never writes a file or opens the network itself, holds 100% statement coverage, and is specified by a conformance suite rather than by its own behaviour."
+ ],
+ "table": "| Package | Holds |\n|---|---|\n| `directive` | the one directive grammar: `ds:<verb> key=value…`, comment and link carriers, continuation folding, parse and format round-trip |\n| `id` | ids as `<label>-<8-char suffix>`; the suffix is the identity, the label is a hint |\n| `block` | blocks, references, kinds, carriers, stability policies, change classes |\n| `extract` | the built-in tiers: markdown and HTML, AsciiDoc and reStructuredText (the document tier), config (yaml, toml, ini, env, properties), heuristic code, plain text; `Locate` for binding a symbol or line without a directive; exported hooks (`ScanCode`, `Prelude`, `NewDef`) for grammar tiers outside the root |\n| `pick` | `pick=` schemes for narrowing a block to one value or range |\n| `sentence` | binding a link to the sentence, list item, or table cell that contains it |\n| `scan` | walking an `fs.FS` under globs, remote `file=` defs, duplicate detection |\n| `ledger` | the committed TSV state: ledger, reverse index, append-only acks |\n| `match` | previous ledger against current scan: ok, moved, changed, moved-unmarked, rewritten, deleted, new; change classification |\n| `check` | the findings engine: every state in the spec's table with severity, remedy, and exit code |\n| `render` | build-time expansion of directives to permalinks, values, code, chains, tables |\n| `config` | `.ds/config.toml` in the TOML subset the spec uses |\n| `procplugin` | both sides of the process-plugin protocol for `ds-pick-*`, `ds-resolve-*`, `ds-records-*`, `ds-<verb>` executables |\n| `workspace` | merging published ledgers and refs across repositories, the index layout, JUnit outcomes for `assert=` |\n| `records` | the frontmatter record source for `ds:table`: a directory of markdown files, filtered by `kind`, `where`, `sort`, `cols`, `limit` |\n| `ext/structured` (own module) | the structured tier: YAML (yaml.v3), TOML (go-toml), and HCL (hcl/v2) extractors that bind keys, tables, blocks, and attributes by parsed extent; `structured.All()` registers the three |\n| `ext/treesitter` (own module, cgo) | the syntax tier: Go, TypeScript, TSX, JavaScript, Python, and SQL through tree-sitter; a def binds to the next declaration as the grammar sees it, nested declarations become `Class.method`, single literals are values, and hashes are taken over the token stream so formatters never cry wolf; `treesitter.New(Grammar{…})` registers any other grammar |\n| `ext/records/sqlite` (own module) | the SQLite record source for `ds:table` on modernc.org/sqlite (pure Go); `kind=` names the table, the rest of the query is the shared records language |\n| `integrations/github` | the composite GitHub Action and the three workflows from spec §24: pull request comments, publish after merge, the nightly job that alone enables `--run` and `--resolve` |\n| `integrations/hugo`, `integrations/docusaurus`, `editors/vscode`, `.pre-commit-hooks.yaml` | the Hugo module reading `ds export hugo` data, the Docusaurus remark plugin over `ds render` plus freshness from `ds status --json`, the VS Code client for `ds lsp`, and pre-commit hooks for `impact --staged` and `report --literals` (at the repository root, which is the only place pre-commit looks) |\n| root | `New` with functional options; `Scan`, `Check`, `Snapshot`, `Render`, `Define` (returns an `Edit`), `Facts`, `Why`, `Map`, `Context`, `Impact`, `Find`, `Read`, `Ack`, `Triage`, `Audit`, `Rename`, `Graph`, `Blame`, `Report`, `Adopt` |"
+}

@@ -1,0 +1,38 @@
+{
+ "name": "gots",
+ "module": "github.com/khanakia/gots",
+ "go": "1.24.2",
+ "coreDeps": 2,
+ "license": "",
+ "latestTag": "",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/khanakia/gots",
+   "deps": 2
+  }
+ ],
+ "contrib": [],
+ "packages": [],
+ "ubgoDeps": [],
+ "examples": [
+  {
+   "title": "Typed String Constants",
+   "code": "type MessageRole string\n\nconst (\n    MessageRoleUser      MessageRole = \"user\"\n    MessageRoleAssistant MessageRole = \"assistant\"\n    MessageRoleSystem    MessageRole = \"system\"\n)"
+  },
+  {
+   "title": "Typed Int Constants (iota)",
+   "code": "type LockType int\n\nconst (\n    _ LockType = iota\n    LockReadonly\n    LockUpdate\n    LockDelete\n)"
+  },
+  {
+   "title": "Type Aliases",
+   "code": "type UserID int64\ntype Slug string\ntype Tags []string\ntype StringMap map[string]string\ntype IPv4 [4]byte\ntype Matrix3x3 [3][3]float64"
+  },
+  {
+   "title": "Function Types",
+   "code": "type Reducer func(accumulator, current int) int\ntype ErrorHandler func(err error)\ntype Callback func()\ntype Handler func(request string) (response string, err error)\ntype MultiReturn func(a, b int) (int, int, error)\ntype Comparator[T any] func(a, b T) int"
+  }
+ ],
+ "features": [],
+ "table": "| Key | Type | Required | Description |\n|---|---|---|---|\n| `file` | string | yes | Path to Go source file (absolute or relative) |\n| `output` | string | yes | Path for generated .ts file |\n| `style` | string | no | Override `default_style` for this file |\n| `include` | string[] | no | Whitelist of type names (supports `*` wildcard) |\n| `exclude` | string[] | no | Blacklist of type names (supports `*` wildcard) |\n| `struct_style` | `interface` \\| `type` | `interface` | Struct output format |\n| `embed_strategy` | `flatten` \\| `extends` \\| `intersection` | `extends` | Embedded struct rendering |"
+}

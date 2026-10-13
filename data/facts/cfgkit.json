@@ -1,0 +1,261 @@
+{
+ "name": "cfgkit",
+ "module": "github.com/ubgo/cfgkit",
+ "go": "1.22",
+ "coreDeps": 1,
+ "license": "Apache-2.0",
+ "latestTag": "v0.1.0",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/cfgkit",
+   "deps": 1
+  },
+  {
+   "dir": "contrib/cli-cobra",
+   "module": "github.com/ubgo/cfgkit/contrib/cli-cobra",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/flags-pflag",
+   "module": "github.com/ubgo/cfgkit/contrib/flags-pflag",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/format-hcl",
+   "module": "github.com/ubgo/cfgkit/contrib/format-hcl",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/format-ini",
+   "module": "github.com/ubgo/cfgkit/contrib/format-ini",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/format-properties",
+   "module": "github.com/ubgo/cfgkit/contrib/format-properties",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/format-toml",
+   "module": "github.com/ubgo/cfgkit/contrib/format-toml",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/format-yaml",
+   "module": "github.com/ubgo/cfgkit/contrib/format-yaml",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/source-appconfig",
+   "module": "github.com/ubgo/cfgkit/contrib/source-appconfig",
+   "deps": 4
+  },
+  {
+   "dir": "contrib/source-azurekeyvault",
+   "module": "github.com/ubgo/cfgkit/contrib/source-azurekeyvault",
+   "deps": 1
+  },
+  {
+   "dir": "contrib/source-consul",
+   "module": "github.com/ubgo/cfgkit/contrib/source-consul",
+   "deps": 1
+  },
+  {
+   "dir": "contrib/source-etcd",
+   "module": "github.com/ubgo/cfgkit/contrib/source-etcd",
+   "deps": 1
+  },
+  {
+   "dir": "contrib/source-gcpsecrets",
+   "module": "github.com/ubgo/cfgkit/contrib/source-gcpsecrets",
+   "deps": 1
+  },
+  {
+   "dir": "contrib/source-k8s",
+   "module": "github.com/ubgo/cfgkit/contrib/source-k8s",
+   "deps": 1
+  },
+  {
+   "dir": "contrib/source-kiln",
+   "module": "github.com/ubgo/cfgkit/contrib/source-kiln",
+   "deps": 3
+  },
+  {
+   "dir": "contrib/source-nats",
+   "module": "github.com/ubgo/cfgkit/contrib/source-nats",
+   "deps": 3
+  },
+  {
+   "dir": "contrib/source-s3",
+   "module": "github.com/ubgo/cfgkit/contrib/source-s3",
+   "deps": 4
+  },
+  {
+   "dir": "contrib/source-secretsmanager",
+   "module": "github.com/ubgo/cfgkit/contrib/source-secretsmanager",
+   "deps": 4
+  },
+  {
+   "dir": "contrib/source-ssm",
+   "module": "github.com/ubgo/cfgkit/contrib/source-ssm",
+   "deps": 4
+  },
+  {
+   "dir": "contrib/source-vault",
+   "module": "github.com/ubgo/cfgkit/contrib/source-vault",
+   "deps": 1
+  },
+  {
+   "dir": "examples",
+   "module": "github.com/ubgo/cfgkit/examples",
+   "deps": 29
+  }
+ ],
+ "contrib": [
+  {
+   "name": "cli-cobra",
+   "module": "github.com/ubgo/cfgkit/contrib/cli-cobra",
+   "deps": 2,
+   "summary": "**Support level: supported** — 97.1% covered, and the covering includes every verb, the masking guarantee, the error contract, the unknown-key reporting and the"
+  },
+  {
+   "name": "flags-pflag",
+   "module": "github.com/ubgo/cfgkit/contrib/flags-pflag",
+   "deps": 2,
+   "summary": "**Support level: supported** — used by the authors; the typed-only rule it enforces is the one viper gets wrong. See the catalogue."
+  },
+  {
+   "name": "format-hcl",
+   "module": "github.com/ubgo/cfgkit/contrib/format-hcl",
+   "deps": 2,
+   "summary": "**Support level: supported** — 100% covered. See the catalogue."
+  },
+  {
+   "name": "format-ini",
+   "module": "github.com/ubgo/cfgkit/contrib/format-ini",
+   "deps": 2,
+   "summary": "**Support level: supported** — 100% covered, and it passes the shared flat-source conformance suite. See the catalogue."
+  },
+  {
+   "name": "format-properties",
+   "module": "github.com/ubgo/cfgkit/contrib/format-properties",
+   "deps": 2,
+   "summary": "**Support level: supported** — 100% covered, and it passes the shared flat-source conformance suite. See the catalogue."
+  },
+  {
+   "name": "format-toml",
+   "module": "github.com/ubgo/cfgkit/contrib/format-toml",
+   "deps": 2,
+   "summary": "**Support level: supported** — 100% covered, and it passes the shared conformance suite that pins overlay behaviour. See the catalogue."
+  },
+  {
+   "name": "format-yaml",
+   "module": "github.com/ubgo/cfgkit/contrib/format-yaml",
+   "deps": 2,
+   "summary": "**Support level: supported** — used by the authors, and the shared conformance suite covers the overlay behaviour the layering depends on. See the catalogue."
+  },
+  {
+   "name": "source-appconfig",
+   "module": "github.com/ubgo/cfgkit/contrib/source-appconfig",
+   "deps": 4,
+   "summary": "**Support level: supported** — 97.3% covered, with both calls of the protocol faked. See the catalogue."
+  },
+  {
+   "name": "source-azurekeyvault",
+   "module": "github.com/ubgo/cfgkit/contrib/source-azurekeyvault",
+   "deps": 1,
+   "summary": "**Support level: supported** — 98.2% covered, with both Azure endpoints faked. See the catalogue."
+  },
+  {
+   "name": "source-consul",
+   "module": "github.com/ubgo/cfgkit/contrib/source-consul",
+   "deps": 1,
+   "summary": "**Support level: supported** — 98.9% covered, including Consul's own quirks around valueless and folder keys. See the catalogue."
+  },
+  {
+   "name": "source-etcd",
+   "module": "github.com/ubgo/cfgkit/contrib/source-etcd",
+   "deps": 1,
+   "summary": "**Support level: supported** — 97.5% covered, including etcd's range-successor convention and its omitted-empty-value encoding. See the catalogue."
+  },
+  {
+   "name": "source-gcpsecrets",
+   "module": "github.com/ubgo/cfgkit/contrib/source-gcpsecrets",
+   "deps": 1,
+   "summary": "**Support level: supported** — 97.4% covered, with both Google endpoints faked. See the catalogue."
+  },
+  {
+   "name": "source-k8s",
+   "module": "github.com/ubgo/cfgkit/contrib/source-k8s",
+   "deps": 1,
+   "summary": "**Support level: supported** — 100% of its behaviour is exercised against a fake API server, including the in-cluster path. See the catalogue."
+  },
+  {
+   "name": "source-kiln",
+   "module": "github.com/ubgo/cfgkit/contrib/source-kiln",
+   "deps": 3,
+   "summary": "**Support level: supported** — 96.6% covered, and the covering includes real age encryption: the suite generates an identity, writes a `kiln.toml`, encrypts a f"
+  },
+  {
+   "name": "source-nats",
+   "module": "github.com/ubgo/cfgkit/contrib/source-nats",
+   "deps": 3,
+   "summary": "**Support level: supported** — 96.9% covered, and the covering includes a real NATS server: the suite starts one in-process with JetStream enabled, writes a buc"
+  },
+  {
+   "name": "source-s3",
+   "module": "github.com/ubgo/cfgkit/contrib/source-s3",
+   "deps": 4,
+   "summary": "**Support level: supported** — 98.1% covered, with the API faked. See the catalogue."
+  },
+  {
+   "name": "source-secretsmanager",
+   "module": "github.com/ubgo/cfgkit/contrib/source-secretsmanager",
+   "deps": 4,
+   "summary": "**Support level: supported** — 97.1% covered, with the API faked. See the catalogue."
+  },
+  {
+   "name": "source-ssm",
+   "module": "github.com/ubgo/cfgkit/contrib/source-ssm",
+   "deps": 4,
+   "summary": "**Support level: supported** — 98.1% covered, with the API faked. See the catalogue."
+  },
+  {
+   "name": "source-vault",
+   "module": "github.com/ubgo/cfgkit/contrib/source-vault",
+   "deps": 1,
+   "summary": "**Support level: supported** — every failure mode Vault can return is exercised against a fake server. See the catalogue."
+  }
+ ],
+ "packages": [
+  "cfgkittest",
+  "mock"
+ ],
+ "ubgoDeps": [
+  {
+   "name": "dotenv",
+   "from": "."
+  }
+ ],
+ "examples": [
+  {
+   "title": "Quick start",
+   "code": "type Config struct {\n\tPort     int           `env:\"PORT\"      default:\"8080\" doc:\"HTTP listen port\"`\n\tTimeout  time.Duration `env:\"TIMEOUT\"   default:\"15s\"`\n\tDBURL    string        `env:\"DATABASE_URL,required\"    doc:\"Postgres connection string\"`\n\tAPIKey   string        `env:\"API_KEY\"   secret:\"true\"  doc:\"Upstream API key\"`\n}\n\ncfg, res, err := cfgkit.Load[Config](\n\tcfgkit.WithSources(\n\t\tcfgkit.FromFiles(\".env\", \".env.local\"),\n\t\tcfgkit.FromEnviron(),   // last = highest precedence\n\t),\n)"
+  },
+  {
+   "title": "Sources",
+   "code": "cfgkit.FromEnviron()\ncfgkit.FromPrefixedEnviron(\"SVC_\")\ncfgkit.FromFiles(\".env\", \".env.local\")     // missing file is not an error\ncfgkit.FromFlagSet(fs)                     // stdlib flag\ncfgkit.FromMap(m)                          // the test seam"
+  },
+  {
+   "title": "Any backend, in five lines",
+   "code": "secrets, _ := vault.ReadAll(ctx, \"secret/data/app\")     // pre-load: Lookup runs once per field\nsrc := cfgkit.SourceFunc(\"vault\", func(key string) (string, bool, error) {\n\tv, ok := secrets[key]\n\treturn v, ok, nil\n})"
+  },
+  {
+   "title": "Any format, in five lines",
+   "code": "src := cfgkit.StructuredFunc(\"config.yaml\", func(dst any) error {\n\tb, err := os.ReadFile(\"config.yaml\")\n\tif err != nil {\n\t\treturn err\n\t}\n\treturn yaml.Unmarshal(b, dst)   // the yaml dependency is YOURS\n})"
+  }
+ ],
+ "features": [],
+ "table": "| Which source set this value | ✅ `Explain` | ❌ | ❌ | ❌ |\n| Secret masking | ✅ structural | ❌ | ❌ | ❌ |\n| Validate without booting | ✅ `Check` | ❌ | ❌ | ❌ |\n| Generate `.env.example` | ✅ `Document` | ❌ | ❌ | ❌ |\n| Valid config with zero input | ✅ pinned by a test | ❌ | ❌ | ⚠️ |\n| Flag defaults cannot beat a file | ✅ | ❌ [#671](https://github.com/spf13/viper/issues/671) | ✅ | ⚠️ |\n| Reload without a caller-side mutex | ✅ `Watcher` | ❌ | ❌ | ❌ |\n| Dependencies | 1 | many | few | several |"
+}

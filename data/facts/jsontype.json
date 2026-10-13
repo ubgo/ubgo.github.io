@@ -1,0 +1,26 @@
+{
+ "name": "jsontype",
+ "module": "github.com/ubgo/jsontype",
+ "go": "1.24",
+ "coreDeps": 0,
+ "license": "Apache-2.0",
+ "latestTag": "v0.1.0",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/jsontype",
+   "deps": 0
+  }
+ ],
+ "contrib": [],
+ "packages": [],
+ "ubgoDeps": [],
+ "examples": [
+  {
+   "title": "Quick start (with Ent or any `database/sql` ORM)",
+   "code": "import \"github.com/ubgo/jsontype\"\n\ntype User struct {\n    ID       int             `json:\"id\"`\n    Settings jsontype.JSON   `json:\"settings\"`\n}\n\n// Settings is stored as jsonb / json / TEXT in the DB and scans round-trip\n// via sql.Scanner / driver.Valuer."
+  }
+ ],
+ "features": [],
+ "table": "| `Value() (driver.Value, error)` | `database/sql/driver.Valuer`. Empty JSON → SQL NULL. |\n| `Scan(value any) error` | `database/sql.Scanner`. Accepts `[]byte`, `string`, `nil` (→ JSON `null` literal). |\n| `MarshalJSON() ([]byte, error)` | Returns raw JSON bytes (no base64 wrapping). |\n| `UnmarshalJSON(b []byte) error` | Validates input via `json.Valid` before storing. |\n| `MarshalGQL(w io.Writer)` | gqlgen Marshaler. Duck-typed; jsontype does not import gqlgen. |\n| `UnmarshalGQL(input any) error` | Accepts `string`, `[]byte`, or `map[string]any`. |\n| `From(v any) (*JSON, error)` | Marshal an arbitrary value into a `*JSON`. |"
+}
