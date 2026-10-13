@@ -112,3 +112,16 @@
 /* Brand page. */
 .dl-btn { @apply inline-flex items-center h-7 px-2.5 rounded-md border border-slate-300 dark:border-slate-700 font-medium text-slate-700 dark:text-slate-200 hover:border-brand-500 hover:text-brand-700 dark:hover:text-brand-400; }
 .swatch.copied [data-swatch-label] { @apply text-emerald-600 dark:text-emerald-400; }
+
+/* Layers diagram (layouts/_partials/layers-diagram.html). */
+.layer-chip { @apply inline-flex items-center h-6 px-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-[11.5px] text-slate-700 dark:text-slate-300 whitespace-nowrap transition-colors; }
+.layer-chip-edge { @apply border-accent bg-amber-50 text-amber-900 dark:bg-amber-500/10 dark:text-amber-200; }
+.layer-wire { fill: none; stroke: #94a3b8; stroke-opacity: .4; stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.layer-pulse { fill: none; stroke: #0891b2; stroke-width: 2; vector-effect: non-scaling-stroke; stroke-dasharray: 6 34; animation: layer-up 1.8s linear infinite; }
+.dark .layer-pulse { stroke: #22d3ee; }
+@keyframes layer-up { to { stroke-dashoffset: 40; } }
+.layer { transition: transform .2s ease, box-shadow .2s ease; }
+.layer:hover { transform: translateY(-1px); box-shadow: 0 8px 24px -12px rgba(8,145,178,.35); }
+@media (prefers-reduced-motion: reduce) { .layer-pulse { animation: none; stroke-dasharray: none; stroke-opacity: .6; } .layer, .layer:hover { transition: none; transform: none; } }
+.term-caret { display: inline-block; width: .55em; height: 1.05em; vertical-align: -0.15em; background: #22d3ee; animation: caret 1s steps(1) infinite; }
+@keyframes caret { 50% { opacity: 0; } }

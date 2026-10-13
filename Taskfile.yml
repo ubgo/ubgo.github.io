@@ -38,7 +38,7 @@ tasks:
     cmds:
       - mkdir -p {{.CLONES}}
       - |
-        grep -oE '^  - name: [a-z0-9-]+' data/libraries.yaml | awk '{print $3}' | \
+        grep -oE '^ +- name: [a-z0-9-]+' data/libraries.yaml | awk '{print $3}' | \
           GIT_TERMINAL_PROMPT=0 xargs -P 4 -I{} sh -c 'cd {{.CLONES}} && ( [ -d {} ] && git -C {} pull -q --depth 1 || git clone -q --depth 1 https://github.com/ubgo/{}.git {} ) && git ls-remote --tags https://github.com/ubgo/{}.git > {}.tags'
       - python3 -I scripts/facts.py {{.CLONES}} data/libraries.yaml data/facts
 

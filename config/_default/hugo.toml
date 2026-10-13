@@ -5,8 +5,8 @@ enableRobotsTXT = true
 disableKinds = ["taxonomy", "term", "rss"]
 
 [params]
-  description = "Focused Go libraries, plus a few TypeScript ones, for errors, logging, caching, config, SQL, GraphQL, HTTP services, crypto and tooling."
-  tagline = "Focused Go libraries for production services."
+  description = "An ecosystem of Go libraries, plus a few TypeScript ones, batteries included to build apps: errors, logging, caching, config, SQL, GraphQL, HTTP services, crypto and tooling. Every library is its own Go module."
+  tagline = "Batteries included for Go, one module at a time."
   github = "https://github.com/ubgo"
   ogImage = "og-card.png"
 

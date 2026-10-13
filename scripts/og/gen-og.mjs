@@ -112,9 +112,10 @@ function card(lib, areaTitle) {
 
 mkdirSync(OUT, { recursive: true })
 const areaTitle = Object.fromEntries(data.areas.map((a) => [a.key, a.title]))
+areaTitle.volt = "volt"
 const only = process.argv.slice(2)
 let n = 0
-for (const lib of data.libraries) {
+for (const lib of [...data.libraries, ...(data.volt?.repos ?? [])]) {
   if (only.length && !only.includes(lib.name)) continue
   const png = new Resvg(card(lib, areaTitle[lib.area]), { fitTo: { mode: "width", value: W } }).render().asPng()
   writeFileSync(join(OUT, `${lib.name}.png`), png)

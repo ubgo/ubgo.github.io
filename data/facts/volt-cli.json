@@ -1,0 +1,17 @@
+{
+ "name": "volt-cli",
+ "module": "",
+ "go": "",
+ "coreDeps": 0,
+ "license": "",
+ "latestTag": "v0.2.0",
+ "streamTags": {},
+ "branch": "main",
+ "modules": [],
+ "contrib": [],
+ "packages": [],
+ "ubgoDeps": [],
+ "examples": [],
+ "features": [],
+ "table": ""
+}

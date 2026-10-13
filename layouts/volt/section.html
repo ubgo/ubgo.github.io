@@ -1,0 +1,169 @@
+{{ define "main" }}
+{{- /* volt landing page. Every command, table row and output block below is copied
+       from the public volt READMEs (voltkit, volt-cli, volt-action, volt-demo-*);
+       the source is named under each block. Re-check them when those READMEs change. */}}
+{{- $v := hugo.Data.libraries.volt }}
+{{- $repos := $v.repos }}
+{{- $vk := index hugo.Data.facts "voltkit" }}
+<div class="relative">
+<div aria-hidden="true" class="pointer-events-none absolute inset-x-0 -top-12 h-[480px] overflow-hidden">
+  <div class="absolute left-1/2 -translate-x-1/2 -top-40 h-[460px] w-[880px] rounded-full bg-[radial-gradient(closest-side,rgba(251,191,36,0.16),transparent)] dark:bg-[radial-gradient(closest-side,rgba(251,191,36,0.10),transparent)]"></div>
+</div>
+
+<section class="relative pt-14 sm:pt-20 pb-8 grid gap-10 lg:grid-cols-[1fr_440px] items-center [&>*]:min-w-0">
+  <div>
+    <p class="inline-flex items-center gap-2 h-7 px-3 rounded-full border border-amber-300/60 dark:border-amber-500/30 bg-amber-50/80 dark:bg-amber-500/10 text-[12px] font-medium text-amber-800 dark:text-amber-200">
+      <svg viewBox="0 0 24 24" class="size-3.5" fill="currentColor" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>volt, now part of ubgo
+    </p>
+    <h1 class="mt-4 font-display font-bold text-[38px] sm:text-[54px] leading-[1.04] tracking-tight text-slate-900 dark:text-white">Build, release and ship Go CLIs, in any repo layout.</h1>
+    <p class="mt-4 max-w-xl text-[16px] leading-relaxed text-slate-600 dark:text-slate-400">volt is the layer on top of ubgo. The <span class="font-mono text-[14px]">volt</span> tool scaffolds a CLI, runs the CI gate, builds for every platform and makes tagged releases it checks after publishing. The kit modules give your CLI the parts every CLI needs, one <span class="font-mono text-[14px]">go get</span> at a time.</p>
+    <div class="mt-6 max-w-md">{{ partial "install.html" $v.install }}</div>
+    <div class="mt-4 flex flex-wrap gap-2 text-[13.5px]">
+      <a href="{{ "/volt/voltkit/" | relURL }}" class="h-10 px-5 inline-flex items-center rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-medium hover:opacity-90">voltkit</a>
+      <a href="https://github.com/ubgo/voltkit" class="h-10 px-5 inline-flex items-center rounded-lg border border-slate-300 dark:border-slate-700 hover:border-brand-500">GitHub</a>
+    </div>
+  </div>
+  {{- /* Terminal: the README's own end-to-end release */}}
+  <figure class="relative rounded-2xl border border-slate-800 bg-[#0b1220] shadow-2xl shadow-brand-900/20 overflow-hidden" data-volt-term>
+    <div class="flex items-center gap-1.5 px-3 h-9 border-b border-slate-800">
+      <span class="size-2.5 rounded-full bg-rose-500/80"></span><span class="size-2.5 rounded-full bg-amber-400/80"></span><span class="size-2.5 rounded-full bg-emerald-500/80"></span>
+      <span class="ml-2 font-mono text-[11px] text-slate-500">a release, end to end</span>
+      <button type="button" class="ml-auto h-6 px-2 rounded text-[11px] text-slate-400 hover:text-white hover:bg-slate-800" data-term-replay>Replay</button>
+    </div>
+    <pre class="p-4 font-mono text-[12.5px] leading-relaxed text-slate-300 overflow-x-auto min-h-[188px]" data-term-body><span class="text-slate-500">$</span> volt status
+<span class="text-slate-500"># what needs releasing?</span>
+<span class="text-slate-500">$</span> volt release ./cmd/notes --bump patch
+testing cmd/notes
+reserved tag <span class="text-amber-300">notes/v0.2.1</span>
+built notes_v0.2.1_darwin_arm64.tar.gz ... (5 platforms)
+<span class="text-emerald-400">released notes/v0.2.1 — 6 asset(s), verified</span></pre>
+    <figcaption class="px-4 pb-3 text-[11px] text-slate-500">From the voltkit README, "A release, end to end".</figcaption>
+  </figure>
+</section>
+
+<section class="py-8" aria-labelledby="layers">
+  <h2 id="layers" class="font-display font-semibold text-[22px] text-slate-900 dark:text-white">Where volt sits</h2>
+  <p class="mt-1 mb-4 max-w-2xl text-[14px] text-slate-600 dark:text-slate-400">ubgo libraries are the parts your code runs on. volt is the tooling that turns your code into a released, installable program. Your app sits on top of both.</p>
+  {{ partial "layers-diagram.html" (dict "compact" false) }}
+</section>
+
+<section class="py-8" aria-labelledby="commands">
+  <h2 id="commands" class="font-display font-semibold text-[22px] text-slate-900 dark:text-white">The volt tool</h2>
+  <p class="mt-1 mb-4 text-[14px] text-slate-600 dark:text-slate-400">Every command, as the voltkit README lists it.{{ with index $vk.streamTags "volt" }} Latest release of the tool: <span class="font-mono">volt/{{ . }}</span>.{{ end }}</p>
+  <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3" data-volt-commands>
+    {{- range slice
+      (dict "c" "volt new cli <name>" "d" "Scaffold a CLI from the volt-cli templates (--template cobra, --list).")
+      (dict "c" "volt status" "d" "Per-stream release state: last tag, commits since, suggested next version.")
+      (dict "c" "volt ci [dir]" "d" "The gate: gofmt, vet, golangci-lint with an embedded config, race tests. Changed modules by default; --fix applies auto-fixes.")
+      (dict "c" "volt cover [dir]" "d" "Coverage per module and a statement-weighted total. --badge writes a README badge, --check fails when it is stale, --min sets a CI floor.")
+      (dict "c" "volt build <dir> --version vX.Y.Z" "d" "Cross-compile matrix into archives and checksums.txt; the version stamp is checked in the built binary.")
+      (dict "c" "volt release <dir> <version>" "d" "Tests, reserve the tag, build, publish, then verify the published artifact. --bump, --snapshot, --from-tag.")
+      (dict "c" "volt gen" "d" "Write workflow stubs and install scripts. Hand-edited files are refused with a diff, never overwritten.")
+      (dict "c" "volt doctor" "d" "Is this repo releasable? Tools, auth, remote, version-pin drift.")
+      (dict "c" "volt upgrade" "d" "Re-apply template changes to a scaffolded project with a three-way merge, so your edits survive.")
+    }}
+    <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-3 hover:border-brand-500 transition-colors">
+      <code class="block font-mono text-[12.5px] font-medium text-slate-900 dark:text-white truncate">{{ .c }}</code>
+      <p class="mt-1 text-[12.5px] leading-snug text-slate-600 dark:text-slate-400">{{ .d }}</p>
+    </div>
+    {{- end }}
+  </div>
+  <p class="mt-2 text-[12px] text-slate-500">Also <code class="font-mono">volt gen install</code>, <code class="font-mono">volt gen skills</code> and <code class="font-mono">volt update</code>. Full list in the <a class="underline" href="https://github.com/ubgo/voltkit#the-volt-tool">voltkit README</a>.</p>
+</section>
+
+<section class="py-8 grid gap-6 lg:grid-cols-2 [&>*]:min-w-0" aria-labelledby="tags">
+  <div>
+    <h2 id="tags" class="font-display font-semibold text-[22px] text-slate-900 dark:text-white">One tag rule for every layout</h2>
+    <p class="mt-1 text-[14px] leading-relaxed text-slate-600 dark:text-slate-400">Libraries tag by directory path, because that is the only shape the Go module proxy resolves. CLIs tag by binary name. A repo that holds one thing tags bare. The same rule works for a single CLI, a library, a monorepo of CLIs and mixed repos.</p>
+    <div class="mt-3 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-slate-50 dark:bg-[#0d1117] codepanel">{{ transform.Highlight "v1.4.0                 the repo root\nnotes/v1.4.0           a CLI at cmd/notes (tag = binary name)\npkg/textutil/v0.1.0    a library submodule (tag = directory path)" "text" "" }}</div>
+    <p class="mt-2 text-[12px] text-slate-500">From the voltkit README, "The tag grammar".</p>
+  </div>
+  <div>
+    <h3 class="font-display font-semibold text-[17px] text-slate-900 dark:text-white">See it on a real monorepo</h3>
+    <p class="mt-1 text-[14px] text-slate-600 dark:text-slate-400"><a class="font-mono underline-offset-2 hover:underline" href="{{ "/volt/volt-demo-clis/" | relURL }}">volt-demo-clis</a> holds two CLIs, a root library and nested libraries. <code class="font-mono text-[12.5px]">volt status</code> shows every releasable stream and only those:</p>
+    <div class="mt-3 rounded-xl border border-slate-800 bg-[#0b1220] overflow-hidden">
+      <pre class="p-4 font-mono text-[12.5px] leading-relaxed text-slate-300 overflow-x-auto"><span class="text-slate-500">$</span> volt status
+.                library  v0.1.0    <span class="text-emerald-400">up to date</span>
+cmd/notes        cli      v0.2.0    <span class="text-emerald-400">up to date</span>
+cmd/snap         cli      v0.1.0    <span class="text-emerald-400">up to date</span>
+pkg/mathx        library  v0.1.0    <span class="text-emerald-400">up to date</span>
+pkg/textutil     library  v0.1.0    <span class="text-emerald-400">up to date</span></pre>
+    </div>
+    <p class="mt-2 text-[12px] text-slate-500">From the volt-demo-clis README. <code class="font-mono">pkg/testutil</code> is marked <code class="font-mono">internal: true</code>, so it is tested but never listed or released.</p>
+  </div>
+</section>
+
+<section class="py-8" aria-labelledby="kit">
+  <h2 id="kit" class="font-display font-semibold text-[22px] text-slate-900 dark:text-white">The kit: parts every CLI needs</h2>
+  <p class="mt-1 mb-4 max-w-2xl text-[14px] text-slate-600 dark:text-slate-400">Each is its own module with its own tag, so a CLI adopts them one at a time and picks up fixes with <code class="font-mono text-[12.5px]">go get -u</code>.</p>
+  <div class="grid gap-3 md:grid-cols-3 [&>*]:min-w-0">
+    {{- range slice
+      (dict "m" "versioncmd" "d" "A ready-made version subcommand with build provenance." "code" "root.AddCommand(versioncmd.New(versioncmd.WithBinaryName(\"mycli\")))")
+      (dict "m" "output" "d" "The stable JSON envelope every command's --json emits." "code" "output.JSON(os.Stdout, \"notes.list\", notes, len(notes))\n// → {\"schema_version\":1,\"kind\":\"notes.list\",\"count\":2,\"data\":[...]}")
+      (dict "m" "appdir" "d" "Where state lives, resolved by policy and never hardcoded; it reports which rule decided." "code" "paths, _ := appdir.Resolve(meta)")
+    }}
+    <article class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 overflow-hidden flex flex-col">
+      <div class="p-4 flex-1">
+        <div class="flex items-center justify-between gap-2"><h3 class="font-mono font-semibold text-[14px] text-slate-900 dark:text-white">{{ .m }}</h3>{{ with index $vk.streamTags .m }}<span class="font-mono text-[11px] text-slate-500">{{ . }}</span>{{ end }}</div>
+        <p class="mt-1 text-[13px] text-slate-600 dark:text-slate-400">{{ .d }}</p>
+      </div>
+      <div class="codepanel border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0d1117]">{{ transform.Highlight .code "go" "" }}</div>
+    </article>
+    {{- end }}
+  </div>
+  <p class="mt-2 text-[12px] text-slate-500">From the voltkit README, "The kit". Also <code class="font-mono">skillcmd</code>: a skills subcommand that serves the project's published skills, matched to the binary's version.</p>
+</section>
+
+<section class="py-8 grid gap-6 lg:grid-cols-2 [&>*]:min-w-0" aria-labelledby="ci">
+  <div>
+    <h2 id="ci" class="font-display font-semibold text-[22px] text-slate-900 dark:text-white">Start a CLI</h2>
+    <p class="mt-1 text-[14px] text-slate-600 dark:text-slate-400"><a class="font-mono underline-offset-2 hover:underline" href="{{ "/volt/volt-cli/" | relURL }}">volt-cli</a> holds the templates. They are fetched at a pinned tag, never main, so a bad commit there cannot break scaffolding.</p>
+    <div class="mt-3 rounded-xl border border-slate-800 bg-[#0b1220] overflow-hidden"><pre class="p-4 font-mono text-[12.5px] leading-relaxed text-slate-300 overflow-x-auto"><span class="text-slate-500">$</span> volt new cli mytool                      <span class="text-slate-500"># minimal</span>
+<span class="text-slate-500">$</span> volt new cli mytool --template cobra
+<span class="text-slate-500">$</span> volt new cli --list</pre></div>
+    <table class="mt-3 w-full text-[12.5px] border-collapse">
+      <thead><tr class="text-left text-[11px] uppercase tracking-wide text-slate-500"><th class="py-1 pr-3 font-medium">Variant</th><th class="py-1 font-medium">Gives you</th></tr></thead>
+      <tbody class="text-slate-700 dark:text-slate-300">
+        <tr class="border-t border-slate-200 dark:border-slate-800"><td class="py-1.5 pr-3 font-mono">minimal</td><td class="py-1.5">stdlib-only CLI: flag parsing, version stamping, zero dependencies</td></tr>
+        <tr class="border-t border-slate-200 dark:border-slate-800"><td class="py-1.5 pr-3 font-mono">cobra</td><td class="py-1.5">cobra root command with --version</td></tr>
+      </tbody>
+    </table>
+    <p class="mt-2 text-[12px] text-slate-500">From the volt-cli README.</p>
+  </div>
+  <div>
+    <h2 class="font-display font-semibold text-[22px] text-slate-900 dark:text-white">Run it in CI</h2>
+    <p class="mt-1 text-[14px] text-slate-600 dark:text-slate-400"><a class="font-mono underline-offset-2 hover:underline" href="{{ "/volt/volt-action/" | relURL }}">volt-action</a> installs the released volt binary, checksum-verified, and runs one command. It has no logic of its own; the pipeline lives in the binary.</p>
+    <div class="mt-3 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-slate-50 dark:bg-[#0d1117] codepanel">{{ transform.Highlight "- uses: khanakia/volt-action@v1\n  with: { args: ci }" "yaml" "" }}</div>
+    <p class="mt-2 text-[12px] text-slate-500">From the volt-action README. A release hook can stop a release before anything is created, as the volt-demo-clis README shows:</p>
+    <div class="mt-2 rounded-xl border border-slate-800 bg-[#0b1220] overflow-hidden"><pre class="p-4 font-mono text-[12px] leading-relaxed text-slate-300 overflow-x-auto"><span class="text-slate-500">$</span> RELEASE_BLOCKED=1 volt release ./cmd/notes --bump patch
+hook pre_release: ./scripts/release-gate.sh
+gate: releases are blocked (RELEASE_BLOCKED=1) — refusing notes/v0.2.1
+<span class="text-rose-400">Error: pre_release hook refused the release — nothing was tagged</span></pre></div>
+  </div>
+</section>
+
+<section class="py-8" aria-labelledby="repos">
+  <h2 id="repos" class="font-display font-semibold text-[22px] text-slate-900 dark:text-white">The volt repos</h2>
+  <p class="mt-1 mb-4 text-[14px] text-slate-600 dark:text-slate-400">The demos are real repos released with volt, and volt is tested against them.</p>
+  <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    {{- range $repos }}
+    {{- $f := index hugo.Data.facts .name }}
+    <li>
+      <a href="{{ printf "/volt/%s/" .name | relURL }}" class="group flex flex-col h-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-4 hover:border-brand-500 hover:shadow-lg hover:shadow-brand-500/5 transition">
+        <div class="flex items-center justify-between gap-2">
+          <span class="font-mono font-semibold text-[15px] text-slate-900 dark:text-white group-hover:text-brand-700 dark:group-hover:text-brand-400">{{ .name }}</span>
+          <span class="h-5 px-1.5 inline-flex items-center rounded text-[11px] font-medium bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">{{ .kind }}</span>
+        </div>
+        <p class="mt-1.5 text-[13px] leading-snug text-slate-600 dark:text-slate-400 flex-1">{{ .summary }}</p>
+        <div class="mt-3 flex flex-wrap gap-1.5 font-mono text-[11px] text-slate-500">
+          {{- with $f.latestTag }}<span class="h-5 px-1.5 inline-flex items-center rounded bg-slate-100 dark:bg-slate-800">{{ . }}</span>{{ end }}
+          {{- range $k, $t := $f.streamTags }}<span class="h-5 px-1.5 inline-flex items-center rounded bg-slate-100 dark:bg-slate-800">{{ $k }}/{{ $t }}</span>{{ end }}
+        </div>
+      </a>
+    </li>
+    {{- end }}
+  </ul>
+  <p class="mt-4 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 px-4 py-3 text-[13.5px] text-slate-600 dark:text-slate-400">App starters are coming.</p>
+</section>
+</div>
+{{ end }}

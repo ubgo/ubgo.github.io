@@ -1,0 +1,69 @@
+{{- /*
+  The three layers: ubgo libraries at the bottom, voltkit tooling in the middle,
+  your app on top. Every chip is a real public repo or module; the one drawn edge
+  (versioncmd -> buildinfo) is a real go.mod require read from data/facts.
+  "App starters" is shown only as "coming", per the owner (no names).
+  Context: dict "compact" bool (home uses the compact version).
+*/ -}}
+{{- $d := hugo.Data.libraries }}
+{{- $vk := index hugo.Data.facts "voltkit" }}
+{{- $kit := slice }}{{ range $vk.modules }}{{ if not (hasPrefix .dir "apps") }}{{ $kit = $kit | append .dir }}{{ end }}{{ end }}
+{{- $edge := index (where $vk.ubgoDeps "name" "buildinfo") 0 }}
+{{- $base := slice "errx" "logger" "cache" "cfgkit" "sqlb" "lock" "health" "shutdown" "buildinfo" "crypt" }}
+<div class="layers relative rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/40 backdrop-blur p-3 sm:p-5 overflow-hidden" data-layers>
+  <div aria-hidden="true" class="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(148,163,184,0.18)_1px,transparent_0)] bg-[size:18px_18px] [mask-image:linear-gradient(to_bottom,black,transparent)]"></div>
+
+  {{- /* Layer 3: your app */}}
+  <div class="layer relative rounded-xl border border-dashed border-slate-300 dark:border-slate-600 bg-white/80 dark:bg-slate-900/70 p-3 sm:p-4" data-layer="app">
+    <div class="flex flex-wrap items-baseline justify-between gap-2">
+      <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">3 · Your app</p>
+      <p class="text-[12px] text-slate-500 dark:text-slate-400">A CLI, a library or a service</p>
+    </div>
+    <div class="mt-2 flex flex-wrap gap-1.5">
+      {{- range slice "mytool  (volt new cli)" "your library" "your service" }}<span class="layer-chip">{{ . }}</span>{{ end }}
+      <span class="layer-chip border-dashed text-slate-400 dark:text-slate-500">app starters are coming</span>
+    </div>
+  </div>
+
+  <svg class="relative block w-full h-8 sm:h-10" viewBox="0 0 600 40" preserveAspectRatio="none" aria-hidden="true">
+    {{- range slice 120 300 480 }}<path d="M{{ . }} 38 V2" class="layer-wire"/><path d="M{{ . }} 38 V2" class="layer-pulse"/>{{ end }}
+  </svg>
+
+  {{- /* Layer 2: voltkit */}}
+  <div class="layer relative rounded-xl border border-brand-500/40 bg-gradient-to-br from-brand-50 to-white dark:from-brand-500/10 dark:to-slate-900/60 p-3 sm:p-4" data-layer="volt">
+    <div class="flex flex-wrap items-baseline justify-between gap-2">
+      <p class="text-[11px] font-semibold uppercase tracking-wider text-brand-700 dark:text-brand-400">2 · volt tooling</p>
+      <a href="{{ "/volt/voltkit/" | relURL }}" class="font-mono text-[12px] text-brand-700 dark:text-brand-400 hover:underline">voltkit →</a>
+    </div>
+    <div class="mt-2 grid gap-2 sm:grid-cols-2">
+      <div>
+        <p class="text-[12px] text-slate-500 dark:text-slate-400">The volt tool</p>
+        <div class="mt-1 flex flex-wrap gap-1.5">{{ range slice "new" "status" "ci" "cover" "build" "release" "gen" }}<span class="layer-chip font-mono">volt {{ . }}</span>{{ end }}</div>
+      </div>
+      <div>
+        <p class="text-[12px] text-slate-500 dark:text-slate-400">Kit modules you import</p>
+        <div class="mt-1 flex flex-wrap gap-1.5">{{ range $kit }}<span class="layer-chip font-mono{{ if and $edge (eq . $edge.from) }} layer-chip-edge{{ end }}"{{ if and $edge (eq . $edge.from) }} data-edge-from{{ end }}>{{ . }}</span>{{ end }}</div>
+      </div>
+    </div>
+  </div>
+
+  <svg class="relative block w-full h-8 sm:h-10" viewBox="0 0 600 40" preserveAspectRatio="none" aria-hidden="true">
+    {{- range slice 120 300 480 }}<path d="M{{ . }} 38 V2" class="layer-wire"/><path d="M{{ . }} 38 V2" class="layer-pulse"/>{{ end }}
+  </svg>
+
+  {{- /* Layer 1: ubgo libraries */}}
+  <div class="layer relative rounded-xl border border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-900/80 p-3 sm:p-4" data-layer="ubgo">
+    <div class="flex flex-wrap items-baseline justify-between gap-2">
+      <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">1 · ubgo libraries</p>
+      <a href="{{ "/libraries/" | relURL }}" class="text-[12px] text-brand-700 dark:text-brand-400 hover:underline">all {{ len $d.libraries }} →</a>
+    </div>
+    <div class="mt-2 flex flex-wrap gap-1.5">
+      {{- range $base }}<a href="{{ printf "/libraries/%s/" . | relURL }}" class="layer-chip font-mono hover:border-brand-500{{ if and $edge (eq . $edge.name) }} layer-chip-edge{{ end }}"{{ if and $edge (eq . $edge.name) }} data-edge-to{{ end }}>{{ . }}</a>{{ end }}
+      <span class="layer-chip text-slate-400">+{{ sub (len $d.libraries) (len $base) }} more</span>
+    </div>
+  </div>
+
+  {{- with $edge }}
+  <p class="relative mt-3 text-[12px] text-slate-600 dark:text-slate-400 flex items-center gap-2"><span class="inline-block h-0.5 w-6 rounded bg-accent"></span>Real link: voltkit's <code class="font-mono">{{ .from }}</code> module requires <a class="font-mono underline-offset-2 hover:underline" href="{{ "/libraries/buildinfo/" | relURL }}">ubgo/buildinfo</a> in its go.mod.</p>
+  {{- end }}
+</div>

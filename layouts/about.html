@@ -1,9 +1,29 @@
 {{ define "main" }}
 {{- $d := hugo.Data.libraries }}
-<article class="pt-8 max-w-3xl prose-ubgo">
-  <h1>About ubgo</h1>
-  <p>ubgo is a collection of libraries, mostly for Go, with a few for TypeScript, all with their source on GitHub. Each library does one job and lives in its own repository, so a service imports only the parts it uses. There are {{ len $d.libraries }} public libraries across {{ len $d.areas }} areas.</p>
-  <p>ubgo is maintained by <a href="https://github.com/khanakia">Aman Bansal</a>. Issues and pull requests go to each library's own repository.</p>
+<div class="relative">
+<div aria-hidden="true" class="pointer-events-none absolute inset-x-0 -top-10 h-64 bg-[radial-gradient(ellipse_at_top,rgba(8,145,178,0.14),transparent_60%)]"></div>
+<header class="relative pt-12 pb-6 max-w-3xl">
+  <p class="text-[12px] font-semibold uppercase tracking-wider text-brand-700 dark:text-brand-400">About</p>
+  <h1 class="mt-1 font-display font-bold text-[34px] sm:text-[44px] leading-[1.05] tracking-tight text-slate-900 dark:text-white">Why ubgo exists</h1>
+  <p class="mt-4 text-[16.5px] leading-relaxed text-slate-700 dark:text-slate-300">Building an app means solving the same problems again and again: errors, logs, caching, configuration, locks, health checks, shutting down cleanly. Laravel answers that for PHP with components for caching, logging, configuration and more that come with the framework. ubgo is that kind of ecosystem for Go, batteries included to build apps.</p>
+  <p class="mt-3 text-[16.5px] leading-relaxed text-slate-700 dark:text-slate-300">The difference is how it is packaged. Every piece is its own Go module, so a service imports only what it uses. The main libraries share the same conventions, a small core, adapters outside it and a shared test suite, so learning one teaches you the next.</p>
+</header>
+
+<section class="relative py-6" aria-labelledby="compare">
+  <h2 id="compare" class="font-display font-semibold text-[22px] text-slate-900 dark:text-white">How ubgo compares</h2>
+  <p class="mt-1 mb-4 max-w-2xl text-[14px] text-slate-600 dark:text-slate-400">ubgo is not one framework you adopt whole. It is a set of Go modules that follow the same rules. Every point below is checked against the repos.</p>
+  {{ partial "compare.html" . }}
+</section>
+
+<section class="relative py-6" aria-labelledby="volt">
+  <h2 id="volt" class="font-display font-semibold text-[22px] text-slate-900 dark:text-white">volt, the layer on top</h2>
+  <p class="mt-1 mb-4 max-w-2xl text-[14px] text-slate-600 dark:text-slate-400">ubgo libraries are the parts your code runs on. <a class="text-brand-700 dark:text-brand-400 hover:underline" href="{{ "/volt/" | relURL }}">volt</a> is the tooling that turns your code into a released, installable program.</p>
+  {{ partial "layers-diagram.html" (dict "compact" false) }}
+</section>
+
+<article class="relative pt-6 max-w-3xl prose-ubgo">
+  <p class="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 px-4 py-3 not-prose">More libraries are on the way.</p>
+  <p>ubgo is maintained by <a href="https://github.com/khanakia">Aman Bansal</a>. There are {{ len $d.libraries }} public libraries across {{ len $d.areas }} areas, plus the volt repos. Issues and pull requests go to each repository.</p>
   <h2>Principles</h2>
   <p>These are true of the libraries named under each one, as stated in their own READMEs. They are not promised for every library.</p>
   {{- range $d.principles }}
@@ -22,4 +42,5 @@
   <h2>Install</h2>
   <p>Go libraries install with <code>go get github.com/ubgo/&lt;name&gt;</code>. A few repos use a different module path or a sub-module; each library page shows the exact line from its README.</p>
 </article>
+</div>
 {{ end }}
