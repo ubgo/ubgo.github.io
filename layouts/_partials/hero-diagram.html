@@ -1,1 +1,151 @@
-{{/* Hero diagram slot: owned by the hero/map work. */}}
+{{- /*
+  Hero diagram: one library's real core, the adapters that plug into it, and (only
+  where libraries.yaml lists one) the shared conformance suite that proves them.
+  assets/js/hero.js draws the SVG from the JSON below; without JS the static list
+  under <noscript> still says what the diagram shows.
+
+  Where the adapters come from, per library (a curated choice, written down here):
+    family   cache: its family members of kind "library" that do not carry their own
+             suite (cache-obj is a separate object cache with its own objtest suite)
+    packages lock: its backend packages (each its own Go module) plus contrib/
+    contrib  everyone else: the modules under contrib/ in data/facts/<name>.json
+*/ -}}
+{{- $libs := hugo.Data.libraries.libraries }}
+{{- $pills := slice
+  (dict "name" "cache" "source" "family")
+  (dict "name" "sqlb" "source" "contrib")
+  (dict "name" "cfgkit" "source" "contrib")
+  (dict "name" "logger" "source" "contrib")
+  (dict "name" "health" "source" "contrib")
+  (dict "name" "lock" "source" "packages")
+  (dict "name" "shutdown" "source" "contrib")
+  (dict "name" "errx" "source" "contrib")
+}}
+{{- $base := "/libraries/" | relURL }}
+{{- $out := slice }}
+{{- range $pills }}
+  {{- $name := .name }}
+  {{- $source := .source }}
+  {{- $lib := index (where $libs "name" $name) 0 }}
+  {{- $f := index hugo.Data.facts $name }}
+  {{- $ads := slice }}
+  {{- if eq $source "family" }}
+    {{- range where $libs "family" $name }}
+      {{- if and (not .kind) (not .suite) }}
+        {{- $ads = $ads | append (dict "name" .name "href" (printf "%s%s/" $base .name) "own" true) }}
+      {{- end }}
+    {{- end }}
+  {{- else }}
+    {{- if eq $source "packages" }}
+      {{- range $f.packages }}
+        {{- $ads = $ads | append (dict "name" . "href" (printf "%s%s/" $base $name)) }}
+      {{- end }}
+    {{- end }}
+    {{- range $f.contrib }}
+      {{- $ads = $ads | append (dict "name" .name "href" (printf "%s%s/" $base $name) "contrib" true) }}
+    {{- end }}
+  {{- end }}
+  {{- if $ads }}
+    {{- $out = $out | append (dict
+      "name" $name
+      "href" (printf "%s%s/" $base $name)
+      "summary" $lib.summary
+      "source" $source
+      "go" $f.go
+      "coreDeps" $f.coreDeps
+      "license" $f.license
+      "tag" $f.latestTag
+      "suite" $lib.suite
+      "adapters" $ads
+    ) }}
+  {{- end }}
+{{- end }}
+{{- if $out }}
+<section aria-labelledby="hero-diagram-h" class="pb-8" data-hero>
+  <div class="relative overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/40">
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 px-3 sm:px-4 pt-3">
+      <div class="min-w-0 mr-auto">
+        <h2 id="hero-diagram-h" class="font-display font-semibold text-[15px] text-slate-900 dark:text-white">A small core. Adapters outside it.</h2>
+        <p class="text-[12.5px] text-slate-500 dark:text-slate-400">Pick a library to see its real core and the modules that plug into it.</p>
+      </div>
+      <div class="flex flex-wrap gap-1" role="group" aria-label="Show library">
+        {{- range $i, $p := $out }}
+        <button type="button" class="hd-pill" data-hero-pill="{{ $p.name }}" aria-pressed="{{ if eq $i 0 }}true{{ else }}false{{ end }}" aria-controls="hero-svg">{{ $p.name }}</button>
+        {{- end }}
+      </div>
+    </div>
+    <div class="relative px-1 sm:px-2" data-hero-stage>
+      <svg id="hero-svg" class="hd-svg block w-full" role="img" aria-labelledby="hero-svg-title hero-svg-desc" data-hero-svg>
+        <title id="hero-svg-title">{{ (index $out 0).name }}: core and adapters</title>
+        <desc id="hero-svg-desc"></desc>
+      </svg>
+      <noscript>
+        <ul class="px-3 pb-3 text-[13px] text-slate-600 dark:text-slate-400">
+          {{- range $out }}<li><a class="font-mono text-slate-900 dark:text-white" href="{{ .href }}">{{ .name }}</a>: {{ len .adapters }} {{ if eq .source "contrib" }}contrib modules{{ else }}backends{{ end }}</li>{{ end }}
+        </ul>
+      </noscript>
+    </div>
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-slate-200 dark:border-slate-800 px-3 sm:px-4 py-2 text-[12px] text-slate-500 dark:text-slate-400" data-hero-foot>
+      <p class="min-w-0 mr-auto" data-hero-caption aria-live="polite"></p>
+      <ul class="flex flex-wrap items-center gap-x-3 gap-y-1" data-hero-legend aria-label="Legend">
+        <li class="inline-flex items-center gap-1.5"><svg class="size-3" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="6" class="fill-emerald-600 dark:fill-emerald-400"/><path d="M3.3 6.2l1.8 1.8 3.6-3.8" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="dark:stroke-slate-900"/></svg>passes the suite</li>
+        <li class="inline-flex items-center gap-1.5" data-hero-legend-fail><svg class="size-3" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5.25" fill="none" stroke-width="1.5" class="stroke-rose-600 dark:stroke-rose-400"/><path d="M4 4l4 4M8 4l-4 4" stroke-width="1.5" stroke-linecap="round" class="stroke-rose-600 dark:stroke-rose-400"/></svg>does not pass</li>
+      </ul>
+    </div>
+  </div>
+  <script type="application/json" id="hero-data">{{ $out | jsonify | safeJS }}</script>
+</section>
+<style>
+  /* Scoped to the hero diagram. Colors are tokens so light and dark share one SVG. */
+  [data-hero] {
+    --hd-node: #ffffff; --hd-node-stroke: #cbd5e1; --hd-text: #0f172a; --hd-muted: #64748b;
+    --hd-wire: #cbd5e1; --hd-flow: #0891b2; --hd-dot: #e2e8f0; --hd-pass: #059669; --hd-fail: #e11d48;
+    --hd-chip: #f1f5f9; --hd-chip-text: #334155; --hd-suite: #ecfeff; --hd-suite-stroke: #a5f3fc; --hd-check-ink: #ffffff;
+  }
+  .dark [data-hero] {
+    --hd-node: #0f172a; --hd-node-stroke: #334155; --hd-text: #e2e8f0; --hd-muted: #94a3b8;
+    --hd-wire: #334155; --hd-flow: #22d3ee; --hd-dot: #1e293b; --hd-pass: #34d399; --hd-fail: #fb7185;
+    --hd-chip: #1e293b; --hd-chip-text: #cbd5e1; --hd-suite: rgba(8,145,178,.12); --hd-suite-stroke: rgba(34,211,238,.35); --hd-check-ink: #0b1220;
+  }
+  .hd-pill { height: 1.625rem; padding: 0 .55rem; border-radius: 999px; font: 500 12px/1 var(--font-mono); color: var(--hd-chip-text); background: var(--hd-node); border: 1px solid var(--hd-node-stroke); transition: background-color .15s, color .15s, border-color .15s; cursor: pointer; }
+  .hd-pill:hover { border-color: var(--hd-flow); color: var(--hd-text); }
+  .hd-pill[aria-pressed="true"] { background: #0891b2; border-color: #0891b2; color: #fff; }
+  .hd-svg { font-family: var(--font-sans); overflow: visible; }
+  .hd-svg text { fill: var(--hd-text); }
+  .hd-svg .hd-mono { font-family: var(--font-mono); }
+  .hd-svg .hd-muted { fill: var(--hd-muted); }
+  .hd-svg .hd-node rect { fill: var(--hd-node); stroke: var(--hd-node-stroke); transition: stroke .15s; }
+  .hd-svg .hd-node:hover rect, .hd-svg .hd-node:focus-visible rect { stroke: var(--hd-flow); }
+  .hd-svg .hd-node:focus { outline: none; }
+  .hd-svg .hd-node:focus-visible rect { stroke-width: 2; }
+  .hd-svg .hd-node.is-pass rect { stroke: color-mix(in srgb, var(--hd-pass) 55%, var(--hd-node-stroke)); }
+  .hd-svg .hd-node.is-fail rect { stroke: color-mix(in srgb, var(--hd-fail) 55%, var(--hd-node-stroke)); stroke-dasharray: 4 3; }
+  .hd-svg .hd-more rect { fill: var(--hd-chip); stroke: var(--hd-node-stroke); stroke-dasharray: 3 3; }
+  .hd-svg .hd-wire { fill: none; stroke: var(--hd-wire); stroke-width: 1.5; }
+  .hd-svg .hd-flow { fill: none; stroke: var(--hd-flow); stroke-width: 1.5; stroke-dasharray: 2 10; stroke-linecap: round; opacity: .9; animation: hd-flow 1.6s linear infinite; }
+  .hd-svg .hd-wire.is-fail { stroke-dasharray: 4 4; }
+  .hd-svg .hd-dots { fill: var(--hd-dot); }
+  .hd-svg .hd-chip rect { fill: var(--hd-chip); }
+  .hd-svg .hd-chip text { fill: var(--hd-chip-text); }
+  .hd-svg .hd-suite rect.hd-suite-box { fill: var(--hd-suite); stroke: var(--hd-suite-stroke); }
+  .hd-svg .hd-pass-dot { fill: var(--hd-pass); }
+  .hd-svg .hd-check { fill: none; stroke: var(--hd-check-ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 12; stroke-dashoffset: 12; }
+  .hd-svg .is-in .hd-check { animation: hd-tick .35s ease-out forwards; animation-delay: var(--d, 0s); }
+  .hd-svg .hd-fail-ring { fill: var(--hd-node); stroke: var(--hd-fail); stroke-width: 1.5; }
+  .hd-svg .hd-fail-x { stroke: var(--hd-fail); stroke-width: 1.6; stroke-linecap: round; }
+  .hd-svg .hd-scan { fill: none; stroke: var(--hd-flow); stroke-width: 2; opacity: 0; }
+  .hd-svg .hd-anim { transition: transform .55s cubic-bezier(.2,.8,.2,1), opacity .35s ease; }
+  .hd-svg .hd-draw { transition: stroke-dashoffset .6s cubic-bezier(.4,0,.2,1); }
+  .hd-svg .hd-fade { transition: opacity .3s ease; }
+  @keyframes hd-flow { to { stroke-dashoffset: -24; } }
+  @keyframes hd-tick { to { stroke-dashoffset: 0; } }
+  @keyframes hd-pulse { 0%, 100% { opacity: .0; } 50% { opacity: .55; } }
+  .hd-svg .hd-halo { fill: none; stroke: var(--hd-flow); stroke-width: 1; animation: hd-pulse 3.2s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) {
+    .hd-svg .hd-flow, .hd-svg .hd-halo { animation: none; }
+    .hd-svg .hd-flow { opacity: 0; }
+    .hd-svg .hd-check { stroke-dashoffset: 0; animation: none !important; }
+    .hd-svg .hd-anim, .hd-svg .hd-draw, .hd-svg .hd-fade, .hd-pill { transition: none !important; }
+  }
+</style>
+{{- end }}
