@@ -1,0 +1,142 @@
+{{ define "main" }}
+{{- /*
+  Library map: every public library as a node, grouped by area, with only real
+  edges. assets/js/map.js draws and drives the SVG from the JSON below. Edge
+  sources (all read here, nothing inferred in the template):
+    family / examples  libraries.yaml `family` (an examples repo's family is an
+                       "examples" edge) and `examplesRepo`
+    interop            libraries.yaml `interop`
+    replaced by        libraries.yaml `replacedBy`
+    depends on         data/facts/<name>.json `ubgoDeps` (go.mod requires)
+*/ -}}
+{{- $d := hugo.Data.libraries }}
+{{- $nodes := slice }}
+{{- range $d.libraries }}
+  {{- $lic := "" }}
+  {{- $deps := slice }}
+  {{- with index hugo.Data.facts .name }}{{ $lic = .license }}{{ $deps = .ubgoDeps }}{{ end }}
+  {{- $nodes = $nodes | append (dict
+    "name" .name "area" .area "summary" .summary "kind" (.kind | default "library") "lang" .lang
+    "featured" (.featured | default false) "family" .family "examplesRepo" (index . "examplesrepo")
+    "interop" .interop "replacedBy" (index . "replacedby")
+    "license" $lic "deps" $deps
+  ) }}
+{{- end }}
+{{- $areas := slice }}
+{{- range $d.areas }}{{ $areas = $areas | append (dict "key" .key "title" .title) }}{{ end }}
+<div class="pt-8 pb-3">
+  <h1 class="font-display font-bold text-[26px] tracking-tight text-slate-900 dark:text-white">Library map</h1>
+  <p class="mt-1 max-w-3xl text-slate-600 dark:text-slate-400">All {{ len $d.libraries }} public libraries, grouped by area. Every line is a real link: family members, example repos, go.mod requires, the byte-compatible crypt pair and one replacement. <span class="hidden sm:inline">Drag to pan, scroll or pinch to zoom, hover a library to see what it touches.</span><span class="sm:hidden">Tap a library to see what it touches, tap again to open it.</span></p>
+</div>
+
+<div class="sticky top-12 z-10 -mx-4 px-4 bg-white/95 dark:bg-ink/95 backdrop-blur py-2 flex flex-wrap items-center gap-2" data-map-tools>
+  <label class="sr-only" for="map-q">Search libraries</label>
+  <input id="map-q" type="search" placeholder="Search the map" autocomplete="off" class="h-7 w-full sm:w-56 px-2 rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-[13px] placeholder:text-slate-400">
+  <div class="flex flex-wrap gap-1" role="group" aria-label="Filter by area">
+    <button type="button" data-map-area="" aria-pressed="true" class="lib-chip">All</button>
+    {{- range $d.areas }}
+    <button type="button" data-map-area="{{ .key }}" aria-pressed="false" class="lib-chip">{{ .title }}</button>
+    {{- end }}
+  </div>
+  <span class="ml-auto text-[12px] text-slate-500 tabular-nums" data-map-count aria-live="polite"></span>
+</div>
+
+<ul class="mt-1 mb-2 flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-slate-600 dark:text-slate-400" aria-label="Edge types" data-map-legend>
+  <li class="inline-flex items-center gap-1.5"><svg width="26" height="8" aria-hidden="true"><line x1="1" y1="4" x2="25" y2="4" class="mp-e-family"/></svg>family member</li>
+  <li class="inline-flex items-center gap-1.5"><svg width="26" height="8" aria-hidden="true"><line x1="1" y1="4" x2="25" y2="4" class="mp-e-examples"/></svg>examples</li>
+  <li class="inline-flex items-center gap-1.5"><svg width="26" height="8" aria-hidden="true"><line x1="1" y1="4" x2="25" y2="4" class="mp-e-depends"/></svg>depends on (go.mod)</li>
+  <li class="inline-flex items-center gap-1.5"><svg width="26" height="8" aria-hidden="true"><line x1="1" y1="4" x2="25" y2="4" class="mp-e-interop"/></svg>byte-compatible</li>
+  <li class="inline-flex items-center gap-1.5"><svg width="26" height="8" aria-hidden="true"><line x1="1" y1="4" x2="25" y2="4" class="mp-e-replaced"/></svg>replaced by</li>
+</ul>
+
+<section class="mp relative mb-8" data-map data-base="{{ "/libraries/" | relURL }}" aria-label="Library map">
+  <div class="mp-stage relative overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/40" data-map-stage>
+    <svg class="mp-svg block w-full" role="img" aria-labelledby="map-svg-title" data-map-svg>
+      <title id="map-svg-title">Graph of {{ len $d.libraries }} ubgo libraries in {{ len $d.areas }} areas and the links between them</title>
+    </svg>
+    <div class="mp-zoom absolute left-2 bottom-2 hidden sm:flex flex-col rounded-lg border border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-900/90 backdrop-blur shadow-sm overflow-hidden" data-map-zoom>
+      <button type="button" class="size-7 inline-flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-zoom="in" aria-label="Zoom in" title="Zoom in (+)"><svg class="size-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg></button>
+      <button type="button" class="size-7 inline-flex items-center justify-center border-y border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-zoom="out" aria-label="Zoom out" title="Zoom out (−)"><svg class="size-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M3 8h10"/></svg></button>
+      <button type="button" class="size-7 inline-flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-zoom="reset" aria-label="Fit the whole map" title="Fit (0)"><svg class="size-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 6V2.5H6M10 2.5h3.5V6M13.5 10v3.5H10M6 13.5H2.5V10"/></svg></button>
+    </div>
+    <p class="absolute right-3 bottom-2 hidden sm:block text-[11px] text-slate-400 tabular-nums pointer-events-none" data-map-scale></p>
+  </div>
+  <aside class="mp-panel hidden" data-map-panel aria-live="polite"></aside>
+  <noscript>
+    <p class="mt-3 text-[13px] text-slate-600 dark:text-slate-400">The map needs JavaScript. The <a class="text-brand-700 dark:text-brand-400 underline" href="{{ "/libraries/" | relURL }}">library list</a> has every library.</p>
+  </noscript>
+  <script type="application/json" id="map-data">{{ dict "areas" $areas "nodes" $nodes | jsonify | safeJS }}</script>
+</section>
+<style>
+  /* Scoped to the map. Colors are tokens so light and dark share one SVG. */
+  .mp, [data-map-legend] {
+    --mp-node: #ffffff; --mp-node-stroke: #cbd5e1; --mp-text: #0f172a; --mp-muted: #64748b; --mp-dot: #e2e8f0;
+    --mp-cluster: rgba(255,255,255,.7); --mp-cluster-stroke: #e2e8f0; --mp-area: #475569;
+    --mp-family: #0891b2; --mp-examples: #7c3aed; --mp-depends: #64748b; --mp-interop: #d97706; --mp-replaced: #e11d48;
+    --mp-hl: #0891b2; --mp-match: #fbbf24;
+  }
+  .dark .mp, .dark [data-map-legend] {
+    --mp-node: #0f172a; --mp-node-stroke: #334155; --mp-text: #e2e8f0; --mp-muted: #94a3b8; --mp-dot: #1e293b;
+    --mp-cluster: rgba(15,23,42,.55); --mp-cluster-stroke: #1e293b; --mp-area: #94a3b8;
+    --mp-family: #22d3ee; --mp-examples: #a78bfa; --mp-depends: #94a3b8; --mp-interop: #fbbf24; --mp-replaced: #fb7185;
+    --mp-hl: #22d3ee; --mp-match: #fbbf24;
+  }
+  .mp-stage { touch-action: none; }
+  @media (min-width: 640px) { .mp-stage { height: clamp(480px, calc(100vh - 300px), 820px); cursor: grab; } .mp-stage.is-panning { cursor: grabbing; } .mp-svg { height: 100%; } }
+  @media (max-width: 639.98px) { .mp-stage { touch-action: pan-y; } }
+  .mp-svg { font-family: var(--font-sans); user-select: none; -webkit-user-select: none; }
+  .mp-svg text { fill: var(--mp-text); }
+  .mp-svg .mp-dots { fill: var(--mp-dot); }
+  .mp-svg .mp-cluster rect { fill: var(--mp-cluster); stroke: var(--mp-cluster-stroke); }
+  .mp-svg .mp-cluster text { fill: var(--mp-area); font: 600 11px var(--font-sans); letter-spacing: .06em; text-transform: uppercase; }
+  .mp-svg .mp-cluster text tspan { fill: var(--mp-muted); font-weight: 500; }
+  .mp-svg .mp-node { cursor: pointer; }
+  .mp-svg .mp-node:focus { outline: none; }
+  .mp-svg .mp-node rect.mp-pill { fill: var(--mp-node); stroke: var(--mp-node-stroke); stroke-width: 1; transition: stroke .15s, fill .15s; }
+  .mp-svg .mp-node text { font: 500 12px var(--font-mono); }
+  .mp-svg .mp-node .mp-tag { font: 600 9px var(--font-sans); fill: var(--mp-muted); letter-spacing: .04em; }
+  .mp-svg .mp-node.is-featured rect.mp-pill { stroke: color-mix(in srgb, var(--mp-hl) 45%, var(--mp-node-stroke)); }
+  .mp-svg .mp-node.k-examples rect.mp-pill { stroke-dasharray: 3 3; }
+  .mp-svg .mp-node.k-deprecated text.mp-label { fill: var(--mp-muted); text-decoration: line-through; }
+  .mp-svg .mp-node:hover rect.mp-pill, .mp-svg .mp-node:focus-visible rect.mp-pill, .mp-svg .mp-node.is-active rect.mp-pill { stroke: var(--mp-hl); stroke-width: 2; }
+  .mp-svg .mp-node.is-match rect.mp-pill { stroke: var(--mp-match); stroke-width: 2; fill: color-mix(in srgb, var(--mp-match) 14%, var(--mp-node)); }
+  .mp-svg .mp-node.is-peek rect.mp-pill { stroke: var(--mp-match); stroke-width: 2; }
+  .mp-svg.is-focus .mp-node.is-peek { opacity: 1; }
+  .mp-svg .mp-node.is-active rect.mp-pill { fill: color-mix(in srgb, var(--mp-hl) 12%, var(--mp-node)); }
+  .mp-svg .mp-edge { fill: none; stroke-width: 1.4; opacity: .55; transition: opacity .2s; }
+  .mp-svg .mp-edge-hit { fill: none; stroke: transparent; stroke-width: 10; }
+  .mp-svg .mp-elabel { font: 500 10px var(--font-mono); fill: var(--mp-muted); paint-order: stroke; stroke: var(--mp-node); stroke-width: 3px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+  .mp-e-family { stroke: var(--mp-family); stroke-width: 1.6; }
+  .mp-e-examples { stroke: var(--mp-examples); stroke-width: 1.4; stroke-dasharray: 5 4; }
+  .mp-e-depends { stroke: var(--mp-depends); stroke-width: 1.2; }
+  .mp-e-interop { stroke: var(--mp-interop); stroke-width: 2.4; }
+  .mp-e-replaced { stroke: var(--mp-replaced); stroke-width: 1.6; stroke-dasharray: 1.5 3.5; stroke-linecap: round; }
+  .mp-svg marker path { stroke: none; }
+  .mp-svg .mk-family { fill: var(--mp-family); } .mp-svg .mk-examples { fill: var(--mp-examples); } .mp-svg .mk-depends { fill: var(--mp-depends); }
+  .mp-svg .mk-interop { fill: var(--mp-interop); } .mp-svg .mk-replaced { fill: var(--mp-replaced); }
+  /* Focus mode: a node (or a search/filter) is highlighted, everything else dims. */
+  .mp-svg .mp-node, .mp-svg .mp-cluster { transition: opacity .2s; }
+  .mp-svg.is-focus .mp-node:not(.is-lit) { opacity: .22; }
+  .mp-svg.is-focus .mp-edge:not(.is-lit) { opacity: .06; }
+  .mp-svg.is-focus .mp-edge.is-lit { opacity: 1; stroke-width: 2.2; }
+  .mp-svg.is-focus .mp-elabel.is-lit { opacity: 1; }
+  .mp-svg.is-filter .mp-cluster:not(.is-lit) { opacity: .35; }
+  .mp-svg.is-filter:not(.is-focus) .mp-node:not(.is-lit) { opacity: .22; }
+  .mp-svg.is-filter:not(.is-focus) .mp-edge:not(.is-lit) { opacity: .06; }
+  .mp-svg.is-filter:not(.is-focus) .mp-edge.is-lit { opacity: .8; }
+  .mp-svg.is-phone .mp-edge:not(.is-lit), .mp-svg.is-phone .mp-elabel:not(.is-lit) { opacity: 0; }
+  .mp-svg .mp-world { transition: none; }
+  .mp-svg .mp-world.is-glide { transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+  .mp-panel { font-size: 13px; }
+  @media (min-width: 640px) {
+    .mp-panel { position: absolute; top: .5rem; right: .5rem; width: 19rem; max-height: calc(100% - 1rem); overflow: auto; }
+  }
+  @media (max-width: 639.98px) {
+    .mp-panel { position: fixed; left: .5rem; right: .5rem; bottom: .5rem; z-index: 30; max-height: 46vh; overflow: auto; border-radius: .75rem; }
+    .mp.has-panel { padding-bottom: 46vh; } /* so the last area can scroll above the docked panel */
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mp-svg .mp-world.is-glide, .mp-svg .mp-node, .mp-svg .mp-cluster, .mp-svg .mp-edge, .mp-svg .mp-elabel { transition: none !important; }
+  }
+</style>
+{{ end }}
