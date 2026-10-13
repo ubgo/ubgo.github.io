@@ -117,18 +117,22 @@
  "examples": [
   {
    "title": "Example",
+   "lang": "go",
    "code": "err := errx.New(\"db: deadlock on user_orders\").\n    WithDomain(\"billing\").WithCode(\"TX_RETRY\").\n    WithPublic(\"Something went wrong, please retry\").\n    WithRetryable(0).\n    WithSafe(\"shard\", \"eu-1\")          // safe field — survives to logs/wire\n    // .With(\"token\", secret)          // unsafe field — auto-redacted at any boundary\n\nhttpx.Write(w, r, err)                  // → 503 application/problem+json\nslog.Error(\"request failed\", \"err\", err) // structured, redacted, fingerprinted"
   },
   {
    "title": "Quick start",
+   "lang": "go",
    "code": "package main\n\nimport (\n\t\"fmt\"\n\n\t\"github.com/ubgo/errx\"\n)\n\nfunc loadOrder(id string) error {\n\t// ... db call fails ...\n\treturn errx.New(\"db: no rows for order \" + id).\n\t\tWithDomain(\"orders\").\n\t\tWithCode(\"NOT_FOUND\").\n\t\tWithPublic(\"Order not found\").\n\t\tWithHint(\"verify the order id\").\n\t\tWithSafe(\"order_id\", id)\n}\n\nfunc main() {\n\terr := loadOrder(\"o-42\")\n\n\tfmt.Println(err.Error())                    // operator message (logs)\n\tfmt.Println(errx.Get(err).Public(\"error\"))  // end-user-safe message\n\tfmt.Println(errx.Code(err))                 // NOT_FOUND\n\tfmt.Println(errx.Get(err).Fingerprint())    // stable grouping key\n}"
   },
   {
    "title": "Identity, class, severity",
+   "lang": "go",
    "code": "errx.New(\"…\").\n    WithDomain(\"billing\").          // namespace\n    WithCode(\"CARD_DECLINED\").      // stable machine code\n    WithClass(errx.ClassExpected).  // ClassExpected | ClassDefect | ClassCancelled\n    WithSeverity(errx.SevWarn).     // SevDebug | SevInfo | SevWarn | SevError | SevFatal\n    WithRetryable(3 * time.Second). // retryable + suggested delay\n    WithOwner(\"payments\")           // routing/alerting"
   },
   {
    "title": "Messages: operator vs end-user vs localized",
+   "lang": "go",
    "code": "errx.New(\"pq: deadlock detected on user_orders\"). // operator (logs, .Error())\n    WithPublic(\"Something went wrong, please retry\"). // end-user-safe\n    WithLocalized(\"fr-FR\", \"Une erreur est survenue\"). // i18n (BCP-47)\n    WithLocalized(\"ja\", \"エラーが発生しました\")\n\ne := errx.Get(err)\ne.Public(\"fallback\")          // end-user message, never the operator detail\ne.Localized(\"fr-CA\", \"fb\")    // → French message via language fallback (fr-CA → fr-FR)"
   }
  ],

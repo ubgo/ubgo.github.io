@@ -18,7 +18,7 @@ read from the repo itself, never guessed:
   contrib     contrib/<name> folders: {name, module, deps, summary}
   packages    top-level Go package folders (backends like lock/redislock)
   ubgoDeps    other ubgo libraries required by any go.mod: {name, from}
-  examples    up to 4 short Go code blocks from the README: {title, code}
+  examples    up to 4 short Go or TypeScript code blocks from the README: {title, lang, code}
   features    bullet points from the README's feature section
   table       first README table about backends/adapters, as markdown
 """
@@ -100,10 +100,11 @@ def readme_parts(repo):
                 in_code = False
                 code = "\n".join(buf).rstrip()
                 n = len(buf)
-                if lang == "go" and 4 <= n <= 32 and len(examples) < 4 and "..." not in code[:20]:
+                lang = {"typescript": "ts", "golang": "go"}.get(lang, lang)
+                if lang in ("go", "ts") and 4 <= n <= 32 and len(examples) < 4 and "..." not in code[:20]:
                     title = plain(heading) or "Example"
                     if title not in [e["title"] for e in examples]:
-                        examples.append({"title": title, "code": code})
+                        examples.append({"title": title, "lang": lang, "code": code})
             i += 1
             continue
         if in_code:

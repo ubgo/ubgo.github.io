@@ -55,4 +55,6 @@ A few use a sub-module or a different module path. Each repo's README, and its p
 
 **Where are the docs?** Each repository's README, plus its page on pkg.go.dev (or npm for the TypeScript ones). The [library index]({{ $site }}/libraries/) links to both.
 
+**What license are they under?** Each repository has its own LICENSE file. Today: {{ $byLicense := dict }}{{ range $d.libraries }}{{ $f := index hugo.Data.facts .name }}{{ $k := or $f.license "no LICENSE file" }}{{ $byLicense = merge $byLicense (dict $k (add (index $byLicense $k | default 0) 1)) }}{{ end }}{{ $i := 0 }}{{ range $k, $n := $byLicense }}{{ if $i }}, {{ end }}{{ $k }} ({{ $n }}){{ $i = add $i 1 }}{{ end }}. Check the LICENSE file before you use a library.
+
 **Where do I report a bug?** Open an issue in that library's repository.

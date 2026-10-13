@@ -108,18 +108,22 @@
  "examples": [
   {
    "title": "HTTP server with database and Redis",
+   "lang": "go",
    "code": "mgr := shutdown.New(shutdown.WithBudget(30 * time.Second))\n\nsrv := &http.Server{Addr: \":8080\", Handler: r}\n_ = shutdownnethttp.Register(mgr, srv)\n\n_ = mgr.Register(\"db\",    closeFn(db.Close),  shutdown.WithPhase(shutdown.PhaseCloseClients))\n_ = mgr.Register(\"redis\", closeFn(rdb.Close), shutdown.WithPhase(shutdown.PhaseCloseClients))\n\ngo func() { _ = srv.ListenAndServe() }()\n_ = mgr.Listen(ctx)"
   },
   {
    "title": "Background worker (actor pattern)",
+   "lang": "go",
    "code": "stop := make(chan struct{})\n\nhandle, _ := mgr.RegisterActor(\"worker\", func(_ error) {\n    close(stop) // tell the run loop to exit\n}, shutdown.WithActorPhase(shutdown.PhaseDrainTraffic))\n\ngo func() {\n    err := worker.Run(stop) // blocks until stop is closed\n    handle.Done(err)         // tells the manager the actor finished\n}()"
   },
   {
    "title": "Programmatic shutdown — no OS signals",
+   "lang": "go",
    "code": "mux.HandleFunc(\"/admin/shutdown\", func(w http.ResponseWriter, r *http.Request) {\n    if !authorized(r) { w.WriteHeader(http.StatusForbidden); return }\n    go func() {\n        _ = mgr.Shutdown(context.Background()) // same execution path as a signal\n    }()\n    w.WriteHeader(http.StatusAccepted)\n})"
   },
   {
    "title": "Reload signal (SIGHUP / SIGUSR1) — Gunicorn-style",
+   "lang": "go",
    "code": "mgr.OnSignal(syscall.SIGHUP, func(ctx context.Context, _ os.Signal) {\n    if err := config.Reload(); err != nil {\n        log.Println(\"reload failed:\", err)\n    }\n})\nmgr.OnSignal(syscall.SIGUSR1, func(ctx context.Context, _ os.Signal) {\n    rotateLogFile()\n})"
   }
  ],

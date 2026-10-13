@@ -19,10 +19,12 @@
  "examples": [
   {
    "title": "DefaultIfEmpty(val *uuid.UUID) uuid.UUID",
+   "lang": "go",
    "code": "gouuid.DefaultIfEmpty(nil) // output: 00000000-0000-0000-0000-000000000000\n\nuid := uuid.New()\ngouuid.DefaultIfEmpty(&uid) // output: some uid b7729c88-47e9-42a7-92d3-3e6bcc585f73"
   },
   {
    "title": "ParseToDefault(val string) uuid.UUID",
+   "lang": "go",
    "code": "ParseToDefault(\"not_uid\") // output: 00000000-0000-0000-0000-000000000000\n\nuid := uuid.New().String()\nresult = ParseToDefault(uid) // output: some uid b7729c88-47e9-42a7-92d3-3e6bcc585f73"
   }
  ],

@@ -242,18 +242,22 @@
  "examples": [
   {
    "title": "Quick start",
+   "lang": "go",
    "code": "type Config struct {\n\tPort     int           `env:\"PORT\"      default:\"8080\" doc:\"HTTP listen port\"`\n\tTimeout  time.Duration `env:\"TIMEOUT\"   default:\"15s\"`\n\tDBURL    string        `env:\"DATABASE_URL,required\"    doc:\"Postgres connection string\"`\n\tAPIKey   string        `env:\"API_KEY\"   secret:\"true\"  doc:\"Upstream API key\"`\n}\n\ncfg, res, err := cfgkit.Load[Config](\n\tcfgkit.WithSources(\n\t\tcfgkit.FromFiles(\".env\", \".env.local\"),\n\t\tcfgkit.FromEnviron(),   // last = highest precedence\n\t),\n)"
   },
   {
    "title": "Sources",
+   "lang": "go",
    "code": "cfgkit.FromEnviron()\ncfgkit.FromPrefixedEnviron(\"SVC_\")\ncfgkit.FromFiles(\".env\", \".env.local\")     // missing file is not an error\ncfgkit.FromFlagSet(fs)                     // stdlib flag\ncfgkit.FromMap(m)                          // the test seam"
   },
   {
    "title": "Any backend, in five lines",
+   "lang": "go",
    "code": "secrets, _ := vault.ReadAll(ctx, \"secret/data/app\")     // pre-load: Lookup runs once per field\nsrc := cfgkit.SourceFunc(\"vault\", func(key string) (string, bool, error) {\n\tv, ok := secrets[key]\n\treturn v, ok, nil\n})"
   },
   {
    "title": "Any format, in five lines",
+   "lang": "go",
    "code": "src := cfgkit.StructuredFunc(\"config.yaml\", func(dst any) error {\n\tb, err := os.ReadFile(\"config.yaml\")\n\tif err != nil {\n\t\treturn err\n\t}\n\treturn yaml.Unmarshal(b, dst)   // the yaml dependency is YOURS\n})"
   }
  ],

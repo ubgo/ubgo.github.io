@@ -19,6 +19,7 @@
  "examples": [
   {
    "title": "GinContextFromContext(ctx context.Context) (*gin.Context, error)",
+   "lang": "go",
    "code": "gc, err := gql_fn.GinContextFromContext(ctx)\nif err != nil {\n  return false\n}"
   }
  ],

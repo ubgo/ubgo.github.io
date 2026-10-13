@@ -24,14 +24,17 @@
  "examples": [
   {
    "title": "Quick start",
+   "lang": "go",
    "code": "package main\n\nimport (\n\t\"context\"\n\t\"log\"\n\t\"time\"\n\n\t\"github.com/redis/go-redis/v9\"\n\trediscache \"github.com/ubgo/cache-redis\"\n)\n\nfunc main() {\n\trdb := redis.NewClient(&redis.Options{Addr: \"localhost:6379\"})\n\n\tc := rediscache.New(rdb, rediscache.WithPrefix(\"svc:billing\"))\n\tdefer c.Close()\n\n\tctx := context.Background()\n\n\tif err := c.Set(ctx, \"invoice:42\", []byte(`{\"total\":1999}`), time.Minute); err != nil {\n\t\tlog.Fatal(err)\n\t}\n\n\tb, err := c.Get(ctx, \"invoice:42\") // (nil, cache.ErrNotFound) on miss\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\tlog.Printf(\"%s\", b)\n}"
   },
   {
    "title": "`WithPrefix(p string) Option`",
+   "lang": "go",
    "code": "billing := rediscache.New(rdb, rediscache.WithPrefix(\"svc:billing\"))\nsearch  := rediscache.New(rdb, rediscache.WithPrefix(\"svc:search\"))\n\n_ = billing.Set(ctx, \"k\", []byte(\"a\"), time.Minute)\n_ = search.Set(ctx, \"k\", []byte(\"b\"), time.Minute)\n\n_ = billing.Flush(ctx)            // wipes only svc:billing:*\nok, _ := search.Has(ctx, \"k\")     // still true — search is isolated"
   },
   {
    "title": "Cross-process invalidation (Redis Pub/Sub)",
+   "lang": "go",
    "code": "inv := rediscache.NewInvalidation(rdb, \"cache:invalidate\")\n\ntc := tieredcache.New(\n\ttieredcache.WithL1(memCache),               // nanosecond local hits\n\ttieredcache.WithL2(rediscache.New(rdb)),    // shared across pods\n\ttieredcache.WithInvalidation(inv),          // Pub/Sub coherence\n)\ndefer tc.Close()"
   }
  ],

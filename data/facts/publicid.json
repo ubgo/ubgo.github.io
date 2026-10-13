@@ -19,10 +19,12 @@
  "examples": [
   {
    "title": "Quick start",
+   "lang": "go",
    "code": "package main\n\nimport (\n    \"fmt\"\n\n    \"github.com/ubgo/publicid\"\n)\n\nfunc main() {\n    id, err := publicid.New()\n    if err != nil { panic(err) }\n    fmt.Println(id) // e.g. \"k7n3p9q2x8m4r6t1v5y0w8z3\"\n}"
   },
   {
    "title": "Validation",
+   "lang": "go",
    "code": "if err := publicid.Validate(\"user_id\", input); err != nil {\n    return err\n}\n// or with custom length:\nif err := publicid.ValidateN(\"short_code\", code, 7); err != nil { ... }"
   }
  ],

@@ -24,18 +24,22 @@
  "examples": [
   {
    "title": "Reading",
+   "lang": "go",
    "code": "f, err := dotenv.Open(\".env\")     // a missing file is not an error\nif err != nil {\n\treturn err\n}\n\nv, ok := f.Get(\"DATABASE_URL\")\nf.Has(\"DATABASE_URL\")\nf.Keys()      // active keys, in file order, deduplicated\nf.Pairs()     // active pairs, in file order, duplicates included\nf.Map()       // effective view: last occurrence wins"
   },
   {
    "title": "Writing",
+   "lang": "go",
    "code": "created := f.Set(\"API_KEY\", \"secret\")   // updates in place, or appends\nf.Unset(\"OLD_KEY\", false)               // comments it out — reversible\nf.Unset(\"OLD_KEY\", true)                // removes it outright\nerr := f.Save()                         // atomic"
   },
   {
    "title": "Generating a file",
+   "lang": "go",
    "code": "f := dotenv.Parse(\"\")\nf.Append(\n    dotenv.NewComment(\"------------------\", \"DATABASE\", \"------------------\"),\n    dotenv.NewPair(\"DB_HOST\", \"localhost\"),\n    dotenv.NewPair(\"DB_PORT\", \"5432\"),\n    dotenv.NewBlank(),\n    dotenv.NewComment(\"------------------\", \"AUTH\", \"------------------\"),\n    dotenv.NewPair(\"AUTH_SECRET\", \"change me\"),\n)\nf.Path = \".env.example\"\nf.Save()"
   },
   {
    "title": "Disabled settings",
+   "lang": "go",
    "code": "for _, e := range f.Entries() {\n    switch e.Kind {\n    case dotenv.KindPair:         // active\n    case dotenv.KindDisabledPair: // turned off, but Key and Value are readable\n    case dotenv.KindComment:      // prose\n    case dotenv.KindBlank:\n    case dotenv.KindOther:        // unrecognised, preserved verbatim\n    }\n}\n\nf.Disabled()   // []Pair of every commented-out setting, in file order"
   }
  ],

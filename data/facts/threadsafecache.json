@@ -19,10 +19,12 @@
  "examples": [
   {
    "title": "Example",
+   "lang": "go",
    "code": "import \"github.com/ubgo/threadsafecache\"\n\nc, _ := threadsafecache.New[string](\n    1024,                     // LRU size\n    5 * time.Minute,          // TTL (0 = disabled)\n)\n\nc.Set(\"user:42\", payload)\n\nif v, ok := c.Get(\"user:42\"); ok {\n    use(v)\n}"
   },
   {
    "title": "Options",
+   "lang": "go",
    "code": "threadsafecache.New[int](\n    1024, ttl,\n    threadsafecache.WithClock[int](myFakeClock),  // tests only\n)"
   }
  ],

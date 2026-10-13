@@ -1,8 +1,8 @@
 {{ define "main" }}
 {{- $libs := hugo.Data.libraries.libraries }}
 {{- $areas := hugo.Data.libraries.areas }}
-<div class="pt-8 pb-3">
-  <h1 class="font-display font-bold text-[26px] tracking-tight text-slate-900 dark:text-white">Libraries</h1>
+<div class="pt-10 pb-3">
+  <h1 class="font-display font-bold text-[32px] tracking-tight text-slate-900 dark:text-white">Libraries</h1>
   <p class="mt-1 text-slate-600 dark:text-slate-400">Every public ubgo library. Press <kbd class="font-mono text-[11px] px-1 rounded border border-slate-300 dark:border-slate-700">/</kbd> to search, <kbd class="font-mono text-[11px] px-1 rounded border border-slate-300 dark:border-slate-700">Esc</kbd> to clear.</p>
 </div>
 
@@ -25,18 +25,23 @@
       <th scope="col" class="py-1.5 pr-3 font-medium">Name</th>
       <th scope="col" class="py-1.5 pr-3 font-medium hidden sm:table-cell">Area</th>
       <th scope="col" class="py-1.5 pr-3 font-medium hidden sm:table-cell">Description</th>
-      <th scope="col" class="py-1.5 font-medium hidden md:table-cell">Lang</th>
+      <th scope="col" class="py-1.5 pr-3 font-medium hidden md:table-cell">Lang</th>
+      <th scope="col" class="py-1.5 pr-3 font-medium hidden lg:table-cell">Tag</th>
+      <th scope="col" class="py-1.5 font-medium hidden lg:table-cell">License</th>
     </tr>
   </thead>
   <tbody>
     {{- range $areas }}
     {{- $a := . }}
     {{- range sort (where $libs "area" .key) "name" }}
-    <tr class="border-b border-slate-100 dark:border-slate-800/70 hover:bg-slate-50 dark:hover:bg-slate-900/50 align-top" data-lib data-area="{{ .area }}" data-text="{{ lower (printf "%s %s %s" .name .summary $a.title) }}">
-      <td class="py-1.5 pr-3 sm:whitespace-nowrap"><a href="{{ printf "/libraries/%s/" .name | relURL }}" class="font-mono font-medium text-slate-900 dark:text-white hover:text-brand-700 dark:hover:text-brand-400">{{ .name }}</a> {{ partial "kind-badge.html" . }}<p class="sm:hidden mt-0.5 text-slate-600 dark:text-slate-300">{{ .summary }}</p></td>
+    <tr class="border-b border-slate-100 dark:border-slate-800/70 hover:bg-slate-50 dark:hover:bg-slate-900/50 align-top" data-lib data-area="{{ .area }}" data-text="{{ lower (printf "%s %s %s %s" .name .summary $a.title (index hugo.Data.facts .name).license) }}">
+      <td class="py-1.5 pr-3 sm:whitespace-nowrap"><a href="{{ printf "/libraries/%s/" .name | relURL }}" class="font-mono font-medium text-slate-900 dark:text-white hover:text-brand-700 dark:hover:text-brand-400">{{ .name }}</a> {{ partial "kind-badge.html" . }}{{ with .suite }} <span class="inline-flex items-center h-5 px-1.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-200" title="Shared conformance suite">{{ .name }}</span>{{ end }}<p class="sm:hidden mt-0.5 text-slate-600 dark:text-slate-300">{{ .summary }}</p></td>
       <td class="py-1.5 pr-3 whitespace-nowrap text-slate-500 dark:text-slate-400 hidden sm:table-cell">{{ $a.title }}</td>
       <td class="py-1.5 pr-3 text-slate-600 dark:text-slate-300 hidden sm:table-cell">{{ .summary }}</td>
-      <td class="py-1.5 text-slate-500 dark:text-slate-400 hidden md:table-cell">{{ .lang }}</td>
+      <td class="py-1.5 pr-3 text-slate-500 dark:text-slate-400 hidden md:table-cell">{{ .lang }}</td>
+      {{- $f := index hugo.Data.facts .name }}
+      <td class="py-1.5 pr-3 font-mono text-[12px] text-slate-500 dark:text-slate-400 hidden lg:table-cell whitespace-nowrap">{{ or $f.latestTag "–" }}</td>
+      <td class="py-1.5 text-[12px] text-slate-500 dark:text-slate-400 hidden lg:table-cell whitespace-nowrap">{{ or $f.license "–" }}</td>
     </tr>
     {{- end }}
     {{- end }}

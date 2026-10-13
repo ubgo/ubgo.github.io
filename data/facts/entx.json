@@ -75,18 +75,22 @@
  "examples": [
   {
    "title": "entcascade",
+   "lang": "go",
    "code": "// One annotation on the schema\nfunc (User) Annotations() []schema.Annotation {\n    return []schema.Annotation{\n        entcascade.Cascade(),\n    }\n}"
   },
   {
    "title": "entgqlmulti",
+   "lang": "go",
    "code": "// Schema annotation — expose Chatbot in dashboard API (full CRUD) and public API (read-only)\nfunc (Chatbot) Annotations() []schema.Annotation {\n    return []schema.Annotation{\n        entgqlmulti.ApiConfig(map[string][]entgqlmulti.ApiTarget{\n            \"apidash\": {{Query: true, Mutations: true, Filters: true}},\n            \"apipub\":  {{TypeName: \"PublicBot\", Fields: []string{\"name\", \"avatar\"}, Query: true}},\n        }),\n    }\n}"
   },
   {
    "title": "entpoly",
+   "lang": "go",
    "code": "// Comment can attach to any AllowedTypes parent (Post, Video, Image, …)\nfunc (Comment) Mixin() []ent.Mixin {\n    return []ent.Mixin{entpoly.MorphMixin(\"commentable\", entpoly.MixinAllowed(Post.Type, Video.Type))}\n}\n\nfunc (Comment) Edges() []ent.Edge {\n    return []ent.Edge{\n        entpoly.MorphTo(\"commentable\", Post.Type, Video.Type).\n            Required().     // hook rejects unset / cleared writes\n            Touch().        // bumps parent.updated_at on save\n            Cascade().      // deletes children when parent dies\n            SoftDelete().   // filters soft-deleted parents on read\n            GQL(),          // emits union Commentable = Post | Video for gqlgen\n    }\n}"
   },
   {
    "title": "entreadonly",
+   "lang": "go",
    "code": "// app's projection of authmgr's auth_users — read it, never write it\nfunc (User) Annotations() []schema.Annotation {\n    return []schema.Annotation{\n        entsql.Annotation{Table: \"auth_users\"},\n        entreadonly.ReadOnly(), // app.User.Create() etc. won't even exist\n    }\n}"
   }
  ],

@@ -68,18 +68,22 @@
  "examples": [
   {
    "title": "60-second tour: code that works for every backend",
+   "lang": "go",
    "code": "package payments\n\nimport (\n    \"context\"\n    \"errors\"\n\n    \"github.com/ubgo/lock\"\n)\n\ntype Service struct {\n    locks lock.Locker\n}\n\nfunc (s *Service) DailyExport(ctx context.Context) error {\n    h, err := s.locks.Acquire(ctx, \"daily-export\")\n    if errors.Is(err, lock.ErrLocked) {\n        return nil // another worker is on it; skip\n    }\n    if err != nil {\n        return err\n    }\n    defer h.Release()\n\n    return s.runExport(ctx)\n}"
   },
   {
    "title": "1. Cron-singleton across N replicas of a service",
+   "lang": "go",
    "code": "locks := redislock.NewFactory(rdb, redislock.WithTTL(10*time.Minute))\n\nerr := locks.WithLock(ctx, \"midnight-billing\", processBilling)\nif errors.Is(err, redislock.ErrLocked) {\n    log.Info(\"billing run already in progress on another replica\")\n    return nil\n}\nreturn err"
   },
   {
    "title": "2. \"Skip if already running\" — single-host CLI",
+   "lang": "go",
    "code": "fl := flock.New(\"nightly-import\", flock.WithDir(\"/var/run\"))\nholder, err := fl.Acquire(ctx)\nif errors.Is(err, flock.ErrLocked) {\n    log.Println(\"previous run still active; skipping\")\n    return\n}\ndefer holder.Release()\nrunImport(ctx)"
   },
   {
    "title": "3. Fencing tokens — defend against the GC-pause scenario",
+   "lang": "go",
    "code": "holder, _ := locks.Acquire(ctx, \"payment-export\")\ndefer holder.Release()\nfence := holder.Token()  // monotonic uint64\n\nif err := s3.PutWithFence(ctx, \"payments/today.csv\", data, fence); err != nil {\n    return err\n}"
   }
  ],

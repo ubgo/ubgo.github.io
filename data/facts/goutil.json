@@ -19,10 +19,12 @@
  "examples": [
   {
    "title": "SnakeCase(str string) string",
+   "lang": "go",
    "code": "goutil.SnakeCase(\"Lucian Khanakia\") // output: luci_khanakia\ngoutil.SnakeCase(\"kebab-case\") // output: kebab_case\ngoutil.SnakeCase(\"Id0Value\") // output: id0_value\ngoutil.SnakeCase(\"ID0Value\") // output: id0_value\ngoutil.SnakeCase(\"HTTPRequest\") // output: http_request"
   },
   {
    "title": "ToJSON(val interface{}) (string, error)",
+   "lang": "go",
    "code": "type Student struct {\n  Name   string `json:\"name\"`\n  RoleNo int    `json:\"roleNo\"`\n}\n\nstudent := Student{\n  Name:   \"Lucian\",\n  RoleNo: 7,\n}\n\nfmt.Println(goutil.ToJSON(student))\n// out: {\"name\":\"Lucian\",\"roleNo\":7}\n\nfmt.Println(goutil.ToJSONIndent(student))\n// out:\n{\n  \"name\": \"Lucian\",\n  \"roleNo\": 7\n}\n\ngoutil.PrintToJSON(student)\n// out:\n{\n  \"name\": \"Lucian\",\n  \"roleNo\": 7\n}"
   }
  ],

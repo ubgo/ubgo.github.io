@@ -111,18 +111,22 @@
  "examples": [
   {
    "title": "Checked three times, not claimed once",
+   "lang": "go",
    "code": "dist := vector.L2(embedding, vector.ParamVector(query))\n\n_, err := sqlb.NewSelect(sqlb.SQLiteDialect{}).Columns(sqlb.Bind(dist, &d)).From(docs).Build()\n// err: sqlb: construct is not supported by this dialect\n//      vector.L2 under dialect \"sqlite\""
   },
   {
    "title": "1. Declare your tables",
+   "lang": "go",
    "code": "package users\n\nimport (\n\t\"time\"\n\n\t\"github.com/ubgo/sqlb\"\n)\n\nvar Table = sqlb.Table{Name: \"app_user\", Alias: \"u\"}\n\nvar (\n\tID        = sqlb.Col[string](Table, \"id\")\n\tEmail     = sqlb.Col[string](Table, \"email\")\n\tCreatedAt = sqlb.Col[time.Time](Table, \"created_at\")\n)"
   },
   {
    "title": "2. Open a database",
+   "lang": "go",
    "code": "import driverpgx \"github.com/ubgo/sqlb/contrib/driver-pgx\"\n\ndb, err := driverpgx.Open(\"postgres://user:pass@localhost:5432/app?sslmode=disable\")\nif err != nil {\n\treturn err\n}\ndefer db.Close()"
   },
   {
    "title": "3. Fix the dialect once",
+   "lang": "go",
    "code": "import \"github.com/ubgo/sqlb/pg\"\n\nq, err := pg.Select().Columns(sqlb.Bind(users.Email, &email)).\n\tFrom(users.Table).\n\tWhere(sqlb.Eq(users.ID, \"usr_1\")).\n\tBuild()"
   }
  ],

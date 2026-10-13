@@ -104,7 +104,7 @@
     <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 p-2 sm:p-4">
       {{- $sub := cond (ne $f.module "") (printf "core · %d direct deps" (int $f.coreDeps)) (printf "%s · %s" $l.lang (or $f.license "")) }}
       <div class="sm:hidden">{{ partial "arch-diagram.html" (dict "core" $l.name "sub" $sub "groups" . "suite" (cond (isset $suite "name") $suite.name "") "cols" 2 "width" 340) }}</div>
-      <div class="hidden sm:block">{{ partial "arch-diagram.html" (dict "core" $l.name "sub" $sub "groups" . "suite" (cond (isset $suite "name") $suite.name "") "cols" 3 "width" 720) }}</div>
+      <div class="hidden sm:block max-w-[760px] mx-auto">{{ partial "arch-diagram.html" (dict "core" $l.name "sub" $sub "groups" . "suite" (cond (isset $suite "name") $suite.name "") "cols" 3 "width" 720) }}</div>
     </div>
     {{- with $suite }}
     <p class="mt-2 text-[13px] text-slate-600 dark:text-slate-400"><code class="font-mono text-[12.5px]">{{ .name }}</code> is the shared conformance suite: each one marked green has a test that runs it.{{ with .note }} {{ . }}{{ end }}</p>
@@ -137,7 +137,7 @@
           </div>
           {{- range $i, $e := . }}
           <div role="tabpanel" id="panel-{{ $i }}" aria-labelledby="tab-{{ $i }}" class="codepanel"{{ if ne $i 0 }} hidden{{ end }}>
-            {{ transform.Highlight $e.code "go" "" }}
+            {{ transform.Highlight $e.code (or $e.lang "go") "" }}
           </div>
           {{- end }}
         </div>
