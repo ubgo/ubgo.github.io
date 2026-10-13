@@ -99,18 +99,22 @@
  "examples": [
   {
    "title": "1. The simplest possible logger",
+   "lang": "go",
    "code": "package main\n\nimport logger \"github.com/ubgo/logger\"\n\nfunc main() {\n\tlog := logger.New() // JSON to stderr at Info\n\tdefer log.Close()\n\n\tlog.Info(\"server started\", logger.String(\"addr\", \":8080\"), logger.Int(\"pid\", 4242))\n}"
   },
   {
    "title": "2. Use a preset",
+   "lang": "go",
    "code": "log := logger.Development() // pretty, colored, Debug, caller — for local dev\n// or\nlog := logger.Production()  // JSON, Info, async, sampled — for services\ndefer log.Close()"
   },
   {
    "title": "4. Wire it as the standard `slog` logger (so all libraries benefit)",
+   "lang": "go",
    "code": "import \"log/slog\"\n\nslog.SetDefault(log.NewSlog())\nslog.Info(\"now every slog call in your deps flows through ubgo/logger\")"
   },
   {
    "title": "5. Build a production pipeline",
+   "lang": "go",
    "code": "log := logger.New(\n\tlogger.WithLevel(logger.LevelInfo),\n\tlogger.WithProcessors(\n\t\tlogger.NewPathRedactor(logger.Mask, \"[REDACTED]\", \"*.password\", \"*.token\"),\n\t\tlogger.NewSampleProcessor(100, 100), // first 100, then 1/100 — never drops ERROR\n\t),\n\tlogger.WithTransport(logger.NewDisruptorTransport(\n\t\tlogger.NewWriterSink(os.Stderr, logger.NewJSONEncoder(), logger.LevelInfo),\n\t\t8192, logger.DropNewest,\n\t)),\n)\ndefer log.Close() // drains the async ring"
   }
  ],

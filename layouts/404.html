@@ -1,6 +1,20 @@
 {{ define "main" }}
-<div class="py-20 text-center">
-  <h1 class="font-display font-bold text-[28px] text-slate-900 dark:text-white">Page not found</h1>
-  <p class="mt-2 text-slate-600 dark:text-slate-400">That page does not exist. Try the <a class="text-brand-700 dark:text-brand-400 underline" href="{{ "/libraries/" | relURL }}">library list</a> or the <a class="text-brand-700 dark:text-brand-400 underline" href="{{ "/" | relURL }}">home page</a>.</p>
+<div class="relative py-20 sm:py-28 text-center">
+  <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 top-0 h-72 bg-[radial-gradient(ellipse_at_top,rgba(8,145,178,0.16),transparent_60%)]"></div>
+  <svg viewBox="0 0 512 512" class="relative mx-auto size-24" aria-hidden="true">
+    <defs><linearGradient id="nf" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0891B2"/><stop offset="1" stop-color="#155E75"/></linearGradient></defs>
+    <rect width="512" height="512" rx="112" fill="url(#nf)"/>
+    <path d="M176 140 V276 a80 80 0 0 0 160 0 V140" stroke="#fff" stroke-width="64" stroke-linecap="round" fill="none"/>
+    <rect x="360" y="60" width="60" height="60" rx="14" fill="#FBBF24" transform="rotate(18 390 90)"/>
+  </svg>
+  <p class="relative mt-6 font-mono text-[13px] text-brand-700 dark:text-brand-400">404</p>
+  <h1 class="relative mt-1 font-display font-bold text-[30px] sm:text-[36px] tracking-tight text-slate-900 dark:text-white">This block fell out of the socket</h1>
+  <p class="relative mt-2 text-slate-600 dark:text-slate-400">That page does not exist. Search for a library, or start from one of these.</p>
+  <div class="relative mt-6 flex flex-wrap justify-center gap-2 text-[13px]">
+    <button type="button" data-palette-open class="h-9 px-4 inline-flex items-center gap-2 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-medium">Search <kbd data-palette-key class="font-mono text-[11px] opacity-70">Ctrl K</kbd></button>
+    <a class="h-9 px-4 inline-flex items-center rounded-lg border border-slate-300 dark:border-slate-700 hover:border-brand-500" href="{{ "/libraries/" | relURL }}">All libraries</a>
+    <a class="h-9 px-4 inline-flex items-center rounded-lg border border-slate-300 dark:border-slate-700 hover:border-brand-500" href="{{ "/map/" | relURL }}">Library map</a>
+    <a class="h-9 px-4 inline-flex items-center rounded-lg border border-slate-300 dark:border-slate-700 hover:border-brand-500" href="{{ "/" | relURL }}">Home</a>
+  </div>
 </div>
 {{ end }}

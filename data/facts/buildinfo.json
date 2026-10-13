@@ -108,14 +108,17 @@
  "examples": [
   {
    "title": "Quick start",
+   "lang": "go",
    "code": "package main\n\nimport (\n    \"log\"\n\n    \"github.com/ubgo/buildinfo\"\n)\n\nfunc main() {\n    info := buildinfo.Get()\n    log.Printf(\"starting %s commit=%s go=%s\",\n        info.Version, info.Commit, info.GoVersion)\n}"
   },
   {
    "title": "Provenance — which input won",
+   "lang": "go",
    "code": "info := buildinfo.Get()\nlog.Printf(\"starting %s (%s)\", info.Version, info.Source)\n\nif !info.HasVersion() {\n    log.Println(\"warning: unstamped build\")\n}"
   },
   {
    "title": "API",
+   "lang": "go",
    "code": "// Auto-populated, cached after first call.\ninfo := buildinfo.Get()\n\n// Flat string-only map for simple renderers.\nm := buildinfo.Map()\n\n// JSON-marshalled bytes for HTTP / log payloads.\nb, _ := info.JSON()"
   }
  ],

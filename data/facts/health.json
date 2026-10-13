@@ -152,14 +152,17 @@
  "examples": [
   {
    "title": "How the pieces fit together",
+   "lang": "go",
    "code": "reg := health.NewRegistry()\nreg.Register(healthredis.New(\"cache\", redisClient))     // CHECKER\nreg.Register(healthpostgres.New(\"db\",  pgxPool))        // CHECKER\nhealthotel.Register(reg)                                // OBSERVER\nhealthgin.Mount(r, reg)                                 // RENDERER"
   },
   {
    "title": "Quick start",
+   "lang": "go",
    "code": "package main\n\nimport (\n    \"context\"\n    \"log\"\n    \"time\"\n\n    \"github.com/ubgo/health\"\n)\n\ntype pingChecker struct{ name string }\n\nfunc (p *pingChecker) Name() string { return p.name }\n\nfunc (p *pingChecker) Check(ctx context.Context) health.Result {\n    // Run your dependency check here. Set Status, Error, Latency, etc.\n    return health.Result{Status: health.StatusUp}\n}\n\nfunc main() {\n    reg := health.NewRegistry()\n    _ = reg.Register(&pingChecker{name: \"db\"})\n    _ = reg.Register(&pingChecker{name: \"cache\"})\n\n    ctx := context.Background()\n    reg.Start(ctx, 30*time.Second) // background re-checks every 30s\n    defer reg.Stop()\n\n    snap := reg.SnapshotForProbe(health.ProbeReadiness)\n    log.Printf(\"ready=%s\", snap.Status)\n}"
   },
   {
    "title": "Observer pattern",
+   "lang": "go",
    "code": "reg.Subscribe(func(name string, r health.Result) {\n    if r.Status == health.StatusDown {\n        slack.Notify(\"check failed: \" + name)\n    }\n})"
   }
  ],

@@ -24,6 +24,7 @@
  "examples": [
   {
    "title": "How to use",
+   "lang": "go",
    "code": "type User struct {\n  TagIDs gormuuid.UUIDArray  `gorm:\"type:uuid[]\"` // Column will take {} as default\n}\n\nvar tagIds gormuuid.UUIDArray = []uuid.UUID{uuid.New(), uuid.New()}\ndb.Create(&User{\n  TagIDs: tagIds,\n})"
   }
  ],

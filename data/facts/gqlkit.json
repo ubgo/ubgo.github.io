@@ -57,14 +57,22 @@
  "examples": [
   {
    "title": "Quick Start — Go",
+   "lang": "go",
    "code": "import (\n    \"gqlkit/pkg/graphqlclient\"\n    \"yourmodule/sdk/queries\"\n    \"yourmodule/sdk/fields\"\n)\n\nclient := graphqlclient.NewClient(\"https://your-api.example.com/graphql\",\n    graphqlclient.WithAuthToken(\"YOUR_TOKEN\"),\n)\n\nqr := queries.NewQueryRoot(client)\n\ntodos, err := qr.Todos().\n    Filter(&inputs.TodoFilter{Done: boolPtr(false)}).\n    Select(func(f *fields.TodoFields) {\n        f.ID().Text().Done().User(func(u *fields.UserFields) {\n            u.ID().Name()\n        })\n    }).\n    Execute(ctx)"
   },
   {
+   "title": "Quick Start — TypeScript",
+   "lang": "ts",
+   "code": "import { GraphQLClient } from \"gqlkit-ts\";\nimport { QueryRoot } from \"./sdk/queries\";\n\nconst client = new GraphQLClient(\"https://your-api.example.com/graphql\", {\n  authToken: \"YOUR_TOKEN\",\n});\n\nconst qr = new QueryRoot(client);\n\nconst todos = await qr\n  .todos()\n  .filter({ done: false })\n  .select((t) =>\n    t.id().text().done().user((u) => u.id().name())\n  )\n  .execute();"
+  },
+  {
    "title": "The duplicate types problem",
+   "lang": "go",
    "code": "// GQLKit — one type, used everywhere\nusers, _ := qr.Users().Select(func(u *fields.UserFields) { u.ID().Name().Email() }).Execute(ctx)\nuser, _  := qr.User().ID(\"1\").Select(func(u *fields.UserFields) { u.ID().Name().Email() }).Execute(ctx)\n// Both return types.User"
   },
   {
    "title": "Static queries vs. dynamic field selection",
+   "lang": "go",
    "code": "// Lightweight list view — only fetch what you need\nqr.Todos().Select(func(f *fields.TodoFields) { f.ID().Text() }).Execute(ctx)\n\n// Detail view — same query, more fields, no codegen step\nqr.Todos().Select(func(f *fields.TodoFields) {\n    f.ID().Text().Done().Priority().Tags().User(func(u *fields.UserFields) {\n        u.ID().Name().Email().Role()\n    })\n}).Execute(ctx)"
   }
  ],

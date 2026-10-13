@@ -19,6 +19,7 @@
  "examples": [
   {
    "title": "Use",
+   "lang": "go",
    "code": "import \"github.com/ubgo/jsonslice\"\n\ntype Event struct {\n    ID   string\n    Tags jsonslice.JsonSlice  // [\"urgent\", \"billing\", 42]\n}\n\n// Save → JSON column\ndb.Exec(`INSERT INTO events(id, tags) VALUES (?, ?)`, e.ID, e.Tags)\n\n// Load\nvar loaded Event\ndb.QueryRow(`SELECT id, tags FROM events WHERE id = ?`, \"x\").\n    Scan(&loaded.ID, &loaded.Tags)"
   }
  ],

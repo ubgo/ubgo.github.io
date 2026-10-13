@@ -24,18 +24,22 @@
  "examples": [
   {
    "title": "Quick start",
+   "lang": "go",
    "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n\n\tmemcache \"github.com/ubgo/cache-mem\"\n)\n\nfunc main() {\n\tc := memcache.New(\n\t\tmemcache.WithMaxEntries(100_000),\n\t\tmemcache.WithMaxBytes(256<<20),\n\t)\n\tdefer c.Close()\n\n\tctx := context.Background()\n\t_ = c.Set(ctx, \"user:1\", []byte(\"alice\"), 5*time.Minute)\n\n\tv, err := c.Get(ctx, \"user:1\")\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(string(v)) // alice\n}"
   },
   {
    "title": "Construction: `New` and options",
+   "lang": "go",
    "code": "c := memcache.New(\n\tmemcache.WithShards(32),\n\tmemcache.WithMaxEntries(1_000_000),\n\tmemcache.WithMaxBytes(512<<20),\n\tmemcache.WithPolicy(memcache.AdaptiveWTinyLFU),\n)\ndefer c.Close()"
   },
   {
    "title": "`WithWeigher(w Weigher)`",
+   "lang": "go",
    "code": "c := memcache.New(\n\tmemcache.WithMaxBytes(64<<20),\n\tmemcache.WithWeigher(func(v []byte) int64 { return int64(len(v)) + 48 }),\n)"
   },
   {
    "title": "Eviction policy types",
+   "lang": "go",
    "code": "type Policy int\n\nconst (\n\tLRU Policy = iota\n\tAdaptiveWTinyLFU\n)"
   }
  ],

@@ -61,6 +61,7 @@
  "examples": [
   {
    "title": "Using the library",
+   "lang": "go",
    "code": "sys, err := docsync.New(\n    docsync.WithFS(os.DirFS(repo)),\n    docsync.WithConfig(cfg),               // parsed by you; the library never reads files it was not given\n    docsync.WithPrevious(ledger, refs),    // the committed state to diff against; zero for a first run\n    docsync.WithAcks(acks),\n    docsync.WithOldContent(gitShow),       // func(ledger.Row) (string, bool): the body a previous row had, for diffs and change classes\n)\nreport, err := sys.Check(ctx, docsync.CheckOptions{})\nfor _, f := range report.Findings {\n    fmt.Println(f.State, f.Doc, f.Line, f.Remedy)\n}\nres, err := sys.Define(ctx, \"internal/store/write.go#Store.Persist\", docsync.DefineOptions{Owner: \"@auth\"})\n// res.Edit is a proposed change to the source file; you decide whether to apply it"
   }
  ],

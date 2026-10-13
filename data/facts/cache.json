@@ -78,18 +78,22 @@
  "examples": [
   {
    "title": "Quick start",
+   "lang": "go",
    "code": "c := memcache.New(memcache.WithMaxEntries(100_000))\ndefer c.Close()\n\n// Bytes in, bytes out. Get returns (nil, cache.ErrNotFound) on miss — never (nil, nil).\n_ = c.Set(ctx, \"k\", []byte(\"v\"), time.Minute)\nb, err := c.Get(ctx, \"k\")\n\n// Typed load-through with stampede protection and the differentiator options:\nu, err := cache.Remember(ctx, c, \"user:42\", 5*time.Minute,\n    func(ctx context.Context) (User, error) { return db.LoadUser(ctx, 42) },\n    cache.WithJitter(0.1),                 // spread expiry across a batch of keys\n    cache.WithStaleIfError(time.Minute),   // serve last-good if the loader fails\n    cache.WithRefreshAhead(0.8),           // refresh hot keys before they expire\n)\n\n// Multi-tenant isolation:\ntenant := cache.Namespaced(c, \"tenant:42\")\n\n// Portable distributed lock (works on any backend):\nl := cache.NewLock(c, \"cron:nightly\", 30*time.Second)\nif err := l.Acquire(ctx); err == nil {\n    defer l.Release(ctx)\n    // ... only one holder runs this ...\n}"
   },
   {
    "title": "Architecture & decorator composition",
+   "lang": "go",
    "code": "c := cache.NewAuditLog(\n        cache.NewBulkhead(\n            cache.NewRetry(\n                cache.NewCircuitBreaker(rediscache.New(rdb)),\n            ), 256),\n        auditSink)"
   },
   {
    "title": "The `Cache` interface and its semantics",
+   "lang": "go",
    "code": "type Cache interface {\n    Get(ctx, key) ([]byte, error)\n    GetMulti(ctx, keys) (map[string][]byte, error)\n    Has(ctx, key) (bool, error)\n    TTL(ctx, key) (time.Duration, error)\n    Set(ctx, key, val, ttl) error\n    SetMulti(ctx, items map[string]Item) error\n    SetNX(ctx, key, val, ttl) (bool, error)\n    Expire(ctx, key, ttl) error\n    Touch(ctx, key) error\n    Incr(ctx, key, delta) (int64, error)\n    Decr(ctx, key, delta) (int64, error)\n    Del(ctx, keys ...string) error\n    DeleteByPrefix(ctx, prefix) error\n    Flush(ctx) error\n    Iterate(ctx, IterateOpts) Iterator\n    Ping(ctx) error\n    Close() error\n    Stats() Stats\n}"
   },
   {
    "title": "Errors",
+   "lang": "go",
    "code": "v, err := c.Get(ctx, \"user:42\")\nif errors.Is(err, cache.ErrNotFound) {\n    // cache miss — load it\n}"
   }
  ],

@@ -19,6 +19,7 @@
  "examples": [
   {
    "title": "Quick start (with Ent or any `database/sql` ORM)",
+   "lang": "go",
    "code": "import \"github.com/ubgo/jsontype\"\n\ntype User struct {\n    ID       int             `json:\"id\"`\n    Settings jsontype.JSON   `json:\"settings\"`\n}\n\n// Settings is stored as jsonb / json / TEXT in the DB and scans round-trip\n// via sql.Scanner / driver.Valuer."
   }
  ],

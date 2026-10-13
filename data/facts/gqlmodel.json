@@ -19,6 +19,7 @@
  "examples": [
   {
    "title": "How to Use",
+   "lang": "go",
    "code": "type Category struct {\n  ID   uuid.UUID `json:\"id\"`\n  Name string    `json:\"name\"`\n}"
   }
  ],

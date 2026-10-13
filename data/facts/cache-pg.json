@@ -24,10 +24,12 @@
  "examples": [
   {
    "title": "Quick start",
+   "lang": "go",
    "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"log\"\n\t\"time\"\n\n\t_ \"github.com/jackc/pgx/v5/stdlib\"\n\tpgcache \"github.com/ubgo/cache-pg\"\n)\n\nfunc main() {\n\tdb, err := sql.Open(\"pgx\", \"postgres://localhost:5432/app?sslmode=disable\")\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\n\tc := pgcache.New(db)            // Postgres dialect by default\n\tif err := c.Migrate(context.Background()); err != nil { // idempotent\n\t\tlog.Fatal(err)\n\t}\n\tdefer c.Close()\n\n\tctx := context.Background()\n\t_ = c.Set(ctx, \"report:q3\", []byte(\"…\"), time.Hour)\n\n\t// Reclaim physically-dead rows on a ticker / cron:\n\t_ = c.Vacuum(ctx)\n}"
   },
   {
    "title": "`Vacuum(ctx) error`",
+   "lang": "go",
    "code": "go func() {\n\tt := time.NewTicker(10 * time.Minute)\n\tfor range t.C {\n\t\t_ = c.Vacuum(context.Background())\n\t}\n}()"
   }
  ],

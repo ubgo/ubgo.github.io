@@ -19,14 +19,17 @@
  "examples": [
   {
    "title": "Example",
+   "lang": "go",
    "code": "import \"github.com/ubgo/crypt\"\n\nkey, _ := crypt.RandomBytes(crypt.AEADKeySize)\nct, _ := crypt.Seal(key, []byte(\"hello, world\"), nil)\npt, _ := crypt.Open(key, ct, nil)\n// pt == []byte(\"hello, world\")"
   },
   {
    "title": "Encrypt a database column at rest",
+   "lang": "go",
    "code": "sealer, _ := crypt.NewSealer(appKey) // 32 bytes from secrets manager\n\nenc, _ := sealer.Seal([]byte(secret), nil)\ndb.Exec(`UPDATE partners SET client_secret = $1 WHERE id = $2`, enc, id)\n\nplain, _ := sealer.Open(row.ClientSecret, nil)"
   },
   {
    "title": "Bind a token to a user (so it can't be replayed for another)",
+   "lang": "go",
    "code": "ct, _ := sealer.Seal(payload, []byte(\"user:\"+userID))\n\npt, err := sealer.Open(ct, []byte(\"user:\"+userID))\n// err == ErrTampered if userID differs from issue time"
   }
  ],

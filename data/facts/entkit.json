@@ -81,14 +81,17 @@
  "examples": [
   {
    "title": "Why one repo with many sub-modules",
+   "lang": "go",
    "code": "// Service that only needs a password hash column\nimport (\n    \"github.com/ubgo/entkit/passwordtype\"\n    \"github.com/ubgo/entkit/ent_passwordtype\"\n)\n// → go.sum carries: ubgo/crypt, golang.org/x/crypto, entgo.io/ent\n// → does NOT carry: ubgo/jsontype, ubgo/jsonslice, gqlgen"
   },
   {
    "title": "Quick start — full ent + gqlgen User entity",
+   "lang": "go",
    "code": "// schema/user.go\npackage schema\n\nimport (\n    \"entgo.io/ent\"\n    \"entgo.io/ent/schema/field\"\n\n    entencryptedtype \"github.com/ubgo/entkit/ent_encryptedtype\"\n    entjsonmap       \"github.com/ubgo/entkit/ent_jsonmap\"\n    entpasswordtype  \"github.com/ubgo/entkit/ent_passwordtype\"\n)\n\ntype User struct{ ent.Schema }\n\nfunc (User) Fields() []ent.Field {\n    return []ent.Field{\n        field.String(\"email\").Unique(),\n\n        entjsonmap.Field(\"metadata\"),                // dynamic JSON object\n        entpasswordtype.Field(\"password\"),           // argon2id, redacts on output\n        entencryptedtype.Field(\"api_secret\").(...),  // AES-256-GCM\n    }\n}"
   },
   {
    "title": "Boot wiring",
+   "lang": "go",
    "code": "import \"github.com/ubgo/entkit/encryptedtype\"\n\nfunc main() {\n    if err := encryptedtype.SetKey([]byte(os.Getenv(\"ENCRYPTION_KEY\"))); err != nil {\n        log.Fatal(err)\n    }\n    // ...\n}"
   }
  ],

@@ -19,18 +19,22 @@
  "examples": [
   {
    "title": "Example",
+   "lang": "go",
    "code": "import \"github.com/ubgo/httpreq\"\n\nvar resp UserResponse\n_, err := httpreq.Do(ctx, \"https://api.example.com/users\",\n    httpreq.WithMethod(http.MethodPost),\n    httpreq.WithJSONBody(req),\n    httpreq.WithBearerToken(token),\n    httpreq.WithTimeout(5 * time.Second),\n    httpreq.WithResponseInto(&resp),\n)"
   },
   {
    "title": "Recipes",
+   "lang": "go",
    "code": "form := url.Values{}\nform.Set(\"grant_type\", \"client_credentials\")\nform.Set(\"scope\", \"read write\")\n\nvar tok struct {\n    AccessToken string `json:\"access_token\"`\n    ExpiresIn   int    `json:\"expires_in\"`\n}\n_, err := httpreq.Do(ctx, \"https://auth.example.com/oauth/token\",\n    httpreq.WithMethod(http.MethodPost),\n    httpreq.WithBasicAuth(clientID, clientSecret),\n    httpreq.WithFormBody(form),\n    httpreq.WithResponseInto(&tok),\n)"
   },
   {
    "title": "Dump as curl",
+   "lang": "go",
    "code": "cmd, _ := httpreq.Curl(ctx, \"https://api/users\",\n    httpreq.WithMethod(http.MethodPost),\n    httpreq.WithJSONBody(payload),\n)\nfmt.Println(cmd)\n// curl -X POST -H 'Content-Type: application/json' --data-raw '{...}' 'https://api/users'"
   },
   {
    "title": "Error types",
+   "lang": "go",
    "code": "_, err := httpreq.Do(ctx, \"https://api/x\")\nvar herr *httpreq.HTTPError\nif errors.As(err, &herr) {\n    log.Printf(\"status=%d body=%s\", herr.StatusCode, herr.Body)\n}"
   }
  ],

@@ -10,7 +10,28 @@
  "contrib": [],
  "packages": [],
  "ubgoDeps": [],
- "examples": [],
+ "examples": [
+  {
+   "title": "Example",
+   "lang": "ts",
+   "code": "import { seal, open, randomBytes, AEAD_KEY_SIZE } from \"@ubgo/crypt\"\n\nconst key = randomBytes(AEAD_KEY_SIZE)\nconst ct = seal(key, \"hello, world\")\nconst pt = open(key, ct).toString(\"utf8\")\n// pt === \"hello, world\""
+  },
+  {
+   "title": "Encrypt before storing",
+   "lang": "ts",
+   "code": "import { Sealer } from \"@ubgo/crypt\"\n\nconst sealer = new Sealer(loadAppKey()) // 32 bytes from env / secrets manager\n\nconst enc = sealer.seal(\"sk_live_4242deadbeef\")\nawait db.query(`UPDATE partners SET secret = $1 WHERE id = $2`, [enc, id])\n\nconst plain = sealer.open(row.secret).toString(\"utf8\")"
+  },
+  {
+   "title": "Bind a token to a user",
+   "lang": "ts",
+   "code": "const ct = sealer.seal(payload, Buffer.from(`user:${userID}`))\n\nconst pt = sealer.open(ct, Buffer.from(`user:${userID}`))\n// throws TamperedError if userID differs from issue time"
+  },
+  {
+   "title": "Sign and verify a webhook",
+   "lang": "ts",
+   "code": "import { sign, verify } from \"@ubgo/crypt\"\n\nconst mac = sign(secret, body)              // signer\nconst ok = verify(secret, body, mac)        // verifier (constant-time)"
+  }
+ ],
  "features": [],
  "table": ""
 }

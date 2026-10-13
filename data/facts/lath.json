@@ -48,10 +48,12 @@
  "examples": [
   {
    "title": "The command model",
+   "lang": "go",
    "code": "func Name()\nfunc Name() error\nfunc Name(ctx context.Context) error\nfunc Name(args ...string) error\nfunc Name(ctx context.Context, args ...string) error"
   },
   {
    "title": "Adding your own step",
+   "lang": "go",
    "code": "pipeline.Func{\n    Label:      \"record-deploy\",\n    Needs:      []pipeline.Key{common.KeyImage},\n    Idempotent: true, // safe to replay under `lath tui`\n    Do: func(ctx context.Context, s *pipeline.State) error {\n        image, err := pipeline.Get[string](s, common.KeyImage)\n        if err != nil { return err }\n        s.Detailf(\"appended %s to the deploy log\", image)\n        return nil\n    },\n}"
   }
  ],

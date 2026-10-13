@@ -19,6 +19,7 @@
  "examples": [
   {
    "title": "Quick start",
+   "lang": "go",
    "code": "package main\n\nimport (\n    \"fmt\"\n\n    \"github.com/ubgo/goerr\"\n)\n\nfunc main() {\n    err := goerr.New(\"db: deadlock detected on user_orders\",\n        goerr.WithMessageUser(\"Something went wrong, please retry\"),\n        goerr.WithCode(\"E_TX_RETRY\"),\n        goerr.WithTraceID(\"trace-abc123\"),\n        goerr.WithKV(\"table\", \"user_orders\"),\n    )\n\n    fmt.Println(err.Error())             // operator-facing\n    fmt.Println(err.ErrorUser().Error()) // user-facing\n    fmt.Println(err.Response().ToJSON()) // wire payload\n}"
   }
  ],

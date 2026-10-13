@@ -24,10 +24,12 @@
  "examples": [
   {
    "title": "Quick start",
+   "lang": "go",
    "code": "package main\n\nimport (\n\t\"context\"\n\t\"errors\"\n\t\"log\"\n\t\"time\"\n\n\t\"github.com/bradfitz/gomemcache/memcache\"\n\t\"github.com/ubgo/cache\"\n\tmemcachedcache \"github.com/ubgo/cache-memcached\"\n)\n\nfunc main() {\n\tmc := memcache.New(\"localhost:11211\")\n\tc := memcachedcache.New(mc)\n\tdefer c.Close()\n\n\tctx := context.Background()\n\t_ = c.Set(ctx, \"k\", []byte(\"v\"), time.Minute)\n\n\tb, err := c.Get(ctx, \"k\")\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n\tlog.Printf(\"%s\", b)\n\n\t// Unsupported ops are explicit, never silent:\n\tif _, err := c.TTL(ctx, \"k\"); errors.Is(err, cache.ErrUnsupported) {\n\t\tlog.Println(\"Memcached cannot report remaining TTL\")\n\t}\n}"
   },
   {
    "title": "Method reference",
+   "lang": "go",
    "code": "ctx := context.Background()\n\n// --- Works ---\nb, err := c.Get(ctx, \"k\")                        // ErrNotFound on miss\nm, err := c.GetMulti(ctx, []string{\"a\", \"b\"})    // missing keys absent from map\nok, err := c.Has(ctx, \"k\")\nerr = c.Set(ctx, \"k\", []byte(\"v\"), time.Minute)  // ttl<=0 => no expiry (Expiration 0)\nerr = c.SetMulti(ctx, map[string]cache.Item{\"a\": {Value: []byte(\"1\")}})\ncreated, err := c.SetNX(ctx, \"k\", []byte(\"v\"), time.Minute) // ADD; false if exists\nerr = c.Expire(ctx, \"k\", time.Hour)              // TOUCH; ErrNotFound if absent\nerr = c.Touch(ctx, \"k\")                          // Expire(key, 1h)\nn, err := c.Incr(ctx, \"hits\", 1)                 // missing key initialised to delta\nn, err = c.Decr(ctx, \"hits\", 2)                  // floors at 0 (unsigned counter)\nerr = c.Del(ctx, \"a\", \"b\")                       // DELETE; miss tolerated\nerr = c.Flush(ctx)                               // flush_all\nerr = c.Ping(ctx)\nerr = c.Close()                                  // idempotent; does not close mc\n\n// --- ErrUnsupported by protocol design ---\n_, err = c.TTL(ctx, \"k\")                         // cache.ErrUnsupported\nerr = c.DeleteByPrefix(ctx, \"user:\")             // cache.ErrUnsupported\nit := c.Iterate(ctx, cache.IterateOpts{})\n_ = it.Next()                                    // false\n_ = it.Err()                                     // cache.ErrUnsupported"
   }
  ],
