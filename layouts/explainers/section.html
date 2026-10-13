@@ -1,0 +1,28 @@
+{{ define "main" }}
+<div class="pt-8 pb-4 max-w-3xl">
+  <h1 class="font-display font-bold text-[26px] tracking-tight text-slate-900 dark:text-white">{{ .Title }}</h1>
+  <p class="mt-1 text-slate-600 dark:text-slate-400">{{ .Description }}</p>
+  {{- with .Content }}<div class="prose-ubgo mt-2 text-slate-600 dark:text-slate-400">{{ . }}</div>{{ end }}
+</div>
+<ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 pb-8">
+  {{- range .Pages.ByWeight }}
+  {{- $key := .Params.explainer | default .File.ContentBaseName }}
+  <li>
+    <a href="{{ .RelPermalink }}" class="group flex flex-col h-full rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-900/40 hover:border-brand-500 dark:hover:border-brand-500 hover:shadow-md hover:shadow-brand-500/5 transition-shadow">
+      <div data-explainer-preview="{{ $key }}" aria-hidden="true" class="pointer-events-none border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 aspect-[8/5] overflow-hidden"></div>
+      <div class="p-3 flex-1 flex flex-col">
+        <div class="flex items-center justify-between gap-2">
+          <span class="font-display font-semibold text-[15px] text-slate-900 dark:text-white group-hover:text-brand-700 dark:group-hover:text-brand-400">{{ .Title }}</span>
+        </div>
+        <p class="mt-1 text-[13px] leading-snug text-slate-600 dark:text-slate-400">{{ .Description }}</p>
+        <div class="mt-auto pt-2 flex items-center gap-2 text-[11.5px] text-slate-500 dark:text-slate-400">
+          <span class="font-mono rounded border border-slate-200 dark:border-slate-700 px-1.5 py-px text-slate-700 dark:text-slate-300">{{ .Params.library }}</span>
+          <span class="tabular-nums">{{ len .Params.steps }} steps</span>
+          <span class="ml-auto text-brand-700 dark:text-brand-400 opacity-0 group-hover:opacity-100 transition-opacity">Open →</span>
+        </div>
+      </div>
+    </a>
+  </li>
+  {{- end }}
+</ul>
+{{ end }}
