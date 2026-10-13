@@ -5,6 +5,7 @@
  "coreDeps": 1,
  "license": "MIT",
  "latestTag": "",
+ "branch": "main",
  "modules": [
   {
    "dir": ".",
@@ -76,5 +77,5 @@
   "**Custom scalar mappings** — configure how GraphQL scalars map to language types via `config.jsonc`",
   "**Zero runtime overhead** — generated code with minimal dependencies"
  ],
- "table": "| **Output structure** | Organized packages (`queries/`, `fields/`, `types/`, etc.) | Single `generated.go` file | Varies by plugin; often one large file |\n| **Schema introspection** | Built-in (`gqlkit-sdl fetch`) | Not supported — must provide local SDL files | Supported via config |\n| **Runtime overhead** | Minimal — lightweight HTTP client | Minimal | Generated code includes duplicate query strings; needs Babel/SWC plugin to optimize |\n| **Languages** | Go + TypeScript from same schema | Go only | TypeScript/JavaScript only |"
+ "table": "| Module | Statement coverage | Command |\n|---|---|---|\n| `gqlkit` | **91.7%** | `cd gqlkit && GOWORK=off go test -cover ./...` |\n| `gqlkit-sdl` | **96.6%** | `cd gqlkit-sdl && GOWORK=off go test -cover ./...` |"
 }

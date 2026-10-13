@@ -1,4 +1,5 @@
 /* Chroma syntax colors: github (light) and github-dark under .dark. Generated with `hugo gen chromastyles`; backgrounds come from main.css. */
+.chroma span { color: #1f2328 }
 .chroma { -webkit-text-size-adjust:none; }
 .chroma .err { color:#f6f8fa;}
 .chroma .lnlinks { outline:none;text-decoration:none;color:inherit }
@@ -70,6 +71,7 @@
 .chroma .go { color:#1f2328 }
 .chroma .gl { text-decoration:underline }
 .chroma .w { color:#fff }
+.dark .chroma span { color: #e6edf3 } /* tokens github-dark leaves unstyled must not keep the light colour */
 .dark .chroma { color:#e6edf3;-webkit-text-size-adjust:none; }
 .dark .chroma .err { color:#f85149 }
 .dark .chroma .lnlinks { outline:none;text-decoration:none;color:inherit }

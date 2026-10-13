@@ -1,55 +1,145 @@
 {{ define "main" }}
-{{- $libs := hugo.Data.libraries.libraries }}
-{{- $areas := hugo.Data.libraries.areas }}
-<section class="pt-10 pb-8 sm:pt-14 grid gap-8 sm:grid-cols-[1fr_auto] items-center">
-  <div class="min-w-0">
-    <h1 class="font-display font-bold text-[34px] sm:text-[44px] leading-none tracking-tight text-slate-900 dark:text-white flex items-center gap-3">
-      <img src="{{ "icon.svg" | relURL }}" alt="ubgo logo" width="48" height="48" class="size-10 sm:size-12">ubgo
-    </h1>
-    <p class="mt-3 text-[17px] sm:text-[19px] font-medium text-slate-800 dark:text-slate-100">{{ site.Params.tagline }}</p>
-    <p class="mt-2 max-w-2xl text-slate-600 dark:text-slate-400">{{ len $libs }} open-source libraries, mostly Go with a few TypeScript ones, for errors, logging, caching, config, SQL, GraphQL, HTTP services, crypto and tooling. Each one does one job and has its own repo, so you import only what you need.</p>
-    <div class="mt-5 max-w-md">{{ partial "install.html" "go get github.com/ubgo/<name>" }}</div>
-    <div class="mt-4 flex flex-wrap gap-2 text-[13px]">
-      <a href="{{ "/libraries/" | relURL }}" class="h-8 px-3 inline-flex items-center rounded-md bg-brand-600 text-white font-medium hover:bg-brand-700">Browse libraries</a>
-      <a href="{{ site.Params.github }}" class="h-8 px-3 inline-flex items-center rounded-md border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">github.com/ubgo</a>
-    </div>
+{{- $d := hugo.Data.libraries }}
+{{- $libs := $d.libraries }}
+{{- $areas := $d.areas }}
+{{- /* Counts, all computed from the data and the repo facts. */}}
+{{- $modules := 0 }}{{ $adapters := 0 }}{{ $suites := 0 }}
+{{- range $libs }}{{ $f := index hugo.Data.facts .name }}{{ $modules = add $modules (len $f.modules) }}{{ $adapters = add $adapters (len $f.contrib) }}{{ if .suite }}{{ $suites = add $suites 1 }}{{ end }}{{ end }}
+{{- $explainers := where site.RegularPages "Section" "explainers" }}
+
+<div class="relative">
+<div aria-hidden="true" class="pointer-events-none absolute inset-x-0 -top-12 h-[520px] overflow-hidden">
+  <div class="absolute left-1/2 -translate-x-1/2 -top-40 h-[480px] w-[900px] rounded-full bg-[radial-gradient(closest-side,rgba(8,145,178,0.22),transparent)] dark:bg-[radial-gradient(closest-side,rgba(34,211,238,0.16),transparent)]"></div>
+  <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(148,163,184,0.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.12)_1px,transparent_1px)] bg-[size:36px_36px] [mask-image:radial-gradient(ellipse_at_top,black_30%,transparent_70%)]"></div>
+</div>
+
+<section class="relative pt-14 sm:pt-20 pb-8 text-center">
+  <a href="{{ "/libraries/" | relURL }}" class="inline-flex items-center gap-2 h-7 pl-1 pr-3 rounded-full border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 backdrop-blur text-[12px] text-slate-600 dark:text-slate-300 hover:border-brand-500 transition-colors">
+    <span class="h-5 px-2 inline-flex items-center rounded-full bg-brand-600 text-white font-medium">{{ len $libs }}</span>libraries across {{ len $areas }} areas <span aria-hidden="true">→</span>
+  </a>
+  <h1 class="mt-5 mx-auto max-w-3xl font-display font-bold text-[38px] leading-[1.04] sm:text-[60px] tracking-tight text-slate-900 dark:text-white">Focused Go libraries for <span class="bg-gradient-to-r from-brand-600 via-brand-500 to-accent bg-clip-text text-transparent">production services</span>.</h1>
+  <p class="mt-5 mx-auto max-w-2xl text-[16px] sm:text-[17px] leading-relaxed text-slate-600 dark:text-slate-400">Errors, logging, caching, config, SQL, GraphQL, HTTP services and crypto. Each library does one job and lives in its own repo, so your service imports only what it uses.</p>
+  <div class="mt-7 mx-auto max-w-md">{{ partial "install.html" "go get github.com/ubgo/<name>" }}</div>
+  <div class="mt-5 flex flex-wrap justify-center gap-2 text-[13.5px]">
+    <a href="{{ "/libraries/" | relURL }}" class="h-10 px-5 inline-flex items-center rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-medium shadow-sm hover:opacity-90 transition">Browse libraries</a>
+    <a href="{{ "/picker/" | relURL }}" class="h-10 px-5 inline-flex items-center rounded-lg border border-slate-300 dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 hover:border-brand-500 transition">Which package do I need?</a>
   </div>
+  <p class="mt-4 text-[12px] text-slate-500">or press <kbd data-palette-key class="palette-kbd">Ctrl K</kbd> to jump to any library</p>
 </section>
 
 {{ partial "hero-diagram.html" . }}
 
-<section aria-labelledby="featured" class="py-4">
-  <div class="flex items-baseline justify-between mb-3">
-    <h2 id="featured" class="font-display font-semibold text-[17px] text-slate-900 dark:text-white">Featured libraries</h2>
+<section class="relative py-6" aria-label="ubgo in numbers">
+  <dl class="grid grid-cols-2 sm:grid-cols-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/40 backdrop-blur divide-slate-200 dark:divide-slate-800 sm:divide-x [&>div:nth-child(-n+2)]:border-b sm:[&>div]:border-b-0 [&>div]:border-slate-200 dark:[&>div]:border-slate-800">
+    {{- range slice (dict "v" (len $libs) "k" "public libraries" "u" "/libraries/") (dict "v" $modules "k" "Go modules" "u" "/map/") (dict "v" $adapters "k" "adapters in contrib/" "u" "/libraries/") (dict "v" $suites "k" "shared conformance suites" "u" "/about/") }}
+    <div class="px-4 py-4 text-center"><dt class="sr-only">{{ .k }}</dt><dd><a href="{{ .u | relURL }}" class="group"><span class="block font-display font-bold text-[28px] tabular-nums text-slate-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">{{ .v }}</span><span class="block text-[12px] text-slate-500 dark:text-slate-400">{{ .k }}</span></a></dd></div>
+    {{- end }}
+  </dl>
+  <p class="mt-2 text-center text-[11.5px] text-slate-400">Counted from the public repos' go.mod files and contrib/ folders.</p>
+</section>
+
+<section class="py-10" aria-labelledby="explore">
+  <h2 id="explore" class="sr-only">Explore</h2>
+  <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    {{- range slice
+      (dict "u" "/map/" "t" "Library map" "x" "Every library, grouped by area, with the real links between them." "i" "map")
+      (dict "u" "/explainers/" "t" "Explainers" "x" (printf "%d step-through diagrams of how the main libraries work." (len $explainers)) "i" "play")
+      (dict "u" "/picker/" "t" "Which package?" "x" "Answer two or three questions, get the right library." "i" "pick")
+      (dict "u" "/brand/" "t" "Brand" "x" "The Socket logo, colours, type and every file to download." "i" "brand")
+    }}
+    <a href="{{ .u | relURL }}" class="group relative overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-4 hover:border-brand-500 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand-500/5 transition">
+      <div class="h-24 -mx-4 -mt-4 mb-3 border-b border-slate-100 dark:border-slate-800 bg-gradient-to-br from-slate-50 to-brand-50/60 dark:from-slate-900 dark:to-brand-500/10 flex items-center justify-center">
+        {{- if eq .i "map" }}
+        <svg viewBox="0 0 160 80" class="h-20 w-auto" aria-hidden="true"><g class="stroke-brand-500/50" stroke-width="1.5"><path d="M30 40 70 20M30 40 70 60M70 20 115 30M70 60 115 30M115 30 140 55M70 60 120 66"/></g><g class="fill-white dark:fill-slate-800 stroke-slate-300 dark:stroke-slate-600"><circle cx="30" cy="40" r="7"/><circle cx="70" cy="20" r="6"/><circle cx="70" cy="60" r="6"/><circle cx="140" cy="55" r="5"/><circle cx="120" cy="66" r="5"/></g><circle cx="115" cy="30" r="9" fill="#0891B2" class="group-hover:fill-accent transition-colors"/></svg>
+        {{- else if eq .i "play" }}
+        <svg viewBox="0 0 160 80" class="h-20 w-auto" aria-hidden="true"><g class="fill-slate-200 dark:fill-slate-700"><rect x="14" y="18" width="40" height="10" rx="5"/><rect x="14" y="35" width="60" height="10" rx="5"/><rect x="14" y="52" width="30" height="10" rx="5"/></g><rect x="14" y="35" width="60" height="10" rx="5" fill="#0891B2" class="origin-left scale-x-50 group-hover:scale-x-100 transition-transform duration-500"/><circle cx="122" cy="40" r="22" fill="#0891B2"/><path d="M116 30v20l16-10z" fill="#fff"/></svg>
+        {{- else if eq .i "pick" }}
+        <svg viewBox="0 0 160 80" class="h-20 w-auto" aria-hidden="true"><g fill="none" class="stroke-slate-300 dark:stroke-slate-600" stroke-width="1.5"><path d="M30 40h30M60 40l28-18M60 40l28 18M88 22h26M88 58h26"/></g><circle cx="30" cy="40" r="7" fill="#0891B2"/><circle cx="60" cy="40" r="5" class="fill-slate-300 dark:fill-slate-600"/><circle cx="88" cy="22" r="5" class="fill-slate-300 dark:fill-slate-600"/><circle cx="88" cy="58" r="5" fill="#0891B2"/><rect x="114" y="50" width="34" height="16" rx="8" fill="#FBBF24"/></svg>
+        {{- else }}
+        <img src="{{ "brand/icon.svg" | relURL }}" alt="" width="56" height="56" class="size-14 group-hover:rotate-[-6deg] transition-transform">
+        {{- end }}
+      </div>
+      <h3 class="font-display font-semibold text-[16px] text-slate-900 dark:text-white flex items-center gap-1">{{ .t }} <span class="transition-transform group-hover:translate-x-0.5" aria-hidden="true">→</span></h3>
+      <p class="mt-1 text-[13px] leading-snug text-slate-600 dark:text-slate-400">{{ .x }}</p>
+    </a>
+    {{- end }}
+  </div>
+</section>
+
+<section aria-labelledby="featured" class="py-8">
+  <div class="flex items-end justify-between mb-4">
+    <div>
+      <h2 id="featured" class="font-display font-semibold text-[22px] text-slate-900 dark:text-white">Featured libraries</h2>
+      <p class="text-[13px] text-slate-500 dark:text-slate-400">The ones most services reach for first.</p>
+    </div>
     <a href="{{ "/libraries/" | relURL }}" class="text-[13px] text-brand-700 dark:text-brand-400 hover:underline">All {{ len $libs }} →</a>
   </div>
-  <ul class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+  <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
     {{- range where $libs "featured" true }}
     {{- $area := index (where $areas "key" .area) 0 }}
+    {{- $f := index hugo.Data.facts .name }}
+    {{- $n := add (len $f.contrib) (len (where (where $libs "family" .name) "kind" "ne" "examples")) }}
     <li>
-      <a href="{{ printf "/libraries/%s/" .name | relURL }}" class="group block h-full rounded-lg border border-slate-200 dark:border-slate-800 p-3 hover:border-brand-500 dark:hover:border-brand-500 hover:bg-slate-50 dark:hover:bg-slate-900/50">
+      <a href="{{ printf "/libraries/%s/" .name | relURL }}" class="group flex flex-col h-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-4 hover:border-brand-500 hover:shadow-lg hover:shadow-brand-500/5 transition">
         <div class="flex items-center justify-between gap-2">
-          <span class="font-mono font-medium text-[14px] text-slate-900 dark:text-white group-hover:text-brand-700 dark:group-hover:text-brand-400">{{ .name }}</span>
+          <span class="font-mono font-semibold text-[15px] text-slate-900 dark:text-white group-hover:text-brand-700 dark:group-hover:text-brand-400">{{ .name }}</span>
           <span class="text-[11px] text-slate-500 dark:text-slate-400">{{ $area.title }}</span>
         </div>
-        <p class="mt-1 text-[13px] leading-snug text-slate-600 dark:text-slate-400">{{ .summary }}</p>
+        <p class="mt-1.5 text-[13px] leading-snug text-slate-600 dark:text-slate-400 flex-1">{{ .summary }}</p>
+        <div class="mt-3 flex flex-wrap gap-1.5 text-[11px] font-mono text-slate-500 dark:text-slate-400">
+          {{- with $f.latestTag }}<span class="h-5 px-1.5 inline-flex items-center rounded bg-slate-100 dark:bg-slate-800">{{ . }}</span>{{ end }}
+          {{- if ne $f.module "" }}<span class="h-5 px-1.5 inline-flex items-center rounded bg-slate-100 dark:bg-slate-800">{{ $f.coreDeps }} core deps</span>{{ end }}
+          {{- if gt $n 0 }}<span class="h-5 px-1.5 inline-flex items-center rounded bg-brand-50 text-brand-800 dark:bg-brand-500/15 dark:text-brand-100">{{ $n }} adapters</span>{{ end }}
+          {{- with .suite }}<span class="h-5 px-1.5 inline-flex items-center rounded bg-emerald-50 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-200">{{ .name }}</span>{{ end }}
+        </div>
       </a>
     </li>
     {{- end }}
   </ul>
 </section>
 
-<section aria-labelledby="areas" class="py-6">
-  <h2 id="areas" class="font-display font-semibold text-[17px] text-slate-900 dark:text-white mb-3">By area</h2>
-  <ul class="grid gap-x-6 gap-y-1 sm:grid-cols-2 text-[13px]">
-    {{- range $areas }}
-    {{- $n := len (where $libs "area" .key) }}
-    <li class="flex items-baseline gap-2 py-1 border-b border-slate-100 dark:border-slate-800/70">
-      <a href="{{ printf "/libraries/?area=%s" .key | relURL }}" class="font-medium text-slate-900 dark:text-white hover:text-brand-700 dark:hover:text-brand-400">{{ .title }}</a>
-      <span class="text-slate-400 tabular-nums">{{ $n }}</span>
-      <span class="ml-auto truncate text-slate-500 dark:text-slate-400 hidden md:inline">{{ .blurb }}</span>
-    </li>
+<section aria-labelledby="principles" class="py-10">
+  <h2 id="principles" class="font-display font-semibold text-[22px] text-slate-900 dark:text-white">How several of them are built</h2>
+  <p class="text-[13px] text-slate-500 dark:text-slate-400">True for the libraries named under each one, as their READMEs state. Not a promise for every repo.</p>
+  <div class="mt-4 grid gap-3 md:grid-cols-3">
+    {{- range $i, $p := $d.principles }}
+    <article class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-4">
+      <svg viewBox="0 0 200 64" class="h-14 w-auto mb-2" aria-hidden="true">
+        {{- if eq $i 0 }}
+        <rect x="70" y="12" width="60" height="40" rx="10" fill="#0891B2"/><path d="M92 24v10a8 8 0 0 0 16 0V24" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none"/><text x="140" y="38" font-family="JetBrains Mono, monospace" font-size="11" class="fill-slate-500">0 deps</text>
+        {{- else if eq $i 1 }}
+        <rect x="80" y="18" width="40" height="28" rx="8" fill="#0891B2"/><g class="fill-white dark:fill-slate-800 stroke-slate-300 dark:stroke-slate-600"><rect x="14" y="8" width="40" height="18" rx="5"/><rect x="14" y="38" width="40" height="18" rx="5"/><rect x="146" y="8" width="40" height="18" rx="5"/><rect x="146" y="38" width="40" height="18" rx="5"/></g><g class="stroke-brand-500/60" stroke-dasharray="3 3"><path d="M54 17h26M54 47h26M120 17h26M120 47h26"/></g>
+        {{- else }}
+        {{- range $j, $x := slice 20 70 120 }}<rect x="{{ $x }}" y="16" width="40" height="32" rx="8" class="fill-white dark:fill-slate-800 stroke-slate-300 dark:stroke-slate-600"/><circle cx="{{ add $x 34 }}" cy="18" r="8" fill="#10B981"/><path d="M{{ add $x 30 }} 18l3 3 5-6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>{{ end }}
+        {{- end }}
+      </svg>
+      <h3 class="font-semibold text-[15px] text-slate-900 dark:text-white">{{ $p.title }}</h3>
+      <p class="mt-1 text-[13px] leading-snug text-slate-600 dark:text-slate-400">{{ $p.text }}</p>
+      <div class="mt-3 flex flex-wrap gap-1">
+        {{- range $p.repos }}<a href="{{ printf "/libraries/%s/" . | relURL }}" class="h-6 px-2 inline-flex items-center rounded-md border border-slate-200 dark:border-slate-700 font-mono text-[11.5px] text-slate-700 dark:text-slate-300 hover:border-brand-500 hover:text-brand-700 dark:hover:text-brand-400">{{ . }}</a>{{ end }}
+      </div>
+    </article>
     {{- end }}
-  </ul>
+  </div>
 </section>
+
+<section aria-labelledby="areas" class="py-8">
+  <h2 id="areas" class="font-display font-semibold text-[22px] text-slate-900 dark:text-white mb-4">By area</h2>
+  <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    {{- range $areas }}
+    {{- $in := sort (where $libs "area" .key) "name" }}
+    <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-4">
+      <a href="{{ printf "/libraries/?area=%s" .key | relURL }}" class="flex items-baseline justify-between gap-2 group">
+        <h3 class="font-semibold text-[14px] text-slate-900 dark:text-white group-hover:text-brand-700 dark:group-hover:text-brand-400">{{ .title }}</h3>
+        <span class="text-[12px] tabular-nums text-slate-400">{{ len $in }}</span>
+      </a>
+      <p class="mt-0.5 text-[12px] leading-snug text-slate-500 dark:text-slate-400">{{ .blurb }}</p>
+      <div class="mt-3 flex flex-wrap gap-1">
+        {{- range $in }}<a href="{{ printf "/libraries/%s/" .name | relURL }}" class="h-6 px-1.5 inline-flex items-center rounded font-mono text-[11.5px] text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800/80 hover:bg-brand-50 hover:text-brand-800 dark:hover:bg-brand-500/15 dark:hover:text-brand-100">{{ .name }}</a>{{ end }}
+      </div>
+    </div>
+    {{- end }}
+  </div>
+</section>
+</div>
 {{ end }}

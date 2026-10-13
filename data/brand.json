@@ -1,0 +1,66 @@
+{
+  "name": "ubgo",
+  "tagline": "Focused Go libraries for production services.",
+  "description": "Focused Go libraries, plus a few TypeScript ones, for errors, logging, caching, config, SQL, GraphQL, HTTP services, crypto and tooling.",
+  "areasLine": "errors · logging · caching · config · sql · graphql · crypto",
+  "org": "https://github.com/ubgo",
+  "site": "https://ubgo.github.io",
+  "logo": {
+    "concept": "socket",
+    "options": {
+      "socket": "A bold lowercase u that holds one block: a library dropping into place in your service.",
+      "grid": "A u built from module cells, with one part sliding into the open slot.",
+      "brackets": "A core and its adapters (three stacked bars) inside code brackets."
+    }
+  },
+  "colors": {
+    "tile": [
+      "#0891B2",
+      "#155E75"
+    ],
+    "fg": "#FFFFFF",
+    "accent": "#FBBF24",
+    "darkTile": [
+      "#1E293B",
+      "#0F172A"
+    ],
+    "darkFg": "#F0F9FF",
+    "lightTile": [
+      "#ECFEFF",
+      "#CFFAFE"
+    ],
+    "lightFg": "#0E7490",
+    "lightAccent": "#D97706",
+    "ink": "#0B1220",
+    "primary": "#0891B2",
+    "primaryDark": "#22D3EE"
+  },
+  "fonts": {
+    "display": "Space Grotesk",
+    "sans": "Inter",
+    "mono": "JetBrains Mono"
+  },
+  "colorNotes": {
+    "tile": "Icon tile gradient, from the first colour to the second",
+    "fg": "The u on the colour tile",
+    "accent": "The block in the u, highlights, the rule on the social card",
+    "darkTile": "Tile for bright backgrounds",
+    "darkFg": "The u on the dark tile",
+    "lightTile": "Tile for dark backgrounds",
+    "lightFg": "The u on the light tile, and the glyph on white",
+    "lightAccent": "The block on the light tile",
+    "ink": "Text on light backgrounds, the wordmark",
+    "primary": "Links and buttons in light mode",
+    "primaryDark": "Links and buttons in dark mode"
+  },
+  "fontNotes": {
+    "display": "Headings, the wordmark, the social card title",
+    "sans": "Body text and interface",
+    "mono": "Code, install lines, library names"
+  },
+  "rules": {
+    "clearSpace": "At least 25% of the icon width on every side",
+    "minSizeIcon": 24,
+    "minSizeFavicon": 16
+  }
+}

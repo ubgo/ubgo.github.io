@@ -5,7 +5,7 @@ enableRobotsTXT = true
 disableKinds = ["taxonomy", "term", "rss"]
 
 [params]
-  description = "Open-source Go libraries, plus a few TypeScript ones, for errors, logging, caching, config, SQL, GraphQL, HTTP services, crypto and tooling."
+  description = "Focused Go libraries, plus a few TypeScript ones, for errors, logging, caching, config, SQL, GraphQL, HTTP services, crypto and tooling."
   tagline = "Focused Go libraries for production services."
   github = "https://github.com/ubgo"
   ogImage = "og-card.png"
@@ -24,3 +24,7 @@ disableKinds = ["taxonomy", "term", "rss"]
   noClasses = false
   lineNos = false
   guessSyntax = false
+
+# home.json is the search index for the Ctrl/Cmd+K command palette.
+[outputs]
+  home = ["html", "json"]

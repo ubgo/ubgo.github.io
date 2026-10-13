@@ -1,0 +1,204 @@
+{{ define "main" }}
+{{- $b := hugo.Data.brand }}
+{{- $c := $b.colors }}
+{{- $base := "brand/" }}
+{{- $mono := os.ReadFile "static/brand/ubgo-mono.svg" | replaceRE `width="512" height="512"` `width="100%" height="100%"` }}
+{{- $variants := slice
+  (dict "name" "Icon" "use" "The main mark. GitHub avatar, app icon, anywhere square." "svg" "icon.svg" "png" "png/ubgo-icon-512.png" "h" "h-20")
+  (dict "name" "Dark tile" "use" "For bright backgrounds where the colour tile is too loud." "svg" "ubgo-icon-dark.svg" "png" "png/ubgo-icon-dark-512.png" "h" "h-20")
+  (dict "name" "Light tile" "use" "For dark backgrounds." "svg" "ubgo-icon-light.svg" "png" "png/ubgo-icon-light-512.png" "h" "h-20")
+  (dict "name" "Glyph" "use" "The mark with no tile, on white or light surfaces." "svg" "ubgo-glyph.svg" "png" "png/ubgo-glyph-512.png" "h" "h-20")
+  (dict "name" "Favicon" "use" "Browser tabs. Thicker strokes so it reads at 16px." "svg" "favicon.svg" "png" "png/favicon-48.png" "ico" "favicon.ico" "h" "h-12")
+  (dict "name" "Wordmark" "use" "The name on its own. Dark ink for light backgrounds." "svg" "ubgo-wordmark.svg" "png" "png/ubgo-wordmark.png" "h" "h-10" "darkSvg" "ubgo-wordmark-light.svg")
+  (dict "name" "Wordmark, light" "use" "The name in white, for dark backgrounds." "svg" "ubgo-wordmark-light.svg" "png" "png/ubgo-wordmark-light.png" "h" "h-10" "lightSvg" "ubgo-wordmark.svg")
+  (dict "name" "Lockup" "use" "Icon and name side by side, on light backgrounds." "svg" "ubgo-lockup.svg" "png" "png/ubgo-lockup.png" "h" "h-12" "darkSvg" "ubgo-lockup-dark.svg")
+  (dict "name" "Lockup, dark" "use" "Icon and name side by side, on dark backgrounds." "svg" "ubgo-lockup-dark.svg" "png" "png/ubgo-lockup-dark.png" "h" "h-12" "lightSvg" "ubgo-lockup.svg")
+}}
+{{- $swatches := slice
+  (dict "k" "tile" "name" "Tile start" "hex" (index $c.tile 0))
+  (dict "k" "tile" "name" "Tile end" "hex" (index $c.tile 1))
+  (dict "k" "accent" "name" "Accent" "hex" $c.accent)
+  (dict "k" "ink" "name" "Ink" "hex" $c.ink)
+  (dict "k" "primary" "name" "Primary" "hex" $c.primary)
+  (dict "k" "primaryDark" "name" "Primary, dark mode" "hex" $c.primaryDark)
+  (dict "k" "lightFg" "name" "Light-tile u" "hex" $c.lightFg)
+  (dict "k" "lightAccent" "name" "Light-tile block" "hex" $c.lightAccent)
+  (dict "k" "darkTile" "name" "Dark tile start" "hex" (index $c.darkTile 0))
+  (dict "k" "darkTile" "name" "Dark tile end" "hex" (index $c.darkTile 1))
+  (dict "k" "lightTile" "name" "Light tile start" "hex" (index $c.lightTile 0))
+  (dict "k" "lightTile" "name" "Light tile end" "hex" (index $c.lightTile 1))
+}}
+<div class="relative">
+<div aria-hidden="true" class="pointer-events-none absolute inset-x-0 -top-10 h-80 bg-[radial-gradient(ellipse_at_top,rgba(8,145,178,0.18),transparent_60%)] dark:bg-[radial-gradient(ellipse_at_top,rgba(34,211,238,0.14),transparent_60%)]"></div>
+
+{{- /* Hero */}}
+<section class="relative pt-12 pb-10 grid gap-10 md:grid-cols-[1fr_auto] items-center">
+  <div class="max-w-2xl">
+    <p class="text-[12px] font-semibold uppercase tracking-wider text-brand-700 dark:text-brand-400">Brand</p>
+    <h1 class="mt-1 font-display font-bold text-[34px] sm:text-[44px] leading-[1.05] tracking-tight text-slate-900 dark:text-white">The Socket</h1>
+    <p class="mt-3 text-[16px] leading-relaxed text-slate-700 dark:text-slate-300">{{ index $b.logo.options $b.logo.concept }} The <span class="font-semibold">u</span> starts the name; the amber block is the part you plug in.</p>
+    <p class="mt-2 text-[14px] text-slate-600 dark:text-slate-400">Everything on this page is built from <code class="font-mono text-[12.5px]">brand.json</code> and the generated files, so it always matches the real assets.</p>
+    <div class="mt-5 flex flex-wrap gap-2 text-[13px]">
+      <a href="{{ printf "%subgo-brand.zip" $base | relURL }}" download class="h-9 px-4 inline-flex items-center gap-2 rounded-md bg-brand-600 text-white font-medium hover:bg-brand-700 shadow-sm"><svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Download everything (.zip)</a>
+      <a href="#colours" class="h-9 px-4 inline-flex items-center rounded-md border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">Colours</a>
+      <a href="#type" class="h-9 px-4 inline-flex items-center rounded-md border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">Type</a>
+    </div>
+  </div>
+  <div class="relative mx-auto">
+    <div class="absolute -inset-6 rounded-[40px] bg-gradient-to-br from-brand-500/25 to-accent/20 blur-2xl" aria-hidden="true"></div>
+    <img src="{{ "brand/icon.svg" | relURL }}" alt="The ubgo Socket logo" width="208" height="208" class="relative size-40 sm:size-52 drop-shadow-xl">
+  </div>
+</section>
+
+{{- /* Anatomy */}}
+<section class="py-8 border-t border-slate-200 dark:border-slate-800" aria-labelledby="anatomy">
+  <h2 id="anatomy" class="font-display font-semibold text-[20px] text-slate-900 dark:text-white">Anatomy</h2>
+  <div class="mt-4 grid gap-6 md:grid-cols-2 items-center">
+    <svg viewBox="0 0 640 400" class="w-full h-auto rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50" role="img" aria-label="Logo anatomy: the tile, the u and the block, with clear space marked">
+      <defs><linearGradient id="an-g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="{{ index $c.tile 0 }}"/><stop offset="1" stop-color="{{ index $c.tile 1 }}"/></linearGradient>
+      <pattern id="an-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#0891B2" stroke-opacity=".35" stroke-width="2"/></pattern></defs>
+      {{- /* icon 200px at (220,100); clear space 25% = 50px */}}
+      <rect x="170" y="50" width="300" height="300" fill="url(#an-hatch)" rx="8"/>
+      <rect x="220" y="100" width="200" height="200" fill="#fff" class="dark:fill-slate-900"/>
+      <g transform="translate(220,100) scale(0.390625)"><rect width="512" height="512" rx="112" fill="url(#an-g)"/><path d="M176 140 V276 a80 80 0 0 0 160 0 V140" stroke="{{ $c.fg }}" stroke-width="64" stroke-linecap="round" fill="none"/><rect x="226" y="202" width="60" height="60" rx="14" fill="{{ $c.accent }}"/></g>
+      <g font-family="Inter, sans-serif" font-size="13" class="fill-slate-600 dark:fill-slate-300">
+        <line x1="420" y1="130" x2="520" y2="90" stroke="currentColor" class="stroke-slate-400"/><text x="526" y="94">Tile, 22% corners</text>
+        <line x1="300" y1="150" x2="520" y2="170" stroke="currentColor" class="stroke-slate-400"/><text x="526" y="174">The u</text>
+        <line x1="330" y1="210" x2="520" y2="250" stroke="currentColor" class="stroke-slate-400"/><text x="526" y="254">The block</text>
+        <text x="170" y="40">Clear space: 25% of the width</text>
+        <line x1="170" y1="370" x2="220" y2="370" stroke="#0891B2" stroke-width="2"/><text x="166" y="392">x/4</text>
+        <line x1="220" y1="370" x2="420" y2="370" stroke="currentColor" class="stroke-slate-400"/><text x="306" y="392">x</text>
+      </g>
+    </svg>
+    <div class="space-y-4 text-[14px] text-slate-700 dark:text-slate-300">
+      <div><h3 class="font-semibold text-slate-900 dark:text-white">Clear space</h3><p class="mt-1">{{ $b.rules.clearSpace }}. Nothing else goes inside the hatched area.</p></div>
+      <div><h3 class="font-semibold text-slate-900 dark:text-white">Minimum size</h3><p class="mt-1">The full icon down to {{ $b.rules.minSizeIcon }}px. Below that, use the favicon, which has thicker strokes and reads at {{ $b.rules.minSizeFavicon }}px.</p>
+        <div class="mt-3 flex items-end gap-4">
+          {{- range slice 64 48 32 24 }}<figure class="text-center"><img src="{{ "brand/icon.svg" | relURL }}" width="{{ . }}" height="{{ . }}" alt="" class="mx-auto"><figcaption class="mt-1 font-mono text-[11px] text-slate-500">{{ . }}px</figcaption></figure>{{ end }}
+          <figure class="text-center"><img src="{{ "brand/favicon.svg" | relURL }}" width="16" height="16" alt="" class="mx-auto"><figcaption class="mt-1 font-mono text-[11px] text-slate-500">16px favicon</figcaption></figure>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{{- /* Variants */}}
+<section class="py-8 border-t border-slate-200 dark:border-slate-800" aria-labelledby="files">
+  <h2 id="files" class="font-display font-semibold text-[20px] text-slate-900 dark:text-white">Logo files</h2>
+  <p class="mt-1 text-[14px] text-slate-600 dark:text-slate-400">Each one on a light and a dark background. Text is outlined, so the SVGs look the same without the fonts installed.</p>
+  <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    {{- range $variants }}
+    <article class="rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-900/40 flex flex-col">
+      <div class="grid grid-cols-2">
+        <div class="bg-white flex items-center justify-center h-32 p-3"><img src="{{ printf "%s%s" $base (or .lightSvg .svg) | relURL }}" alt="{{ .name }} on a light background" class="{{ .h }} w-auto max-w-full"></div>
+        <div class="bg-[#0d1117] flex items-center justify-center h-32 p-3"><img src="{{ printf "%s%s" $base (or .darkSvg .svg) | relURL }}" alt="{{ .name }} on a dark background" class="{{ .h }} w-auto max-w-full"></div>
+      </div>
+      <div class="p-3 flex-1 flex flex-col">
+        <h3 class="font-medium text-[14px] text-slate-900 dark:text-white">{{ .name }}</h3>
+        <p class="mt-0.5 text-[12.5px] text-slate-500 dark:text-slate-400 flex-1">{{ .use }}</p>
+        <div class="mt-3 flex flex-wrap gap-1.5 text-[12px]">
+          <a href="{{ printf "%s%s" $base .svg | relURL }}" download class="dl-btn">SVG</a>
+          <a href="{{ printf "%s%s" $base .png | relURL }}" download class="dl-btn">PNG</a>
+          {{- with .ico }}<a href="{{ printf "%s%s" $base . | relURL }}" download class="dl-btn">ICO</a>{{ end }}
+        </div>
+      </div>
+    </article>
+    {{- end }}
+    <article class="rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-900/40 flex flex-col">
+      <div class="grid grid-cols-2">
+        <div class="bg-white text-slate-900 flex items-center justify-center h-32 p-3"><span class="block size-20" aria-label="Mono mark in dark ink" role="img">{{ $mono | safeHTML }}</span></div>
+        <div class="bg-[#0d1117] text-white flex items-center justify-center h-32 p-3"><span class="block size-20" aria-label="Mono mark in white" role="img">{{ $mono | safeHTML }}</span></div>
+      </div>
+      <div class="p-3 flex-1 flex flex-col">
+        <h3 class="font-medium text-[14px] text-slate-900 dark:text-white">Mono</h3>
+        <p class="mt-0.5 text-[12.5px] text-slate-500 dark:text-slate-400 flex-1">One colour that follows the surrounding text colour. Terminals, print, embossing.</p>
+        <div class="mt-3 flex flex-wrap gap-1.5 text-[12px]"><a href="{{ printf "%subgo-mono.svg" $base | relURL }}" download class="dl-btn">SVG</a></div>
+      </div>
+    </article>
+  </div>
+</section>
+
+{{- /* Do and don't */}}
+<section class="py-8 border-t border-slate-200 dark:border-slate-800" aria-labelledby="dodont">
+  <h2 id="dodont" class="font-display font-semibold text-[20px] text-slate-900 dark:text-white">Do and don't</h2>
+  <div class="mt-4 grid gap-3 grid-cols-2 md:grid-cols-4">
+    {{- $icon := "brand/icon.svg" | relURL }}
+    {{- range slice
+      (dict "ok" true "t" "Use it flat on plain light or dark backgrounds" "bg" "bg-white" "style" "")
+      (dict "ok" true "t" "Pick the light tile on dark surfaces" "bg" "bg-[#0d1117]" "style" "" "src" "brand/ubgo-icon-light.svg")
+      (dict "ok" false "t" "Don't stretch or squash it" "bg" "bg-white" "style" "transform: scaleX(1.45)")
+      (dict "ok" false "t" "Don't rotate it" "bg" "bg-white" "style" "transform: rotate(-18deg)")
+      (dict "ok" false "t" "Don't recolour it outside the palette" "bg" "bg-white" "style" "filter: hue-rotate(140deg) saturate(1.6)")
+      (dict "ok" false "t" "Don't add shadows, glows or bevels" "bg" "bg-white" "style" "filter: drop-shadow(6px 8px 4px rgba(0,0,0,.55))")
+      (dict "ok" false "t" "Don't put it on busy or low-contrast backgrounds" "bg" "bg-[repeating-linear-gradient(45deg,#0891B2_0_10px,#22D3EE_10px_20px)]" "style" "")
+      (dict "ok" false "t" "Don't shrink the full icon below 24px" "bg" "bg-white" "style" "" "tiny" true)
+    }}
+    <figure class="rounded-xl border {{ if .ok }}border-emerald-300 dark:border-emerald-500/40{{ else }}border-rose-300 dark:border-rose-500/40{{ end }} overflow-hidden">
+      <div class="{{ .bg }} h-28 flex items-center justify-center overflow-hidden"><img src="{{ (or .src "brand/icon.svg") | relURL }}" alt="" width="{{ if .tiny }}12{{ else }}64{{ end }}" height="{{ if .tiny }}12{{ else }}64{{ end }}" style="{{ .style | safeCSS }}"></div>
+      <figcaption class="px-3 py-2 text-[12.5px] flex gap-2 items-start bg-white dark:bg-slate-900/40"><span class="shrink-0 font-semibold {{ if .ok }}text-emerald-600 dark:text-emerald-400{{ else }}text-rose-600 dark:text-rose-400{{ end }}">{{ if .ok }}Do{{ else }}Don't{{ end }}</span><span class="text-slate-600 dark:text-slate-300">{{ .t }}</span></figcaption>
+    </figure>
+    {{- end }}
+  </div>
+</section>
+
+{{- /* Colours */}}
+<section id="colours" class="py-8 border-t border-slate-200 dark:border-slate-800 scroll-mt-16" aria-labelledby="colours-h">
+  <h2 id="colours-h" class="font-display font-semibold text-[20px] text-slate-900 dark:text-white">Colours</h2>
+  <p class="mt-1 text-[14px] text-slate-600 dark:text-slate-400">Click a swatch to copy its hex value.</p>
+  <div class="mt-4 grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
+    {{- range $swatches }}
+    <button type="button" data-swatch="{{ .hex }}" class="swatch group text-left rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-900/40 hover:border-brand-500 transition">
+      <span class="block h-20 border-b border-slate-200/70 dark:border-slate-800" style="background: {{ .hex | safeCSS }}"></span>
+      <span class="block px-2.5 py-2">
+        <span class="block text-[12.5px] font-medium text-slate-900 dark:text-white">{{ .name }}</span>
+        <span class="flex items-center justify-between font-mono text-[12px] text-slate-500"><span data-swatch-label>{{ .hex }}</span><span class="opacity-0 group-hover:opacity-100 text-[11px]" aria-hidden="true">Copy</span></span>
+        <span class="block mt-1 text-[11.5px] leading-snug text-slate-500 dark:text-slate-400">{{ index $b.colorNotes .k }}</span>
+      </span>
+    </button>
+    {{- end }}
+  </div>
+  <div class="mt-4 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800">
+    <div class="h-10" style="background: linear-gradient(90deg, {{ index $c.tile 0 | safeCSS }}, {{ index $c.tile 1 | safeCSS }})"></div>
+    <p class="px-3 py-2 text-[12.5px] text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-900/40">The tile gradient runs from <code class="font-mono">{{ index $c.tile 0 }}</code> at the top left to <code class="font-mono">{{ index $c.tile 1 }}</code> at the bottom right.</p>
+  </div>
+</section>
+
+{{- /* Type */}}
+<section id="type" class="py-8 border-t border-slate-200 dark:border-slate-800 scroll-mt-16" aria-labelledby="type-h">
+  <h2 id="type-h" class="font-display font-semibold text-[20px] text-slate-900 dark:text-white">Type</h2>
+  <p class="mt-1 text-[14px] text-slate-600 dark:text-slate-400">Three open-source (OFL) fonts, self-hosted on this site.</p>
+  <div class="mt-4 grid gap-3 lg:grid-cols-3">
+    {{- range slice (dict "k" "display" "cls" "font-display" "sample" "Focused Go libraries" "w" "500–700") (dict "k" "sans" "cls" "font-sans" "sample" "Small cores, adapters outside, suites that prove them." "w" "400–600") (dict "k" "mono" "cls" "font-mono" "sample" "go get github.com/ubgo/cache" "w" "400–600") }}
+    <article class="rounded-xl border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-900/40">
+      <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">{{ .k }} · weights {{ .w }}</p>
+      <h3 class="mt-1 {{ .cls }} text-[22px] font-semibold text-slate-900 dark:text-white">{{ index $b.fonts .k }}</h3>
+      <p class="mt-2 {{ .cls }} text-[18px] leading-snug text-slate-700 dark:text-slate-200 break-words">{{ .sample }}</p>
+      <p class="mt-3 text-[12.5px] text-slate-500 dark:text-slate-400">{{ index $b.fontNotes .k }}</p>
+    </article>
+    {{- end }}
+  </div>
+  <div class="mt-4 rounded-xl border border-slate-200 dark:border-slate-800 divide-y divide-slate-200 dark:divide-slate-800 bg-white dark:bg-slate-900/40">
+    {{- range slice (dict "n" "Display XL" "cls" "font-display font-bold text-[44px] tracking-tight" "s" "44px / 700" "t" "ubgo") (dict "n" "Display L" "cls" "font-display font-bold text-[30px] tracking-tight" "s" "30px / 700" "t" "Which package do I need?") (dict "n" "Heading" "cls" "font-display font-semibold text-[20px]" "s" "20px / 600" "t" "How it fits together") (dict "n" "Body" "cls" "font-sans text-[15px]" "s" "15px / 400" "t" "Each library does one job and has its own repo.") (dict "n" "Small" "cls" "font-sans text-[13px]" "s" "13px / 400" "t" "Dense tables, captions and interface text.") (dict "n" "Code" "cls" "font-mono text-[13px]" "s" "13px / 400" "t" "cache.Remember(ctx, c, key, ttl, load)") }}
+    <div class="flex items-baseline gap-4 px-4 py-3 min-w-0">
+      <span class="shrink-0 w-24 text-[11px] text-slate-500"><span class="block font-medium text-slate-700 dark:text-slate-300">{{ .n }}</span><span class="font-mono">{{ .s }}</span></span>
+      <span class="{{ .cls }} text-slate-900 dark:text-white truncate">{{ .t }}</span>
+    </div>
+    {{- end }}
+  </div>
+</section>
+
+{{- /* Social card */}}
+<section class="py-8 border-t border-slate-200 dark:border-slate-800" aria-labelledby="social">
+  <h2 id="social" class="font-display font-semibold text-[20px] text-slate-900 dark:text-white">Social card</h2>
+  <p class="mt-1 text-[14px] text-slate-600 dark:text-slate-400">1280×640, the GitHub social preview size, also used for link previews. Each library page has its own card built from the same template.</p>
+  <div class="mt-4 grid gap-3 md:grid-cols-2">
+    {{- range slice (dict "f" "og-card" "n" "Dark") (dict "f" "og-card-light" "n" "Light") }}
+    <figure class="rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-900/40">
+      <img src="{{ printf "%spng/%s.png" $base .f | relURL }}" alt="ubgo social card, {{ lower .n }}" width="1280" height="640" class="w-full h-auto" loading="lazy">
+      <figcaption class="px-3 py-2 flex items-center justify-between text-[12.5px]"><span class="text-slate-600 dark:text-slate-300">{{ .n }}</span><span class="flex gap-1.5"><a class="dl-btn" download href="{{ printf "%s%s.svg" $base .f | relURL }}">SVG</a><a class="dl-btn" download href="{{ printf "%spng/%s.png" $base .f | relURL }}">PNG</a></span></figcaption>
+    </figure>
+    {{- end }}
+  </div>
+</section>
+</div>
+{{ end }}

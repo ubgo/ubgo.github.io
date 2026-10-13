@@ -5,14 +5,14 @@
 <p align="center"><img src="ubgo-icon-512.png" alt="ubgo logo: a bold lowercase u holding one amber block" width="72" height="72"></p>
 <h1 align="center">ubgo</h1>
 <p align="center"><strong>Focused Go libraries for production services.</strong></p>
-<p align="center">Open-source Go libraries, plus a few TypeScript ones, for errors, logging, caching, config, SQL, GraphQL, HTTP services, crypto and tooling.</p>
+<p align="center">Focused Go libraries, plus a few TypeScript ones, for errors, logging, caching, config, SQL, GraphQL, HTTP services, crypto and tooling.</p>
 <p align="center">
   <a href="{{ $site }}"><img src="https://img.shields.io/badge/site-ubgo.github.io-0891B2" alt="Website: ubgo.github.io"></a>
   <img src="https://img.shields.io/badge/public%20libraries-{{ len $d.libraries }}-0891B2" alt="{{ len $d.libraries }} public libraries">
   <img src="https://img.shields.io/badge/language-Go%20%C2%B7%20TypeScript-0891B2" alt="Languages: Go and TypeScript">
 </p>
 
-ubgo is a set of small open-source Go libraries (and a few TypeScript ones) for building backend services: structured errors and logging, caching with Redis, Postgres, Memcached and in-memory backends, typed configuration and .env files, SQL building, GraphQL and ent helpers, health checks, graceful shutdown and crypto. Each library does one job and has its own repository, so you import only what you need.
+ubgo is a set of small Go libraries (and a few TypeScript ones), with their source on GitHub, for building backend services: structured errors and logging, caching with Redis, Postgres, Memcached and in-memory backends, typed configuration and .env files, SQL building, GraphQL and ent helpers, health checks, graceful shutdown and crypto. Each library does one job and has its own repository, so you import only what you need.
 
 - [Libraries by area](#libraries-by-area)
 {{- if $d.principles }}

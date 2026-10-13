@@ -5,6 +5,7 @@
  "coreDeps": 1,
  "license": "Apache-2.0",
  "latestTag": "v0.1.0",
+ "branch": "main",
  "modules": [
   {
    "dir": ".",
@@ -27,9 +28,9 @@
  ],
  "features": [
   "**Generics.** Values are stored without boxing through `interface{}`.",
-  "**LRU bound.** When the cache fills, the least-recently-used entry is",
-  "**TTL.** Entries older than the TTL miss on `Get` and are evicted as a",
-  "**Lock everything.** All operations take the same `sync.Mutex` —"
+  "**LRU bound.** When the cache fills, the least-recently-used entry is evicted. (`hashicorp/golang-lru/v2` does the heavy lifting.)",
+  "**TTL.** Entries older than the TTL miss on `Get` and are evicted as a side effect of being touched. Set TTL to `0` to disable expiry and use the cache as pure LRU.",
+  "**Lock everything.** All operations take the same `sync.Mutex` — hashicorp's LRU mutates internal state on `Get` (recency tracking), so splitting reads and writes is unsafe in general. The result is simple and race-clean."
  ],
  "table": ""
 }

@@ -5,6 +5,7 @@
  "coreDeps": 0,
  "license": "Apache-2.0",
  "latestTag": "v0.2.0",
+ "branch": "main",
  "modules": [
   {
    "dir": ".",
@@ -123,5 +124,5 @@
   }
  ],
  "features": [],
- "table": "| `PhaseStopAccepting` | 0 | Close HTTP / gRPC listeners. | Don't drain in-flight here — that's the next phase. `srv.Shutdown` already does both, but contribs put it here so dependencies live to serve those drains. |\n| `PhaseDrainTraffic` | 100 | Wait for in-flight work to finish. NATS `Drain()`. Worker pools that own queue items. | Closing the DB here will fail in-flight requests. |\n| `PhaseFlushQueues` | 200 | Flush async producers (Kafka, log shippers, batchers). | Don't close the underlying client until next phase. |\n| `PhaseCloseClients` | 300 | Close DB / cache / messaging client connections. | Putting OTEL flush here loses spans for prior phases. |\n| `PhaseFlushLogs` | 400 | Flush logs and traces last so prior errors actually leave the process. | Closing the logger before this phase silences the rest of the shutdown. |\n| `PhasePostShutdown` | 500 | Final cleanup, exit-code reporting. | (Most apps don't need this.) |"
+ "table": "| Adapter | Module path | Role |\n|---------|-------------|------|\n| `shutdown-nethttp` | `github.com/ubgo/shutdown/contrib/shutdown-nethttp` | `*http.Server.Shutdown` registered as a phase handler |\n| `shutdown-gin` | `github.com/ubgo/shutdown/contrib/shutdown-gin` | Same, for the `*http.Server` wrapping a Gin engine |\n| `shutdown-chi` | `github.com/ubgo/shutdown/contrib/shutdown-chi` | Same, for the `*http.Server` wrapping a Chi router |\n| `shutdown-echo` | `github.com/ubgo/shutdown/contrib/shutdown-echo` | `*echo.Echo.Shutdown` (Echo owns its server) |\n| `shutdown-fiber` | `github.com/ubgo/shutdown/contrib/shutdown-fiber` | `*fiber.App.ShutdownWithContext` |\n| `shutdown-zap` | `github.com/ubgo/shutdown/contrib/shutdown-zap` | Observer that emits structured logs via `go.uber.org/zap` |\n| `shutdown-otel` | `github.com/ubgo/shutdown/contrib/shutdown-otel` | Observer that emits OpenTelemetry spans (root + phase + handler) |\n| `shutdown-prom` | `github.com/ubgo/shutdown/contrib/shutdown-prom` | Observer that exports Prometheus metrics |"
 }

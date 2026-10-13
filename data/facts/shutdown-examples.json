@@ -5,6 +5,7 @@
  "coreDeps": 0,
  "license": "Apache-2.0",
  "latestTag": "",
+ "branch": "main",
  "modules": [
   {
    "dir": "01-basic",

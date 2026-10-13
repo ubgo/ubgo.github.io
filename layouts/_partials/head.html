@@ -1,5 +1,7 @@
 {{- $title := cond .IsHome (printf "%s · %s" site.Title site.Params.tagline) (printf "%s · %s" .Title site.Title) -}}
 {{- $desc := site.Params.description -}}
+{{- $og := site.Params.ogImage -}}
+{{- with .Params.lib }}{{ $og = printf "og/%s.png" .name }}{{ end -}}
 {{- with .Params.lib }}{{ $desc = printf "%s %s" .summary (cond (ne .install "") (printf "Install: %s" .install) "") | strings.TrimSpace }}{{ else }}{{ with .Description }}{{ $desc = . }}{{ end }}{{ end -}}
 <title>{{ $title }}</title>
 <meta name="description" content="{{ $desc }}">
@@ -17,13 +19,13 @@
 <meta property="og:title" content="{{ $title }}">
 <meta property="og:description" content="{{ $desc }}">
 <meta property="og:url" content="{{ .Permalink }}">
-<meta property="og:image" content="{{ site.Params.ogImage | absURL }}">
+<meta property="og:image" content="{{ $og | absURL }}">
 <meta property="og:image:width" content="1280">
 <meta property="og:image:height" content="640">
-<meta property="og:image:alt" content="ubgo logo and tagline">
+<meta property="og:image:alt" content="{{ with .Params.lib }}{{ .name }}: {{ .summary }}{{ else }}ubgo logo and tagline{{ end }}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ $title }}">
 <meta name="twitter:description" content="{{ $desc }}">
-<meta name="twitter:image" content="{{ site.Params.ogImage | absURL }}">
+<meta name="twitter:image" content="{{ $og | absURL }}">
 <link rel="preload" href="{{ "fonts/inter.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="{{ "fonts/space-grotesk.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>

@@ -1,0 +1,14 @@
+{
+  "name": "ubgo-site-og",
+  "private": true,
+  "type": "module",
+  "description": "Builds one 1280x640 social card per library into ../../static/og/. Build-time only; the site itself needs no Node.",
+  "devDependencies": {
+    "@fontsource/jetbrains-mono": "5.2.5",
+    "@fontsource/space-grotesk": "5.2.5",
+    "@fontsource/inter": "5.2.5",
+    "@resvg/resvg-js": "2.6.2",
+    "opentype.js": "1.3.4",
+    "yaml": "2.8.1"
+  }
+}

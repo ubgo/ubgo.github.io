@@ -12,6 +12,7 @@ read from the repo itself, never guessed:
   go          Go version from the root go.mod
   license     license name detected from the LICENSE file
   latestTag   highest root vX.Y.Z tag ("" when there is none)
+  branch      default branch of the clone (for links into the repo)
   coreDeps    number of direct requires in the root go.mod
   modules     every go.mod in the repo: {dir, module, deps}
   contrib     contrib/<name> folders: {name, module, deps, summary}
@@ -54,6 +55,15 @@ def license_name(repo):
                     return name
             return "see LICENSE"
     return ""
+
+
+def branch(repo):
+    head = os.path.join(repo, ".git", "HEAD")
+    if os.path.exists(head):
+        m = re.search(r"refs/heads/(\S+)", open(head).read())
+        if m:
+            return m.group(1)
+    return "main"
 
 
 def latest_tag(name):
@@ -107,8 +117,14 @@ def readme_parts(repo):
                 feat_done = True
             feat_section = not feat_done and bool(re.search(r"feature|what it does|highlight|at a glance|what you get|why ", heading, re.I))
         elif feat_section and re.match(r"^\s{0,1}[-*]\s+\S", line) and len(features) < 10:
-            features.append(plain(re.sub(r"^\s*[-*]\s+", "", line)))
-        elif not table and line.startswith("|") and re.search(r"backend|adapter|contrib|support|matrix|famil|packag|module|checker|driver|source|codec", heading + " " + line, re.I):
+            item = re.sub(r"^\s*[-*]\s+", "", line)
+            # README bullets often wrap: join indented continuation lines.
+            while i + 1 < len(lines) and re.match(r"^\s{2,}\S", lines[i + 1]) and not re.match(r"^\s*[-*]\s", lines[i + 1]):
+                i += 1
+                item += " " + lines[i].strip()
+            features.append(plain(item))
+        elif not table and line.startswith("|") and i + 1 < len(lines) and re.match(r"^\|[\s:|-]+\|?\s*$", lines[i + 1]) and re.search(r"backend|adapter|contrib|support|matrix|famil|packag|module|checker|driver|source|codec", heading + " " + line, re.I):
+            # Only start at a header row (the next line is the |---| separator).
             rows = []
             while i < len(lines) and lines[i].startswith("|"):
                 rows.append(re.sub(r"\[([^\]]+)\]\((?!https?://)[^)]*\)", r"\1", re.sub(r"!\[[^\]]*\]\([^)]*\)", "", lines[i])))
@@ -131,7 +147,7 @@ def main():
                 name_of[parse_gomod(os.path.join(d, "go.mod"))[0]] = n
     for n in NAMES:
         repo = os.path.join(ROOT, n)
-        f = {"name": n, "module": "", "go": "", "coreDeps": 0, "license": license_name(repo), "latestTag": latest_tag(n),
+        f = {"name": n, "module": "", "go": "", "coreDeps": 0, "license": license_name(repo), "latestTag": latest_tag(n), "branch": branch(repo),
              "modules": [], "contrib": [], "packages": [], "ubgoDeps": []}
         seen = set()
         for d, dirs, files in os.walk(repo):

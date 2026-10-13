@@ -5,6 +5,7 @@
  "coreDeps": 0,
  "license": "",
  "latestTag": "",
+ "branch": "main",
  "modules": [
   {
    "dir": "cache",

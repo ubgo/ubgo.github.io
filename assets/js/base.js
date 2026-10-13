@@ -80,3 +80,10 @@ if (filters) {
   })
   apply()
 }
+
+// Phone menu (<details data-menu>): close on outside click or Esc.
+const menu = document.querySelector("[data-menu]")
+if (menu) {
+  document.addEventListener("click", (e) => { if (menu.open && !menu.contains(e.target)) menu.open = false })
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && menu.open) { menu.open = false; menu.querySelector("summary").focus() } })
+}

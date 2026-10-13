@@ -1,43 +1,204 @@
 {{ define "main" }}
 {{- $l := .Params.lib }}
-{{- $all := hugo.Data.libraries.libraries }}
-<nav class="pt-6 text-[12px] text-slate-500" aria-label="Breadcrumb">
+{{- $d := hugo.Data.libraries }}
+{{- $all := $d.libraries }}
+{{- $f := index hugo.Data.facts $l.name }}
+{{- $repo := printf "https://github.com/ubgo/%s" $l.name }}
+{{- $tree := printf "%s/tree/%s" $repo (or $f.branch "main") }}
+{{- $suite := $l.suite }}
+{{- $passes := slice }}{{ $fails := slice }}
+{{- with $suite }}{{ $passes = .passes }}{{ with .fails }}{{ $fails = . }}{{ end }}{{ end }}
+
+{{- /* Ordered list of every library (area order, then name) for prev/next. */}}
+{{- $ordered := slice }}
+{{- range $d.areas }}{{ range sort (where $all "area" .key) "name" }}{{ $ordered = $ordered | append . }}{{ end }}{{ end }}
+{{- $idx := 0 }}{{ range $i, $x := $ordered }}{{ if eq $x.name $l.name }}{{ $idx = $i }}{{ end }}{{ end }}
+{{- $prev := cond (gt $idx 0) (index $ordered (sub $idx 1)) dict }}
+{{- $next := cond (lt (add $idx 1) (len $ordered)) (index $ordered (add $idx 1)) dict }}
+
+{{- /* Diagram groups, all from the repo itself. */}}
+{{- $groups := slice }}
+{{- $mark := dict }}
+{{- range $passes }}{{ $mark = merge $mark (dict . "pass") }}{{ end }}
+{{- range $fails }}{{ $mark = merge $mark (dict . "fail") }}{{ end }}
+{{- $max := 15 }}
+{{- with $f.contrib }}
+  {{- $nodes := slice }}
+  {{- range first $max . }}{{ $nodes = $nodes | append (dict "name" .name "href" (printf "%s/contrib/%s" $tree .name) "mark" (index $mark .name | default "")) }}{{ end }}
+  {{- if gt (len .) $max }}{{ $nodes = $nodes | append (dict "name" (printf "+%d more" (sub (len .) $max)) "href" (printf "%s/contrib" $tree) "mark" "") }}{{ end }}
+  {{- $groups = $groups | append (dict "label" "Adapters in contrib/" "nodes" $nodes) }}
+{{- end }}
+{{- $members := where (where $all "family" $l.name) "kind" "ne" "examples" }}
+{{- with $members }}
+  {{- $nodes := slice }}
+  {{- range sort . "name" }}{{ $nodes = $nodes | append (dict "name" .name "href" (printf "/libraries/%s/" .name | relURL) "mark" (index $mark .name | default "")) }}{{ end }}
+  {{- $groups = $groups | append (dict "label" "Backends and tools (own repos)" "nodes" $nodes) }}
+{{- end }}
+{{- with $f.packages }}
+  {{- $nodes := slice }}
+  {{- range first $max . }}{{ $nodes = $nodes | append (dict "name" . "href" (printf "%s/%s" $tree .) "mark" "") }}{{ end }}
+  {{- if gt (len .) $max }}{{ $nodes = $nodes | append (dict "name" (printf "+%d more" (sub (len .) $max)) "href" $repo "mark" "") }}{{ end }}
+  {{- $groups = $groups | append (dict "label" (cond (eq $l.kind "examples") "Examples" "Packages") "nodes" $nodes) }}
+{{- end }}
+
+{{- $explainer := index (where (where site.RegularPages "Section" "explainers") "Params.library" $l.name) 0 }}
+{{- $usedBy := slice }}
+{{- range $all }}{{ $o := index hugo.Data.facts .name }}{{ range $o.ubgoDeps }}{{ if eq .name $l.name }}{{ $usedBy = $usedBy | append (dict "name" $o.name "from" .from) }}{{ end }}{{ end }}{{ end }}
+
+<div class="relative">
+<div aria-hidden="true" class="pointer-events-none absolute inset-x-0 -top-10 h-56 bg-[radial-gradient(ellipse_at_top,rgba(8,145,178,0.14),transparent_60%)] dark:bg-[radial-gradient(ellipse_at_top,rgba(34,211,238,0.12),transparent_60%)]"></div>
+<nav class="relative pt-6 text-[12px] text-slate-500" aria-label="Breadcrumb">
   <a href="{{ "/libraries/" | relURL }}" class="hover:text-slate-800 dark:hover:text-white">Libraries</a>
-  <span aria-hidden="true">/</span>
+  <span aria-hidden="true" class="mx-1">/</span>
   <a href="{{ printf "/libraries/?area=%s" $l.area | relURL }}" class="hover:text-slate-800 dark:hover:text-white">{{ .Params.areaTitle }}</a>
 </nav>
-<article class="pt-2 max-w-3xl">
-  <h1 class="font-mono font-semibold text-[26px] tracking-tight text-slate-900 dark:text-white flex flex-wrap items-center gap-2">{{ $l.name }} {{ partial "kind-badge.html" $l }}</h1>
-  <p class="mt-2 text-[15px] text-slate-700 dark:text-slate-300">{{ $l.summary }}</p>
-  <dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-[13px]">
-    <dt class="text-slate-500">Area</dt><dd>{{ .Params.areaTitle }}</dd>
-    <dt class="text-slate-500">Language</dt><dd>{{ $l.lang }}</dd>
-    <dt class="text-slate-500">Repository</dt><dd class="min-w-0 truncate"><a class="text-brand-700 dark:text-brand-400 hover:underline" href="https://github.com/ubgo/{{ $l.name }}">github.com/ubgo/{{ $l.name }}</a></dd>
-  </dl>
-  {{- with $l.install }}
-  <h2 class="mt-6 mb-2 font-display font-semibold text-[15px] text-slate-900 dark:text-white">Install</h2>
-  {{ partial "install.html" . }}
-  {{- else }}
-  <p class="mt-6 text-[13px] text-slate-600 dark:text-slate-400">{{ if eq $l.kind "examples" }}This repo holds runnable examples. Clone it and run them with <code class="font-mono text-[12.5px]">go run .</code> as its README describes.{{ else }}See the repository README for how to use it.{{ end }}</p>
-  {{- end }}
-  {{- if eq $l.kind "deprecated" }}
-  <p class="mt-4 rounded-md border border-amber-300 dark:border-amber-500/40 bg-amber-50 dark:bg-amber-500/10 px-3 py-2 text-[13px] text-amber-900 dark:text-amber-200">This library is deprecated. New code should use the replacement listed under related libraries.</p>
-  {{- end }}
-  <div class="mt-5 flex flex-wrap gap-2 text-[13px]">
-    <a href="https://github.com/ubgo/{{ $l.name }}" class="h-8 px-3 inline-flex items-center rounded-md bg-brand-600 text-white font-medium hover:bg-brand-700">View on GitHub</a>
-    {{- with $l.docs }}
-    <a href="{{ . }}" class="h-8 px-3 inline-flex items-center rounded-md border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">{{ if hasPrefix . "https://pkg.go.dev" }}pkg.go.dev{{ else }}npm{{ end }}</a>
+
+<article class="relative pt-2">
+  <header class="grid gap-6 lg:grid-cols-[1fr_300px] items-start">
+    <div class="min-w-0">
+      <h1 class="font-mono font-semibold text-[28px] sm:text-[32px] tracking-tight text-slate-900 dark:text-white flex flex-wrap items-center gap-2">{{ $l.name }} {{ partial "kind-badge.html" $l }}</h1>
+      <p class="mt-2 text-[15px] leading-relaxed text-slate-700 dark:text-slate-300 max-w-2xl">{{ $l.summary }}</p>
+      {{- with $l.install }}
+      <div class="mt-4 max-w-xl">{{ partial "install.html" . }}</div>
+      {{- else }}
+      <p class="mt-4 text-[13px] text-slate-600 dark:text-slate-400">{{ if eq $l.kind "examples" }}Runnable examples. Clone the repo and run each one with <code class="font-mono text-[12.5px]">go run .</code>.{{ else }}See the repository README for how to use it.{{ end }}</p>
+      {{- end }}
+      {{- if eq $l.kind "deprecated" }}
+      <p class="mt-4 max-w-xl rounded-md border border-amber-300 dark:border-amber-500/40 bg-amber-50 dark:bg-amber-500/10 px-3 py-2 text-[13px] text-amber-900 dark:text-amber-200">Deprecated.{{ with $l.replacedBy }} Use <a class="underline font-mono" href="{{ printf "/libraries/%s/" . | relURL }}">{{ . }}</a> instead.{{ end }}</p>
+      {{- end }}
+      <div class="mt-4 flex flex-wrap gap-2 text-[13px]">
+        <a href="{{ $repo }}" class="h-8 px-3 inline-flex items-center gap-1.5 rounded-md bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-medium hover:opacity-90"><svg class="size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+        {{- with $l.docs }}
+        <a href="{{ . }}" class="h-8 px-3 inline-flex items-center rounded-md border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">{{ if hasPrefix . "https://pkg.go.dev" }}pkg.go.dev{{ else }}npm{{ end }}</a>
+        {{- end }}
+        {{- with $l.examplesRepo }}
+        <a href="{{ printf "/libraries/%s/" . | relURL }}" class="h-8 px-3 inline-flex items-center rounded-md border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">Examples</a>
+        {{- end }}
+        {{- with $explainer }}
+        <a href="{{ .RelPermalink }}" class="h-8 px-3 inline-flex items-center gap-1.5 rounded-md border border-brand-500/50 text-brand-700 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-500/10"><span aria-hidden="true">▶</span> {{ .Title }}</a>
+        {{- end }}
+      </div>
+    </div>
+    {{- /* Facts from the repo */}}
+    <dl class="grid grid-cols-3 lg:grid-cols-2 gap-px rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-200 dark:bg-slate-800 text-[12px]">
+      {{- $facts := slice
+        (dict "k" "Language" "v" $l.lang)
+        (dict "k" "Go version" "v" (cond (ne $f.go "") $f.go "–"))
+        (dict "k" "Core deps" "v" (cond (ne $f.module "") (printf "%d direct" (int $f.coreDeps)) "–"))
+        (dict "k" "Latest tag" "v" (or $f.latestTag "none"))
+        (dict "k" "License" "v" (or $f.license "not stated"))
+        (dict "k" "Go modules" "v" (cond (gt (len $f.modules) 0) (string (len $f.modules)) "–"))
+      }}
+      {{- range $facts }}
+      <div class="bg-white dark:bg-ink px-3 py-2 min-w-0"><dt class="text-slate-500 dark:text-slate-400">{{ .k }}</dt><dd class="mt-0.5 font-mono text-[13px] leading-snug text-slate-900 dark:text-white break-words">{{ .v }}</dd></div>
+      {{- end }}
+    </dl>
+  </header>
+
+  {{- with $groups }}
+  <section class="mt-10" aria-labelledby="arch">
+    <div class="flex items-baseline justify-between gap-3 mb-3">
+      <h2 id="arch" class="font-display font-semibold text-[17px] text-slate-900 dark:text-white">How it fits together</h2>
+      {{- with $suite }}<span class="text-[12px] text-slate-500 dark:text-slate-400 inline-flex items-center gap-3"><span class="inline-flex items-center gap-1"><span class="size-2.5 rounded-full bg-emerald-500"></span>passes <code class="font-mono">{{ .name }}</code></span>{{ with .fails }}<span class="inline-flex items-center gap-1"><span class="size-2.5 rounded-full bg-amber-500"></span>does not pass</span>{{ end }}</span>{{ end }}
+    </div>
+    <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 p-2 sm:p-4">
+      {{- $sub := cond (ne $f.module "") (printf "core · %d direct deps" (int $f.coreDeps)) (printf "%s · %s" $l.lang (or $f.license "")) }}
+      <div class="sm:hidden">{{ partial "arch-diagram.html" (dict "core" $l.name "sub" $sub "groups" . "suite" (cond (isset $suite "name") $suite.name "") "cols" 2 "width" 340) }}</div>
+      <div class="hidden sm:block">{{ partial "arch-diagram.html" (dict "core" $l.name "sub" $sub "groups" . "suite" (cond (isset $suite "name") $suite.name "") "cols" 3 "width" 720) }}</div>
+    </div>
+    {{- with $suite }}
+    <p class="mt-2 text-[13px] text-slate-600 dark:text-slate-400"><code class="font-mono text-[12.5px]">{{ .name }}</code> is the shared conformance suite: each one marked green has a test that runs it.{{ with .note }} {{ . }}{{ end }}</p>
     {{- end }}
+  </section>
+  {{- end }}
+
+  <div class="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_260px]">
+    <div class="min-w-0 space-y-10">
+      {{- with $f.features }}
+      <section aria-labelledby="features">
+        <h2 id="features" class="font-display font-semibold text-[17px] text-slate-900 dark:text-white mb-3">Highlights from the README</h2>
+        <ul class="grid gap-2 sm:grid-cols-2">
+          {{- range first 8 . }}
+          <li class="feature-item rounded-lg border border-slate-200 dark:border-slate-800 p-3 text-[13px] leading-snug text-slate-700 dark:text-slate-300">{{ . | markdownify }}</li>
+          {{- end }}
+        </ul>
+      </section>
+      {{- end }}
+
+      {{- with $f.examples }}
+      <section aria-labelledby="code">
+        <h2 id="code" class="font-display font-semibold text-[17px] text-slate-900 dark:text-white mb-3">Code from the README</h2>
+        <div class="codetabs rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-slate-50 dark:bg-[#0d1117]" data-codetabs>
+          <div class="flex items-center gap-1 overflow-x-auto border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 px-2" role="tablist" aria-label="Code examples">
+            {{- range $i, $e := . }}
+            <button type="button" role="tab" id="tab-{{ $i }}" aria-controls="panel-{{ $i }}" aria-selected="{{ if eq $i 0 }}true{{ else }}false{{ end }}" tabindex="{{ if eq $i 0 }}0{{ else }}-1{{ end }}" class="codetab shrink-0 h-9 px-2.5 text-[12px] border-b-2 -mb-px whitespace-nowrap max-w-[16rem] truncate">{{ $e.title | markdownify | plainify }}</button>
+            {{- end }}
+            <button type="button" data-copy-code class="ml-auto shrink-0 h-7 px-2 rounded text-[12px] text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 dark:hover:text-white" aria-label="Copy code">Copy</button>
+          </div>
+          {{- range $i, $e := . }}
+          <div role="tabpanel" id="panel-{{ $i }}" aria-labelledby="tab-{{ $i }}" class="codepanel"{{ if ne $i 0 }} hidden{{ end }}>
+            {{ transform.Highlight $e.code "go" "" }}
+          </div>
+          {{- end }}
+        </div>
+        <p class="mt-2 text-[12px] text-slate-500">From the <a class="underline hover:text-slate-800 dark:hover:text-white" href="{{ $repo }}#readme">{{ $l.name }} README</a>.</p>
+      </section>
+      {{- end }}
+
+      {{- with $f.table }}
+      <section aria-labelledby="table">
+        <h2 id="table" class="font-display font-semibold text-[17px] text-slate-900 dark:text-white mb-3">At a glance (from the README)</h2>
+        <div class="md-table overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">{{ . | markdownify }}</div>
+      </section>
+      {{- end }}
+    </div>
+
+    <aside class="space-y-6 text-[13px]">
+      {{- with $f.ubgoDeps }}
+      <section>
+        <h2 class="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-2">Uses</h2>
+        <ul class="space-y-1">{{ range . }}<li><a class="font-mono text-slate-900 dark:text-white hover:text-brand-700 dark:hover:text-brand-400" href="{{ printf "/libraries/%s/" .name | relURL }}">{{ .name }}</a>{{ if ne .from "." }} <span class="text-slate-500">in {{ .from }}</span>{{ end }}</li>{{ end }}</ul>
+      </section>
+      {{- end }}
+      {{- with $usedBy }}
+      <section>
+        <h2 class="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-2">Used by</h2>
+        <ul class="space-y-1">{{ range . }}<li><a class="font-mono text-slate-900 dark:text-white hover:text-brand-700 dark:hover:text-brand-400" href="{{ printf "/libraries/%s/" .name | relURL }}">{{ .name }}</a>{{ if ne .from "." }} <span class="text-slate-500">in {{ .from }}</span>{{ end }}</li>{{ end }}</ul>
+      </section>
+      {{- end }}
+      {{- with $l.interop }}
+      <section>
+        <h2 class="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-2">Byte-compatible with</h2>
+        <a class="font-mono text-slate-900 dark:text-white hover:text-brand-700 dark:hover:text-brand-400" href="{{ printf "/libraries/%s/" . | relURL }}">{{ . }}</a>
+      </section>
+      {{- end }}
+      {{- with $l.related }}
+      <section>
+        <h2 class="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-2">Related</h2>
+        <ul class="space-y-1.5">
+          {{- range . }}{{ with index (where $all "name" .) 0 }}
+          <li><a class="font-mono text-slate-900 dark:text-white hover:text-brand-700 dark:hover:text-brand-400" href="{{ printf "/libraries/%s/" .name | relURL }}">{{ .name }}</a><p class="text-slate-500 dark:text-slate-400 leading-snug line-clamp-2">{{ .summary }}</p></li>
+          {{- end }}{{ end }}
+        </ul>
+      </section>
+      {{- end }}
+      {{- with $f.modules }}{{ if gt (len .) 1 }}
+      <details class="group">
+        <summary class="cursor-pointer text-[11px] font-semibold uppercase tracking-wide text-slate-500 list-none flex items-center gap-1"><span class="transition-transform group-open:rotate-90" aria-hidden="true">›</span> Go modules ({{ len . }})</summary>
+        <ul class="mt-2 space-y-1 font-mono text-[11.5px] text-slate-600 dark:text-slate-400 break-all">{{ range . }}<li>{{ .module }} <span class="text-slate-400">· {{ .deps }} deps</span></li>{{ end }}</ul>
+      </details>
+      {{- end }}{{ end }}
+    </aside>
   </div>
-  {{- with $l.related }}
-  <h2 class="mt-8 mb-2 font-display font-semibold text-[15px] text-slate-900 dark:text-white">Related</h2>
-  <ul class="text-[13px] divide-y divide-slate-100 dark:divide-slate-800/70 border-y border-slate-100 dark:border-slate-800/70">
-    {{- range . }}
-    {{- with index (where $all "name" .) 0 }}
-    <li class="py-1.5 flex gap-3"><a class="font-mono font-medium shrink-0 text-slate-900 dark:text-white hover:text-brand-700 dark:hover:text-brand-400" href="{{ printf "/libraries/%s/" .name | relURL }}">{{ .name }}</a><span class="text-slate-600 dark:text-slate-400 truncate">{{ .summary }}</span></li>
+
+  <nav class="mt-12 grid grid-cols-2 gap-3 text-[13px]" aria-label="Previous and next library">
+    {{- with $prev.name }}
+    <a href="{{ printf "/libraries/%s/" . | relURL }}" class="group rounded-lg border border-slate-200 dark:border-slate-800 p-3 hover:border-brand-500"><span class="text-[11px] text-slate-500">← Previous</span><span class="block font-mono font-medium text-slate-900 dark:text-white group-hover:text-brand-700 dark:group-hover:text-brand-400 truncate">{{ . }}</span></a>
+    {{- else }}<span></span>{{ end }}
+    {{- with $next.name }}
+    <a href="{{ printf "/libraries/%s/" . | relURL }}" class="group rounded-lg border border-slate-200 dark:border-slate-800 p-3 text-right hover:border-brand-500"><span class="text-[11px] text-slate-500">Next →</span><span class="block font-mono font-medium text-slate-900 dark:text-white group-hover:text-brand-700 dark:group-hover:text-brand-400 truncate">{{ . }}</span></a>
     {{- end }}
-    {{- end }}
-  </ul>
-  {{- end }}
+  </nav>
 </article>
+</div>
 {{ end }}
