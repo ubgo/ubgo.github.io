@@ -17,6 +17,7 @@
  "contrib": [],
  "packages": [],
  "ubgoDeps": [],
+ "plugins": [],
  "examples": [
   {
    "title": "Quick start",

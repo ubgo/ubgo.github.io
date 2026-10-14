@@ -82,6 +82,7 @@
   "cachetest"
  ],
  "ubgoDeps": [],
+ "plugins": [],
  "examples": [
   {
    "title": "Quick start",

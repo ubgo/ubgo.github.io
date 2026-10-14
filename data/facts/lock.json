@@ -74,6 +74,7 @@
   "redislock"
  ],
  "ubgoDeps": [],
+ "plugins": [],
  "examples": [
   {
    "title": "60-second tour: code that works for every backend",

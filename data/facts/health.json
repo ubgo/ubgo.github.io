@@ -163,6 +163,7 @@
  ],
  "packages": [],
  "ubgoDeps": [],
+ "plugins": [],
  "examples": [
   {
    "title": "How the pieces fit together",

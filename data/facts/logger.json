@@ -97,6 +97,7 @@
   "logtest"
  ],
  "ubgoDeps": [],
+ "plugins": [],
  "examples": [
   {
    "title": "1. The simplest possible logger",

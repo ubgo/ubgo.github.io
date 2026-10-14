@@ -10,7 +10,7 @@
   "output": "v0.2.0",
   "skillcmd": "v0.2.0",
   "versioncmd": "v0.2.1",
-  "volt": "v0.3.1"
+  "volt": "v0.3.2"
  },
  "branch": "main",
  "modules": [
@@ -58,6 +58,7 @@
    "from": "versioncmd"
   }
  ],
+ "plugins": [],
  "examples": [],
  "features": [],
  "table": "| Module | Import | What it does |\n|---|---|---|\n| **root** | `github.com/ubgo/voltkit/...` | the kit's core packages, below |\n| `appmeta` | `.../appmeta` | app identity: name, env prefix, directory names, DB location policy |\n| `appdir` | `.../appdir` | resolves where state lives — and reports which rung decided |\n| `output` | `.../output` | the stable `{schema_version, kind, count, data}` JSON envelope |\n| `versioncmd` | `.../versioncmd` | plug-and-play `version` command with build provenance |\n| `skillcmd` | `.../skillcmd` | a `skills` subcommand for any CLI: serves the project's published SKILL.md agent skills, always matched to the binary's version |\n| `apps/demo` | — | the reference binary built from the kit — installable, not importable |\n| `apps/volt` | — | the family tool: `new` · `status` · `ci` · `cover` · `build` · `release` · `gen` · `doctor` · `update` — see its README |"

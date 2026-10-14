@@ -26,6 +26,7 @@
    "from": "."
   }
  ],
+ "plugins": [],
  "examples": [],
  "features": [
   "**Zero-glue debugging.** Inspect a production or local cache without embedding a debug endpoint in your service.",

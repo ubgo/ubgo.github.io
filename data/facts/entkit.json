@@ -79,6 +79,7 @@
    "from": "ent_jsontype"
   }
  ],
+ "plugins": [],
  "examples": [
   {
    "title": "Why one repo with many sub-modules",

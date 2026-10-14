@@ -6,9 +6,9 @@
  "license": "Apache-2.0",
  "latestTag": "",
  "streamTags": {
-  "gqlkit": "v0.13.0",
-  "gqlkit-sdl": "v0.11.0",
-  "gqlkit-ts": "v0.2.0"
+  "gqlkit": "v0.14.0",
+  "gqlkit-sdl": "v0.12.0",
+  "gqlkit-ts": "v0.3.0"
  },
  "branch": "main",
  "modules": [
@@ -64,6 +64,7 @@
    "from": "gqlkit"
   }
  ],
+ "plugins": [],
  "examples": [
   {
    "title": "Quick Start — Go",

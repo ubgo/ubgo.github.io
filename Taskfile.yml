@@ -32,14 +32,11 @@ tasks:
       - python3 -I scripts/brand-zip.py {{.BRAND}} static/brand/ubgo-brand.zip
 
   facts:
-    desc: Refresh data/facts/*.json from shallow clones of every public repo (needs network)
+    desc: Refresh data/facts/*.json from shallow clones of every public repo (needs network; fetches with timeouts and retries, fails if any repo cannot be fetched)
     vars:
       CLONES: '{{.CLONES | default ".facts-clones"}}'
     cmds:
-      - mkdir -p {{.CLONES}}
-      - |
-        grep -oE '^ +- name: [a-z0-9-]+' data/libraries.yaml | awk '{print $3}' | \
-          GIT_TERMINAL_PROMPT=0 xargs -P 4 -I{} sh -c 'cd {{.CLONES}} && ( [ -d {} ] && git -C {} pull -q --depth 1 || git clone -q --depth 1 https://github.com/ubgo/{}.git {} ) && git ls-remote --tags https://github.com/ubgo/{}.git > {}.tags'
+      - sh scripts/fetch-facts.sh {{.CLONES}} data/libraries.yaml
       - python3 -I scripts/facts.py {{.CLONES}} data/libraries.yaml data/facts
 
   og:
