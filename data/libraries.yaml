@@ -65,9 +65,9 @@ libraries:
     install: go get github.com/ubgo/auth@latest
     docs: ""  # not on pkg.go.dev yet (checked 2026-10-14)
     # Untagged by the owner's choice (2026-10-14): people use the latest commit, so
-    # the install line pins @latest. Note: a plugin module such as plugin/password
-    # requires github.com/ubgo/auth v0.0.0, so `go get` of it fails while untagged.
-    note: auth is not tagged yet; @latest takes the newest commit on main.
+    # the install line pins @latest. Every plugin and contrib module requires the
+    # core at a pushed commit's pseudo-version (auth's `task pin`), so
+    # `go get github.com/ubgo/auth/plugin/password@latest` works too (checked 2026-10-14).
     featured: true
     flagship: true
     # In the order the README's opening sentence lists them.
