@@ -115,6 +115,7 @@
    "from": "contrib/goerr"
   }
  ],
+ "plugins": [],
  "examples": [
   {
    "title": "Example",

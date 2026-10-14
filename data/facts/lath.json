@@ -51,6 +51,7 @@
   "steps"
  ],
  "ubgoDeps": [],
+ "plugins": [],
  "examples": [
   {
    "title": "The command model",

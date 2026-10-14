@@ -119,6 +119,7 @@
   "stmt"
  ],
  "ubgoDeps": [],
+ "plugins": [],
  "examples": [
   {
    "title": "Checked three times, not claimed once",

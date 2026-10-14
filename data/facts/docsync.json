@@ -4,7 +4,7 @@
  "go": "1.26",
  "coreDeps": 0,
  "license": "Apache-2.0",
- "latestTag": "v0.1.6",
+ "latestTag": "v0.1.7",
  "streamTags": {
   "cli": "v0.1.8",
   "ds": "v0.1.8",
@@ -65,6 +65,7 @@
   "workspace"
  ],
  "ubgoDeps": [],
+ "plugins": [],
  "examples": [
   {
    "title": "Using the library",

@@ -80,6 +80,7 @@
   "testenttui"
  ],
  "ubgoDeps": [],
+ "plugins": [],
  "examples": [
   {
    "title": "entcascade",

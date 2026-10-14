@@ -261,6 +261,7 @@
    "from": "."
   }
  ],
+ "plugins": [],
  "examples": [
   {
    "title": "Quick start",
