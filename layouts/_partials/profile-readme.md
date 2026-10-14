@@ -6,7 +6,7 @@
 <h1 align="center">ubgo</h1>
 <p align="center"><strong>Batteries included for Go, one module at a time.</strong></p>
 <p align="center"><em>Early alpha: ubgo is still being built and is not fully production-ready yet, so libraries and APIs may change.</em></p>
-<p align="center">Open-source Go libraries, plus a few TypeScript ones, for errors, logging, caching, config, SQL, GraphQL, HTTP services, crypto and tooling.</p>
+<p align="center">Open-source Go libraries, plus a few TypeScript ones, for authentication, errors, logging, caching, config, SQL, GraphQL, HTTP services, crypto and tooling.</p>
 <p align="center">
   <a href="{{ $site }}"><img src="https://img.shields.io/badge/site-ubgo.github.io-0891B2" alt="Website: ubgo.github.io"></a>
   <img src="https://img.shields.io/badge/public%20libraries-{{ len $d.libraries }}-0891B2" alt="{{ len $d.libraries }} public libraries">
@@ -14,7 +14,7 @@
   <img src="https://img.shields.io/badge/license-Apache--2.0-0891B2" alt="License: Apache-2.0">{{ end }}
 </p>
 
-ubgo is an ecosystem for building Go apps, in the spirit of the components Laravel ships for caching, logging and configuration. Every piece is its own Go module, so a service imports only what it uses: structured errors and logging, caching with Redis, Postgres, Memcached and in-memory backends, typed configuration and .env files, SQL building, GraphQL and ent helpers, health checks, graceful shutdown and crypto. The main libraries share one shape, a small core with adapters outside it and a shared test suite, so learning one teaches you the next.
+ubgo is an ecosystem for building Go apps, in the spirit of the components Laravel ships for authentication, caching, logging and configuration. Every piece is its own Go module, so a service imports only what it uses: sign-in, sessions, two-factor, passkeys, OAuth and organizations, structured errors and logging, caching with Redis, Postgres, Memcached and in-memory backends, typed configuration and .env files, SQL building, GraphQL and ent helpers, health checks, graceful shutdown and crypto. The main libraries share one shape, a small core with adapters outside it and a shared test suite, so learning one teaches you the next.
 
 - [Libraries by area](#libraries-by-area)
 - [Volt](#volt)

@@ -11,6 +11,9 @@
 #   docs     API docs link (pkg.go.dev or npm); empty when there is no package to document
 #   kind     library (default) | examples | cli | deprecated
 #   featured true to show on the home page
+#   flagship true to pin it as the wide first card of the featured list
+#   note     optional plain line shown under the install line (e.g. no release yet)
+#   highlight optional list of plugin names drawn first (home hero and flagship card)
 #   related  optional list of other library names
 #   family       parent library this repo belongs to (backends, CLIs, examples)
 #   examplesRepo name of the repo with runnable examples for this library
@@ -25,6 +28,9 @@
 # Only PUBLIC repos may appear here.
 
 areas:
+  - key: auth-identity
+    title: Auth and identity
+    blurb: Sign-in, sessions, two-factor, passkeys, OAuth and organizations, stored in your own database.
   - key: errors-logging
     title: Errors and logging
     blurb: Structured errors, logging and telemetry.
@@ -51,6 +57,23 @@ areas:
     blurb: Doc checking, task running, code generation and small utilities.
 
 libraries:
+  # Auth and identity
+  - name: auth
+    area: auth-identity
+    summary: Embeddable authentication with plugins for email, password, phone, OAuth, passkeys, 2FA, API keys, JWT and organizations, stored in your own Postgres, MySQL or SQLite.
+    lang: Go
+    install: go get github.com/ubgo/auth
+    docs: ""  # not on pkg.go.dev yet (checked 2026-10-14)
+    # No tag yet (checked 2026-10-14): the core resolves to the latest commit, but a
+    # plugin module such as plugin/password requires github.com/ubgo/auth v0.0.0, so
+    # `go get` of it fails until the first version is tagged.
+    note: No release yet, so go get takes the latest commit. Plugins that are their own module, such as password and passkey, install once the first version is tagged.
+    featured: true
+    flagship: true
+    # In the order the README's opening sentence lists them.
+    highlight: [email, password, phone, username, magiclink, oauth, twofactor, passkey, apikey, jwt, organization, admin]
+    related: [sqlb]
+
   # Errors and logging
   - name: errx
     area: errors-logging
@@ -419,7 +442,7 @@ principles:
     repos: [errx, logger, health, shutdown, buildinfo, sqlb, lock, httpreq]
   - title: Adapters live outside the core
     text: Integrations (frameworks, OpenTelemetry, drivers, secret stores) ship as separate modules, so you only download what you import.
-    repos: [errx, logger, health, shutdown, buildinfo, cfgkit, sqlb, otelkit, lock]
+    repos: [errx, logger, health, shutdown, buildinfo, cfgkit, sqlb, otelkit, lock, auth]
   - title: Shared conformance suites
     text: A family's contract is a test suite that every backend runs, so backends behave the same.
     repos: [cache, cache-obj, sqlb]

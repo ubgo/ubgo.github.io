@@ -30,6 +30,13 @@
 {{- range $passes }}{{ $mark = merge $mark (dict . "pass") }}{{ end }}
 {{- range $fails }}{{ $mark = merge $mark (dict . "fail") }}{{ end }}
 {{- $max := 15 }}
+{{- /* Plugins (plugin/<name>), in the repo README's order; "own module" ones have a go.mod. */}}
+{{- with $f.plugins }}
+  {{- $nodes := slice }}
+  {{- range first $max . }}{{ $nodes = $nodes | append (dict "name" .name "href" (printf "%s/plugin/%s" $tree .name) "mark" "") }}{{ end }}
+  {{- if gt (len .) $max }}{{ $nodes = $nodes | append (dict "name" (printf "+%d more" (sub (len .) $max)) "href" (printf "%s/plugin" $tree) "mark" "") }}{{ end }}
+  {{- $groups = $groups | append (dict "label" (printf "Plugins in plugin/ · %d own modules" (len (where . "module" "ne" ""))) "nodes" $nodes) }}
+{{- end }}
 {{- with $f.contrib }}
   {{- $nodes := slice }}
   {{- range first $max . }}{{ $nodes = $nodes | append (dict "name" .name "href" (printf "%s/contrib/%s" $tree .name) "mark" (index $mark .name | default "")) }}{{ end }}
@@ -72,6 +79,7 @@
       <p class="mt-2 text-[15px] leading-relaxed text-slate-700 dark:text-slate-300 max-w-2xl">{{ $l.summary }}</p>
       {{- with $l.install }}
       <div class="mt-4 max-w-xl">{{ partial "install.html" . }}</div>
+      {{- with $l.note }}<p class="mt-2 max-w-xl text-[12.5px] leading-snug text-slate-600 dark:text-slate-400">{{ . }}</p>{{ end }}
       {{- else }}
       <p class="mt-4 text-[13px] text-slate-600 dark:text-slate-400">{{ if eq $l.kind "examples" }}Runnable examples. Clone the repo and run each one with <code class="font-mono text-[12.5px]">go run .</code>.{{ else }}See the repository README for how to use it.{{ end }}</p>
       {{- end }}
@@ -97,7 +105,7 @@
         (dict "k" "Language" "v" $l.lang)
         (dict "k" "Go version" "v" (cond (ne $f.go "") $f.go "–"))
         (dict "k" "Core deps" "v" (cond (ne $f.module "") (printf "%d direct" (int $f.coreDeps)) "–"))
-        (dict "k" "Latest tag" "v" (or $f.latestTag (cond (gt (len $streams) 0) (printf "%d streams" (len $streams)) "none")))
+        (dict "k" "Latest tag" "v" (or $f.latestTag (cond (gt (len $streams) 0) (printf "%d streams" (len $streams)) "no release yet")))
         (dict "k" "License" "v" (or $f.license "not stated"))
         (dict "k" "Go modules" "v" (cond (gt (len $f.modules) 0) (string (len $f.modules)) "–"))
       }}
@@ -114,7 +122,7 @@
       {{- with $suite }}<span class="text-[12px] text-slate-500 dark:text-slate-400 inline-flex items-center gap-3"><span class="inline-flex items-center gap-1"><span class="size-2.5 rounded-full bg-emerald-500"></span>passes <code class="font-mono">{{ .name }}</code></span>{{ with .fails }}<span class="inline-flex items-center gap-1"><span class="size-2.5 rounded-full bg-amber-500"></span>does not pass</span>{{ end }}</span>{{ end }}
     </div>
     <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 p-2 sm:p-4">
-      {{- $sub := cond (ne $f.module "") (printf "core · %d direct deps" (int $f.coreDeps)) (cond (ne $f.license "") (printf "%s · %s" $l.lang $f.license) (printf "%s · %d Go modules" $l.lang (len $f.modules))) }}
+      {{- $sub := cond (ne $f.module "") (printf "core · %d direct %s" (int $f.coreDeps) (cond (eq (int $f.coreDeps) 1) "dep" "deps")) (cond (ne $f.license "") (printf "%s · %s" $l.lang $f.license) (printf "%s · %d Go modules" $l.lang (len $f.modules))) }}
       <div class="sm:hidden">{{ partial "arch-diagram.html" (dict "core" $l.name "sub" $sub "groups" . "suite" $suiteName "cols" 2 "width" 340) }}</div>
       <div class="hidden sm:block max-w-[760px] mx-auto">{{ partial "arch-diagram.html" (dict "core" $l.name "sub" $sub "groups" . "suite" $suiteName "cols" 3 "width" 720) }}</div>
     </div>

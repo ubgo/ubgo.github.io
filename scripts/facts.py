@@ -17,6 +17,9 @@ read from the repo itself, never guessed:
   coreDeps    number of direct requires in the root go.mod
   modules     every go.mod in the repo: {dir, module, deps}
   contrib     contrib/<name> folders: {name, module, deps, summary}
+  plugins     plugin/<name> (or plugins/<name>) folders, same shape as contrib;
+              module is "" when the plugin lives in the root module. Ordered as
+              the repo README first links them, then by name
   packages    top-level Go package folders (backends like lock/redislock)
   ubgoDeps    other ubgo libraries required by any go.mod: {name, from}
   examples    up to 4 short Go or TypeScript code blocks from the README: {title, lang, code}
@@ -37,7 +40,7 @@ if os.environ.get("FACTS_ONLY"):
     NAMES = [n for n in NAMES if n in os.environ["FACTS_ONLY"].split(",")]
 # Module path prefixes that refer to a ubgo library (some repos moved from khanakia).
 PREFIXES = ("github.com/ubgo/", "github.com/khanakia/")
-SKIP_DIRS = {"internal", "cmd", "contrib", "examples", "example", "docs", "testdata", "scripts", "brand", "vendor", ".github", "node_modules"}
+SKIP_DIRS = {"internal", "cmd", "contrib", "plugin", "plugins", "examples", "example", "docs", "testdata", "scripts", "brand", "vendor", ".github", "node_modules"}
 
 
 def parse_gomod(path):
@@ -155,6 +158,40 @@ def readme_parts(repo):
     return examples, features, table
 
 
+def adapter_dirs(repo, folder, readme_order=False):
+    """Sub-folders of <repo>/<folder> (contrib/, plugin/): {name, module, deps, summary}.
+
+    The summary is the first prose line of the folder's README. Sorted by name;
+    with readme_order, folders the repo README links as `folder/<name>` come
+    first, in the README's own order (e.g. a plugin table), then the rest by name.
+    """
+    cdir = os.path.join(repo, folder)
+    if not os.path.isdir(cdir):
+        return []
+    rp = next((os.path.join(repo, x) for x in os.listdir(repo) if x.lower() == "readme.md"), None)
+    order = []
+    if rp and readme_order:
+        for m in re.findall(rf"\({re.escape(folder)}/([a-z0-9_-]+)\)", open(rp, encoding="utf-8").read()):
+            if m not in order:
+                order.append(m)
+    names = [c for c in sorted(os.listdir(cdir)) if os.path.isdir(os.path.join(cdir, c))]
+    names.sort(key=lambda c: (order.index(c) if c in order else len(order), c))
+    out = []
+    for c in names:
+        cp = os.path.join(cdir, c)
+        gm = os.path.join(cp, "go.mod")
+        module, _, direct = parse_gomod(gm) if os.path.exists(gm) else ("", "", [])
+        summary = ""
+        rp2 = os.path.join(cp, "README.md")
+        if os.path.exists(rp2):
+            for line in open(rp2, encoding="utf-8").read().splitlines()[1:]:
+                if line.strip() and not line.startswith(("#", "[!", "!", "<", "|", "```", ">")):
+                    summary = plain(line)[:160]
+                    break
+        out.append({"name": c, "module": module, "deps": len(direct), "summary": summary})
+    return out
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     name_of = {}
@@ -185,22 +222,8 @@ def main():
                 if target and target != n and target not in seen and not rel.startswith(("examples", "example")):
                     seen.add(target)
                     f["ubgoDeps"].append({"name": target, "from": rel})
-        cdir = os.path.join(repo, "contrib")
-        if os.path.isdir(cdir):
-            for c in sorted(os.listdir(cdir)):
-                cp = os.path.join(cdir, c)
-                if not os.path.isdir(cp):
-                    continue
-                gm = os.path.join(cp, "go.mod")
-                module, _, direct = parse_gomod(gm) if os.path.exists(gm) else ("", "", [])
-                summary = ""
-                rp = os.path.join(cp, "README.md")
-                if os.path.exists(rp):
-                    for line in open(rp, encoding="utf-8").read().splitlines()[1:]:
-                        if line.strip() and not line.startswith(("#", "[!", "!", "<", "|", "```", ">")):
-                            summary = plain(line)[:160]
-                            break
-                f["contrib"].append({"name": c, "module": module, "deps": len(direct), "summary": summary})
+        f["contrib"] = adapter_dirs(repo, "contrib")
+        f["plugins"] = adapter_dirs(repo, "plugin", True) or adapter_dirs(repo, "plugins", True)
         for c in sorted(os.listdir(repo)):
             cp = os.path.join(repo, c)
             if os.path.isdir(cp) and c not in SKIP_DIRS and not c.startswith(".") and any(x.endswith(".go") and not x.endswith("_test.go") for x in os.listdir(cp)):

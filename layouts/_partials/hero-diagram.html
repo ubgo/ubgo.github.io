@@ -9,9 +9,14 @@
              suite (cache-obj is a separate object cache with its own objtest suite)
     packages lock: its backend packages (each its own Go module) plus contrib/
     contrib  everyone else: the modules under contrib/ in data/facts/<name>.json
+    plugins  auth: its plugin/ folders, then its contrib/ modules. The library's
+             `highlight` list in libraries.yaml names the plugins drawn first (the
+             order the auth README's opening sentence lists them); the rest keep
+             the README's plugin-table order behind "+N more"
 */ -}}
 {{- $libs := hugo.Data.libraries.libraries }}
 {{- $pills := slice
+  (dict "name" "auth" "source" "plugins")
   (dict "name" "cache" "source" "family")
   (dict "name" "sqlb" "source" "contrib")
   (dict "name" "cfgkit" "source" "contrib")
@@ -29,7 +34,18 @@
   {{- $lib := index (where $libs "name" $name) 0 }}
   {{- $f := index hugo.Data.facts $name }}
   {{- $ads := slice }}
-  {{- if eq $source "family" }}
+  {{- $first := $lib.highlight | default slice }}
+  {{- if eq $source "plugins" }}
+    {{- range $first }}{{ $p := . }}{{ range where $f.plugins "name" $p }}
+      {{- $ads = $ads | append (dict "name" .name "href" (printf "%s%s/" $base $name) "own" (ne .module "")) }}
+    {{- end }}{{ end }}
+    {{- range $f.plugins }}{{ if not (in $first .name) }}
+      {{- $ads = $ads | append (dict "name" .name "href" (printf "%s%s/" $base $name) "own" (ne .module "")) }}
+    {{- end }}{{ end }}
+    {{- range $f.contrib }}
+      {{- $ads = $ads | append (dict "name" .name "href" (printf "%s%s/" $base $name) "contrib" true) }}
+    {{- end }}
+  {{- else if eq $source "family" }}
     {{- range where $libs "family" $name }}
       {{- if and (not .kind) (not .suite) }}
         {{- $ads = $ads | append (dict "name" .name "href" (printf "%s%s/" $base .name) "own" true) }}
@@ -56,6 +72,8 @@
       "license" $f.license
       "tag" $f.latestTag
       "suite" $lib.suite
+      "plugins" (len ($f.plugins | default slice))
+      "contribs" (len ($f.contrib | default slice))
       "adapters" $ads
     ) }}
   {{- end }}
@@ -81,7 +99,7 @@
       </svg>
       <noscript>
         <ul class="px-3 pb-3 text-[13px] text-slate-600 dark:text-slate-400">
-          {{- range $out }}<li><a class="font-mono text-slate-900 dark:text-white" href="{{ .href }}">{{ .name }}</a>: {{ len .adapters }} {{ if eq .source "contrib" }}contrib modules{{ else }}backends{{ end }}</li>{{ end }}
+          {{- range $out }}<li><a class="font-mono text-slate-900 dark:text-white" href="{{ .href }}">{{ .name }}</a>: {{ len .adapters }} {{ if eq .source "contrib" }}contrib modules{{ else if eq .source "plugins" }}plugins and contrib modules{{ else }}backends{{ end }}</li>{{ end }}
         </ul>
       </noscript>
     </div>

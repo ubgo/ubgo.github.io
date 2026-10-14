@@ -6,6 +6,7 @@ nodes:
   need:
     q: What do you need?
     options:
+      - { label: "Sign-in and accounts", hint: "Passwords, passkeys, OAuth, two-factor, organizations", next: auth-what }
       - { label: "A cache", hint: "In-memory, Redis, Postgres, Memcached, tiered or clustered", next: cache-where }
       - { label: "A lock", hint: "Run something once, on one host or across many", next: lock-host }
       - { label: "Configuration", hint: "Typed config or .env files", next: config-what }
@@ -13,6 +14,16 @@ nodes:
       - { label: "Service lifecycle", hint: "Health probes, graceful shutdown, build info", next: svc-what }
       - { label: "SQL and data types", next: sql-what }
       - { label: "Encryption or signing", next: crypto-where }
+
+  auth-what:
+    q: What should sign-in look like?
+    options:
+      - { label: "Email and password", hint: "With reset, verification and optional two-factor", next: r-auth-password }
+      - { label: "Passwordless", hint: "Magic links, email or SMS codes, passkeys", next: r-auth-passwordless }
+      - { label: "Google, GitHub or company SSO", hint: "OAuth, OpenID Connect or SAML", next: r-auth-oauth }
+      - { label: "Teams and organizations", hint: "Workspaces, invitations and roles", next: r-auth-org }
+      - { label: "Keys for scripts and other services", hint: "API keys and short-lived JWTs", next: r-auth-keys }
+      - { label: "Just a login gate for an internal tool", hint: "One email domain, no database", next: r-auth-gate }
 
   cache-where:
     q: Where should cached values live?
@@ -86,6 +97,12 @@ nodes:
       - { label: "Go and Node.js or TypeScript", hint: "Data encrypted on one side, read on the other", next: r-crypt-both }
 
   # Results: libs are library names; why is one plain sentence from the README.
+  r-auth-password: { result: { libs: [auth], why: "auth signs users in with the plugins you pass to auth.New: plugin/email and plugin/password give sign-up, sign-in, reset and email verification as JSON routes and typed Go calls, and plugin/twofactor adds TOTP with recovery codes.", source: "auth README, Quick start and Plugins" } }
+  r-auth-passwordless: { result: { libs: [auth], why: "plugin/magiclink signs in with a single-use link, plugin/emailchallenge with a link or a code, plugin/phone with an SMS code alone, and plugin/passkey with a passkey (WebAuthn).", source: "auth README, Plugins" } }
+  r-auth-oauth: { result: { libs: [auth], why: "plugin/oauth signs in through Google, GitHub or any OpenID Connect issuer, and plugin/sso registers OpenID Connect and SAML 2.0 identity providers per organization or email domain.", source: "auth README, Plugins" } }
+  r-auth-org: { result: { libs: [auth], why: "plugin/organization adds organizations, teams, members, invitations by email and roles checked by permission, with an active organization per session.", source: "auth README, Plugins" } }
+  r-auth-keys: { result: { libs: [auth], why: "plugin/apikey gives scoped API keys for scripts and integrations, and plugin/jwt issues short-lived JWTs from a session, with a JWKS, for another service.", source: "auth README, Plugins" } }
+  r-auth-gate: { result: { libs: [auth], why: "authgate is a login gate with no database: an internal dashboard for one email domain, with the sign-in kept in a sealed cookie.", source: "auth README, Modules and Examples (login-gate)" } }
   r-cache-mem: { result: { libs: [cache, cache-mem], why: "cache gives you one Cache interface with typed generics and single-flight Remember; cache-mem is its sharded in-memory backend with W-TinyLFU or LRU eviction.", source: "cache-obj README (when to use cache + cache-mem); cache-mem README" } }
   r-cache-obj: { result: { libs: [cache-obj], why: "cache-obj holds live objects by reference with TTL and LRU, for values that would not survive a codec round-trip. For serializable values the README points to cache + cache-mem instead.", source: "cache-obj README" } }
   r-cache-redis: { result: { libs: [cache, cache-redis], why: "cache-redis is the Redis 6+ backend for cache, with prefix isolation and Pub/Sub invalidation, and it passes the shared cachetest suite.", source: "cache-redis README" } }
