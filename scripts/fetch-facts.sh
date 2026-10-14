@@ -40,5 +40,8 @@ CLONES=$1
 LIBS=$2
 mkdir -p "$CLONES"
 export ATTEMPTS TIMEOUT
-grep -oE "^ +- name: [a-z0-9-]+" "$LIBS" | awk "{print \$3}" | \
+# Stop at the top-level `upcoming:` key: those repos are private and get no facts.
+# FACTS_ONLY=a,b limits the fetch to those names, like scripts/facts.py.
+sed '/^upcoming:/,$d' "$LIBS" | grep -oE "^ +- name: [a-z0-9-]+" | awk "{print \$3}" | \
+  { if [ -n "${FACTS_ONLY:-}" ]; then grep -xE "$(echo "$FACTS_ONLY" | tr , '|')"; else cat; fi; } | \
   xargs -P "$PARALLEL" -I{} sh "$0" --one "$CLONES" {}

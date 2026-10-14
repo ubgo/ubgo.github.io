@@ -34,7 +34,9 @@ import sys
 ROOT, LIBS, OUT = sys.argv[1:4]
 # Every repo listed in libraries.yaml: the libraries (2-space indent) and the volt
 # repos (4-space indent under volt.repos). FACTS_ONLY=a,b limits a run to those.
-NAMES = re.findall(r"^ +- name: ([a-z0-9-]+)", open(LIBS, encoding="utf-8").read(), re.M)
+# Everything from the top-level `upcoming:` key on is private repos and the home
+# builder, so it is cut off before matching (private repos never get facts).
+NAMES = re.findall(r"^ +- name: ([a-z0-9-]+)", re.split(r"^upcoming:", open(LIBS, encoding="utf-8").read(), flags=re.M)[0], re.M)
 ALL_NAMES = list(NAMES)  # dependency matching always sees every repo name
 if os.environ.get("FACTS_ONLY"):
     NAMES = [n for n in NAMES if n in os.environ["FACTS_ONLY"].split(",")]
