@@ -4,9 +4,9 @@
  "go": "1.22",
  "coreDeps": 0,
  "license": "Apache-2.0",
- "latestTag": "v0.1.1",
+ "latestTag": "v0.1.2",
  "streamTags": {
-  "cli": "v0.1.2"
+  "cli": "v0.1.3"
  },
  "branch": "main",
  "modules": [
@@ -29,22 +29,22 @@
   {
    "title": "Reading",
    "lang": "go",
-   "code": "f, err := dotenv.Open(\".env\")     // a missing file is not an error\nif err != nil {\n\treturn err\n}\n\nv, ok := f.Get(\"DATABASE_URL\")\nf.Has(\"DATABASE_URL\")\nf.Keys()      // active keys, in file order, deduplicated\nf.Pairs()     // active pairs, in file order, duplicates included\nf.Map()       // effective view: last occurrence wins"
+   "code": "// Example_reading shows what each read accessor returns for a file with a\n// duplicated key and a commented-out setting: duplicates resolve to the last\n// occurrence, and disabled lines are invisible to every accessor.\nfunc Example_reading() {\n\tf := dotenv.Parse(\"A=1\\nB=2\\nA=3\\n# C=off\\n\")\n\n\tv, ok := f.Get(\"A\")\n\tfmt.Println(v, ok)             // last occurrence wins\n\tfmt.Println(f.Has(\"C\"))        // disabled lines are not active keys\n\tfmt.Println(f.Count(\"A\"))      // how many active A lines exist\n\tfmt.Println(f.Keys())          // active keys, file order, deduplicated\n\tfmt.Println(len(f.Pairs()))    // active pairs, duplicates included\n\tfmt.Println(f.Map()[\"A\"])      // effective view\n\tfmt.Println(len(f.Disabled())) // the commented-out setting is still known\n\t// Output:\n\t// 3 true\n\t// false\n\t// 2\n\t// [A B]\n\t// 3\n\t// 3\n\t// 1\n}"
   },
   {
-   "title": "Writing",
+   "title": "Placing a new key",
    "lang": "go",
-   "code": "created := f.Set(\"API_KEY\", \"secret\")   // updates in place, or appends\nf.Unset(\"OLD_KEY\", false)               // comments it out — reversible\nf.Unset(\"OLD_KEY\", true)                // removes it outright\nerr := f.Save()                         // atomic"
-  },
-  {
-   "title": "Generating a file",
-   "lang": "go",
-   "code": "f := dotenv.Parse(\"\")\nf.Append(\n    dotenv.NewComment(\"------------------\", \"DATABASE\", \"------------------\"),\n    dotenv.NewPair(\"DB_HOST\", \"localhost\"),\n    dotenv.NewPair(\"DB_PORT\", \"5432\"),\n    dotenv.NewBlank(),\n    dotenv.NewComment(\"------------------\", \"AUTH\", \"------------------\"),\n    dotenv.NewPair(\"AUTH_SECRET\", \"change me\"),\n)\nf.Path = \".env.example\"\nf.Save()"
+   "code": "// Example_editing covers the upsert family: Set updates in place or appends,\n// SetAfter places a new key next to an anchor, a missing anchor is an error\n// rather than a silent append, and Unset comments a key out reversibly.\nfunc Example_editing() {\n\tf := dotenv.Parse(\"DB_HOST=localhost\\nDB_PORT=5432\\nOLD_KEY=x\\n\")\n\n\tcreated := f.Set(\"API_KEY\", \"secret\") // appends: the key was new\n\tfmt.Println(\"created:\", created)\n\n\tif _, err := f.SetAfter(\"DB_PORT\", \"DB_PASSWORD\", \"s3cret\"); err != nil {\n\t\tfmt.Println(err)\n\t\treturn\n\t}\n\n\t_, err := f.SetAfter(\"NO_SUCH_KEY\", \"X\", \"1\")\n\tfmt.Println(\"missing anchor:\", errors.Is(err, dotenv.ErrAnchorNotFound))\n\n\tf.Unset(\"OLD_KEY\", false) // false: comment it out; true would delete the line\n\tfmt.Print(f.Render())\n\t// Output:\n\t// created: true\n\t// missing anchor: true\n\t// DB_HOST=localhost\n\t// DB_PORT=5432\n\t// DB_PASSWORD=s3cret\n\t// # OLD_KEY=x\n\t// API_KEY=secret\n}"
   },
   {
    "title": "Disabled settings",
    "lang": "go",
-   "code": "for _, e := range f.Entries() {\n    switch e.Kind {\n    case dotenv.KindPair:         // active\n    case dotenv.KindDisabledPair: // turned off, but Key and Value are readable\n    case dotenv.KindComment:      // prose\n    case dotenv.KindBlank:\n    case dotenv.KindOther:        // unrecognised, preserved verbatim\n    }\n}\n\nf.Disabled()   // []Pair of every commented-out setting, in file order"
+   "code": "// Example_disabledSettings shows that a commented-out setting is its own kind\n// with a readable key and value, that it stays inactive, and that Restore turns\n// it back on without inventing any bytes.\nfunc Example_disabledSettings() {\n\tf := dotenv.Parse(\"# DB_USER=admin\\n# just a note\\nDB_HOST=db\\n\")\n\n\tfor _, e := range f.Entries() {\n\t\tfmt.Printf(\"%-13s %q\\n\", e.Kind, e.Key)\n\t}\n\tfmt.Println(f.Has(\"DB_USER\"), f.Disabled()[0].Key)\n\n\tf.Restore(\"DB_USER\")\n\tfmt.Print(f.Render())\n\t// Output:\n\t// disabled-pair \"DB_USER\"\n\t// comment       \"\"\n\t// pair          \"DB_HOST\"\n\t// false DB_USER\n\t// DB_USER=admin\n\t// # just a note\n\t// DB_HOST=db\n}"
+  },
+  {
+   "title": "Inherited declarations",
+   "lang": "go",
+   "code": "// Example_inheritedDeclarations reads a Compose-style name-only line. The\n// package lists the name but never resolves it; the application layers its\n// own source on top (a map stands in for os.LookupEnv here).\nfunc Example_inheritedDeclarations() {\n\tf := dotenv.Parse(\"DATABASE_URL=postgres://localhost/dev\\nAWS_REGION\\n\")\n\thost := map[string]string{\"AWS_REGION\": \"eu-west-1\"} // stands in for the process environment\n\n\tenv := f.Map()\n\tfmt.Println(f.Inherited(), len(env))\n\tfor _, name := range f.Inherited() {\n\t\tif v, ok := host[name]; ok { // the caller's decision, not the parser's\n\t\t\tenv[name] = v\n\t\t}\n\t}\n\tfmt.Println(env[\"AWS_REGION\"])\n\t// Output:\n\t// [AWS_REGION] 1\n\t// eu-west-1\n}"
   }
  ],
  "features": [],
