@@ -62,7 +62,7 @@ function factChips(lib) {
   if (typeof lib.coreDeps === "number") out.push(`core: ${plural(lib.coreDeps, "direct dep", "direct deps")}`)
   if (lib.go) out.push(`go ${lib.go}`)
   if (lib.license) out.push(lib.license)
-  out.push(lib.tag || "no release yet")
+  out.push(lib.tag || `${lib.branch || "main"} (no tagged release yet)`)
   return out
 }
 
