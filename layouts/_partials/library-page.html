@@ -105,7 +105,7 @@
         (dict "k" "Language" "v" $l.lang)
         (dict "k" "Go version" "v" (cond (ne $f.go "") $f.go "–"))
         (dict "k" "Core deps" "v" (cond (ne $f.module "") (printf "%d direct" (int $f.coreDeps)) "–"))
-        (dict "k" "Latest tag" "v" (or $f.latestTag (cond (gt (len $streams) 0) (printf "%d streams" (len $streams)) "no release yet")))
+        (dict "k" (cond (or $f.latestTag (gt (len $streams) 0)) "Latest tag" "Latest") "v" (or $f.latestTag (cond (gt (len $streams) 0) (printf "%d streams" (len $streams)) (printf "%s (no tagged release yet)" (or $f.branch "main")))))
         (dict "k" "License" "v" (or $f.license "not stated"))
         (dict "k" "Go modules" "v" (cond (gt (len $f.modules) 0) (string (len $f.modules)) "–"))
       }}

@@ -62,12 +62,12 @@ libraries:
     area: auth-identity
     summary: Embeddable authentication with plugins for email, password, phone, OAuth, passkeys, 2FA, API keys, JWT and organizations, stored in your own Postgres, MySQL or SQLite.
     lang: Go
-    install: go get github.com/ubgo/auth
+    install: go get github.com/ubgo/auth@latest
     docs: ""  # not on pkg.go.dev yet (checked 2026-10-14)
-    # No tag yet (checked 2026-10-14): the core resolves to the latest commit, but a
-    # plugin module such as plugin/password requires github.com/ubgo/auth v0.0.0, so
-    # `go get` of it fails until the first version is tagged.
-    note: No release yet, so go get takes the latest commit. Plugins that are their own module, such as password and passkey, install once the first version is tagged.
+    # Untagged by the owner's choice (2026-10-14): people use the latest commit, so
+    # the install line pins @latest. Note: a plugin module such as plugin/password
+    # requires github.com/ubgo/auth v0.0.0, so `go get` of it fails while untagged.
+    note: auth is not tagged yet; @latest takes the newest commit on main.
     featured: true
     flagship: true
     # In the order the README's opening sentence lists them.

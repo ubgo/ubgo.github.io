@@ -112,7 +112,7 @@
       </div>
       <p class="mt-1.5 text-[13.5px] leading-snug text-slate-700 dark:text-slate-300">{{ .summary }}</p>
       <div class="mt-3 flex flex-wrap gap-1.5 text-[11px] font-mono text-slate-500 dark:text-slate-400">
-        <span class="h-5 px-1.5 inline-flex items-center rounded bg-slate-100 dark:bg-slate-800">{{ or $f.latestTag "no release yet" }}</span>
+        <span class="h-5 px-1.5 inline-flex items-center rounded bg-slate-100 dark:bg-slate-800">{{ or $f.latestTag (printf "%s (no tagged release yet)" (or $f.branch "main")) }}</span>
         {{- if ne $f.module "" }}<span class="h-5 px-1.5 inline-flex items-center rounded bg-slate-100 dark:bg-slate-800">{{ $f.coreDeps }} core {{ cond (eq (int $f.coreDeps) 1) "dep" "deps" }}</span>{{ end }}
         {{- with $f.plugins }}<span class="h-5 px-1.5 inline-flex items-center rounded bg-brand-50 text-brand-800 dark:bg-brand-500/15 dark:text-brand-100">{{ len . }} plugins</span>{{ end }}
         {{- with $f.contrib }}<span class="h-5 px-1.5 inline-flex items-center rounded bg-brand-50 text-brand-800 dark:bg-brand-500/15 dark:text-brand-100">{{ len . }} adapters</span>{{ end }}

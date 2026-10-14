@@ -71,6 +71,7 @@
       "coreDeps" $f.coreDeps
       "license" $f.license
       "tag" $f.latestTag
+      "branch" $f.branch
       "suite" $lib.suite
       "plugins" (len ($f.plugins | default slice))
       "contribs" (len ($f.contrib | default slice))
