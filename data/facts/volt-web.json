@@ -1,0 +1,25 @@
+{
+ "name": "volt-web",
+ "module": "",
+ "go": "",
+ "coreDeps": 0,
+ "license": "Apache-2.0",
+ "latestTag": "",
+ "streamTags": {},
+ "branch": "main",
+ "modules": [],
+ "contrib": [],
+ "packages": [],
+ "ubgoDeps": [],
+ "plugins": [],
+ "examples": [],
+ "features": [
+  "**Token-driven design system** — control density (height, padding, font) and the full color palette are CSS variables in one file. Change one token and the whole UI rescales; flip a class and the whole app re-themes. No component-by-component restyling.",
+  "**Two RPC layers, side by side** — the same CRUD implemented in both **tRPC v11** and **oRPC**, plus a typed **GraphQL** SDK via gqlkit. Keep the one you like, delete the rest.",
+  "**A real dashboard shell** — fixed sidebar, `PageHeader`, `Surface`, `StatusBadge`, user menu, and a FOUC-safe theme toggle. Not a hello-world layout.",
+  "**34 UI components** from basecn (Base UI), tuned to a compact, consistent density — not stock shadcn spacing.",
+  "**Typesafe everything** — routes, RPC, forms, env, and per-route document titles are compile-checked.",
+  "**Demo isolation** — the entire showcase is quarantined under `/demo`, so removing it leaves a clean foundation."
+ ],
+ "table": ""
+}

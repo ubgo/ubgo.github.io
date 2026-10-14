@@ -1,0 +1,111 @@
+{
+ "name": "volt-api",
+ "module": "",
+ "go": "",
+ "coreDeps": 0,
+ "license": "Apache-2.0",
+ "latestTag": "",
+ "streamTags": {},
+ "branch": "main",
+ "modules": [
+  {
+   "dir": "modules/apidash",
+   "module": "apidash",
+   "deps": 7
+  },
+  {
+   "dir": "modules/config",
+   "module": "config",
+   "deps": 1
+  },
+  {
+   "dir": "modules/core",
+   "module": "core",
+   "deps": 19
+  },
+  {
+   "dir": "modules/dbent",
+   "module": "dbent",
+   "deps": 9
+  },
+  {
+   "dir": "modules/examples",
+   "module": "examples",
+   "deps": 15
+  },
+  {
+   "dir": "modules/lace",
+   "module": "lace",
+   "deps": 14
+  },
+  {
+   "dir": "modules/scripts",
+   "module": "scripts",
+   "deps": 2
+  },
+  {
+   "dir": "modules/webapp",
+   "module": "webapp",
+   "deps": 18
+  }
+ ],
+ "contrib": [],
+ "packages": [],
+ "ubgoDeps": [
+  {
+   "name": "cfgkit",
+   "from": "modules/config"
+  },
+  {
+   "name": "buildinfo",
+   "from": "modules/core"
+  },
+  {
+   "name": "cache",
+   "from": "modules/core"
+  },
+  {
+   "name": "cache-redis",
+   "from": "modules/core"
+  },
+  {
+   "name": "crypt",
+   "from": "modules/core"
+  },
+  {
+   "name": "errx",
+   "from": "modules/core"
+  },
+  {
+   "name": "health",
+   "from": "modules/core"
+  },
+  {
+   "name": "logger",
+   "from": "modules/core"
+  },
+  {
+   "name": "otelkit",
+   "from": "modules/core"
+  },
+  {
+   "name": "shutdown",
+   "from": "modules/examples"
+  },
+  {
+   "name": "goutil",
+   "from": "modules/webapp"
+  }
+ ],
+ "plugins": [],
+ "examples": [],
+ "features": [
+  "**Schema-first GraphQL** — edit the `.graphqls`, run one task, and gqlgen regenerates resolvers with your Ent entity types auto-mapped. No hand-written marshaling.",
+  "**Ent ORM** — a typed schema with a shared `BaseMixin`, auto-migrations, and pgvector support.",
+  "**Type-safe config** — one Go file is the schema, the defaults and the validation; zero input is already valid, and secrets still come from the environment.",
+  "**Event-driven** — NATS JetStream handlers slot into the app bootstrap lifecycle, not import-time globals.",
+  "**Observability on by default** — OpenTelemetry tracing and structured logging with trace correlation, out of the box.",
+  "**Separate binaries** — independent API, cron, and CLI processes sharing one domain and a `lace/` utility library, under a `go.work` monorepo."
+ ],
+ "table": ""
+}
