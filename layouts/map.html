@@ -33,12 +33,21 @@
     "license" $lic "deps" $deps "url" (printf "/volt/%s/" .name | relURL)
   ) }}
 {{- end }}
+{{- /* Upcoming (private) repos: an extra dimmed area, drawn without links. */}}
+{{- range $d.upcoming }}
+  {{- $nodes = $nodes | append (dict
+    "name" .name "area" "upcoming" "summary" .summary "kind" "upcoming" "lang" .lang
+    "featured" false "family" "" "examplesRepo" "" "interop" "" "replacedBy" ""
+    "license" "" "deps" slice
+  ) }}
+{{- end }}
 {{- $areas := slice }}
 {{- range $d.areas }}{{ $areas = $areas | append (dict "key" .key "title" .title) }}{{ end }}
 {{- $areas = $areas | append (dict "key" "volt" "title" "Volt") }}
+{{- with $d.upcoming }}{{ $areas = $areas | append (dict "key" "upcoming" "title" "Upcoming") }}{{ end }}
 <div class="pt-8 pb-3">
   <h1 class="font-display font-bold text-[26px] tracking-tight text-slate-900 dark:text-white">Library map</h1>
-  <p class="mt-1 max-w-3xl text-slate-600 dark:text-slate-400">All {{ len $d.libraries }} public libraries and the {{ len $d.volt.repos }} Volt repos, grouped by area. Every line is a real link: family members, example repos, go.mod requires, the byte-compatible crypt pair and one replacement. <span class="hidden sm:inline">Drag to pan, scroll or pinch to zoom, hover a library to see what it touches.</span><span class="sm:hidden">Tap a library to see what it touches, tap again to open it.</span></p>
+  <p class="mt-1 max-w-3xl text-slate-600 dark:text-slate-400">All {{ len $d.libraries }} public libraries and the {{ len $d.volt.repos }} Volt repos, grouped by area, plus {{ len $d.upcoming }} upcoming ones that are not public yet (dimmed). Every line is a real link: family members, example repos, go.mod requires, the byte-compatible crypt pair and one replacement. <span class="hidden sm:inline">Drag to pan, scroll or pinch to zoom, hover a library to see what it touches.</span><span class="sm:hidden">Tap a library to see what it touches, tap again to open it.</span></p>
 </div>
 
 <div class="sticky top-12 z-10 -mx-4 px-4 bg-white/95 dark:bg-ink/95 backdrop-blur py-2 flex flex-wrap items-center gap-2" data-map-tools>
@@ -109,6 +118,10 @@
   .mp-svg .mp-node .mp-tag { font: 600 9px var(--font-sans); fill: var(--mp-muted); letter-spacing: .04em; }
   .mp-svg .mp-node.is-featured rect.mp-pill { stroke: color-mix(in srgb, var(--mp-hl) 45%, var(--mp-node-stroke)); }
   .mp-svg .mp-node.k-examples rect.mp-pill { stroke-dasharray: 3 3; }
+  .mp-svg .mp-up { opacity: .7; cursor: default; }
+  .mp-svg .mp-up rect.mp-pill { fill: var(--mp-node); stroke: var(--mp-node-stroke); stroke-dasharray: 3 3; }
+  .mp-svg .mp-up text { font: 500 12px var(--font-mono); fill: var(--mp-muted); }
+  .mp-svg.is-focus .mp-up:not(.is-lit), .mp-svg.is-filter .mp-up:not(.is-lit) { opacity: .2; }
   .mp-svg .mp-node.k-deprecated text.mp-label { fill: var(--mp-muted); text-decoration: line-through; }
   .mp-svg .mp-node:hover rect.mp-pill, .mp-svg .mp-node:focus-visible rect.mp-pill, .mp-svg .mp-node.is-active rect.mp-pill { stroke: var(--mp-hl); stroke-width: 2; }
   .mp-svg .mp-node.is-match rect.mp-pill { stroke: var(--mp-match); stroke-width: 2; fill: color-mix(in srgb, var(--mp-match) 14%, var(--mp-node)); }

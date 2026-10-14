@@ -18,6 +18,9 @@ ubgo is an ecosystem for building Go apps, in the spirit of the components Larav
 
 - [Libraries by area](#libraries-by-area)
 - [Volt](#volt)
+{{- if $d.upcoming }}
+- [Upcoming](#upcoming)
+{{- end }}
 {{- if $d.principles }}
 - [Principles](#principles)
 {{- end }}
@@ -33,8 +36,6 @@ ubgo is an ecosystem for building Go apps, in the spirit of the components Larav
 - [**{{ .name }}**](https://github.com/ubgo/{{ .name }}): {{ .summary }}{{ if eq .kind "examples" }} *(examples)*{{ else if eq .kind "cli" }} *(CLI)*{{ end }}
 {{ end }}
 {{- end }}
-More libraries are on the way.
-
 ## Volt
 
 Volt is the layer on top of ubgo to build, release and ship Go CLIs and libraries: the `volt` tool (scaffold, CI gate, coverage, cross-platform builds, verified releases) plus importable kit modules for building the CLIs themselves.
@@ -46,8 +47,15 @@ Volt is the layer on top of ubgo to build, release and ship Go CLIs and librarie
 {{ range $d.volt.repos -}}
 - [**{{ .name }}**](https://github.com/ubgo/{{ .name }}): {{ .summary }}
 {{ end }}
-App starters are coming.
+{{ with $d.upcoming -}}
+## Upcoming
 
+These exist but are not public yet, so they have no links. More libraries are on the way.
+
+{{ range . -}}
+- **{{ .name }}**: {{ .summary }}
+{{ end }}
+{{ end -}}
 {{ with $d.principles -}}
 ## Principles
 

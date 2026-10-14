@@ -1,0 +1,67 @@
+{{- /*
+  "Build almost any app": pick an app shape, the modules it uses light up and get
+  wired to the app box. Data: libraries.yaml `builder` (bands, roles, stacks).
+  A module resolves to a public library (/libraries/<name>/), a public volt repo
+  (/volt/<name>/) or an `upcoming` entry (dimmed, no link). Anything else fails the
+  build, so the diagram can never name a repo the data file does not know.
+  assets/js/stackbuilder.js drives the selection and draws the wires.
+*/ -}}
+{{- $d := hugo.Data.libraries }}
+{{- $b := $d.builder }}
+{{- $mods := dict }}
+{{- range $d.libraries }}{{ $mods = merge $mods (dict .name (dict "url" (printf "/libraries/%s/" .name | relURL) "summary" .summary "up" false)) }}{{ end }}
+{{- range $d.volt.repos }}{{ $mods = merge $mods (dict .name (dict "url" (printf "/volt/%s/" .name | relURL) "summary" .summary "up" false)) }}{{ end }}
+{{- range $d.upcoming }}{{ $mods = merge $mods (dict .name (dict "url" "" "summary" .summary "up" true)) }}{{ end }}
+{{- range $b.bands }}{{ range .modules }}{{ if not (index $mods .) }}{{ errorf "builder band names %q, which is not a public library, volt repo or upcoming entry" . }}{{ end }}{{ end }}{{ end }}
+{{- range $b.stacks }}{{ range .modules }}{{ if not (index $mods .) }}{{ errorf "builder stack names %q, which is not a public library, volt repo or upcoming entry" . }}{{ end }}{{ end }}{{ end }}
+{{- $first := index $b.stacks 0 }}
+<div class="sb grid gap-4 lg:grid-cols-[minmax(0,17rem)_minmax(0,1fr)] [&>*]:min-w-0" data-sb>
+  <div class="relative flex lg:flex-col gap-1.5 overflow-x-auto lg:overflow-visible -mx-4 px-4 lg:mx-0 lg:px-0 pb-1 lg:pb-0 [scrollbar-width:none]" role="group" aria-label="App shapes">
+    {{- range $i, $s := $b.stacks }}
+    {{- $up := 0 }}{{ range .modules }}{{ if (index $mods .).up }}{{ $up = add $up 1 }}{{ end }}{{ end }}
+    <button type="button" class="sb-pick" data-stack="{{ .key }}" data-mods="{{ delimit .modules " " }}" data-text="{{ .text }}" aria-pressed="{{ cond (eq $i 0) "true" "false" }}">
+      <span class="block font-semibold text-[13.5px] text-slate-900 dark:text-white">{{ .title }}</span>
+      <span class="block text-[11.5px] text-slate-500 dark:text-slate-400 tabular-nums">{{ len .modules }} modules{{ if $up }} · {{ $up }} upcoming{{ end }}</span>
+    </button>
+    {{- end }}
+  </div>
+
+  <div class="sb-stage relative rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/40 backdrop-blur p-3 sm:p-4 overflow-hidden" data-sb-stage>
+    <div aria-hidden="true" class="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(148,163,184,0.18)_1px,transparent_0)] bg-[size:18px_18px] [mask-image:linear-gradient(to_bottom,black,transparent)]"></div>
+    <svg class="sb-wires absolute inset-0 w-full h-full pointer-events-none" aria-hidden="true" data-sb-wires></svg>
+
+    <div class="relative z-10 mx-auto max-w-md rounded-xl border border-brand-500/50 bg-gradient-to-br from-brand-50 to-white dark:from-brand-500/15 dark:to-slate-900/70 px-4 py-2.5 text-center shadow-sm" data-sb-app>
+      <p class="text-[11px] font-semibold uppercase tracking-wider text-brand-700 dark:text-brand-400">Your app</p>
+      <p class="font-display font-semibold text-[18px] text-slate-900 dark:text-white" data-sb-title aria-live="polite">{{ $first.title }}</p>
+    </div>
+
+    <div class="relative z-10 mt-10 sm:mt-12 space-y-3">
+      {{- range $b.bands }}
+      <div class="sm:grid sm:grid-cols-[6.5rem_1fr] sm:items-center gap-3">
+        <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 sm:mb-0">{{ .title }}</p>
+        <ul class="flex flex-wrap gap-1.5">
+          {{- range .modules }}
+          {{- $m := index $mods . }}
+          {{- $on := in $first.modules . }}
+          <li>
+            {{- if $m.up }}
+            <span class="sb-tile is-up{{ if $on }} is-on{{ end }}" data-mod="{{ . }}" title="Upcoming: {{ $m.summary }}" tabindex="0"><span class="font-mono font-medium">{{ . }}</span><span class="sb-role">{{ index $b.roles . }} · upcoming</span></span>
+            {{- else }}
+            <a class="sb-tile{{ if $on }} is-on{{ end }}" data-mod="{{ . }}" href="{{ $m.url }}" title="{{ $m.summary }}"><span class="font-mono font-medium">{{ . }}</span><span class="sb-role">{{ index $b.roles . }}</span></a>
+            {{- end }}
+          </li>
+          {{- end }}
+        </ul>
+      </div>
+      {{- end }}
+    </div>
+
+    <div class="relative z-10 mt-4 pt-3 border-t border-slate-200/80 dark:border-slate-800 flex flex-wrap items-start justify-between gap-x-6 gap-y-2">
+      <p class="max-w-xl text-[13px] leading-snug text-slate-600 dark:text-slate-400" data-sb-text>{{ $first.text }}</p>
+      <ul class="flex flex-wrap gap-x-3 gap-y-1 text-[11.5px] text-slate-500 dark:text-slate-400" aria-label="Legend">
+        <li class="inline-flex items-center gap-1.5"><span class="inline-block size-2.5 rounded-sm border border-brand-500 bg-brand-50 dark:bg-brand-500/20"></span>public module, links to its page</li>
+        <li class="inline-flex items-center gap-1.5"><span class="inline-block size-2.5 rounded-sm border border-dashed border-amber-500"></span>upcoming, not public yet</li>
+      </ul>
+    </div>
+  </div>
+</div>

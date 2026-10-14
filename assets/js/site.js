@@ -9,3 +9,4 @@ import "./picker.js" // /picker/: which package do I need
 import "./palette.js" // Ctrl/Cmd+K command palette (every page)
 import "./brand.js" // /brand/: click-to-copy swatches
 import "./volt.js" // /volt/: release terminal replay
+import "./stackbuilder.js" // home: build almost any app

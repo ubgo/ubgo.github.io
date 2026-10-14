@@ -333,6 +333,7 @@ function init() {
   }
   const base = root.dataset.base || "/libraries/"
   const nodes = data.nodes
+  const upcoming = nodes.filter((n) => n.kind === "upcoming").length
   const areas = data.areas
   const byName = Object.fromEntries(nodes.map((n) => [n.name, n]))
   // A node may carry its own url (volt repos live under /volt/); default is the library page.
@@ -431,7 +432,13 @@ function init() {
     })
     for (const n of nodes) {
       const p = L.pos[n.name]
-      const a = el("a", { href: href(n.name), class: `mp-node k-${n.kind}${n.featured ? " is-featured" : ""}`, "data-name": n.name, "aria-label": `${n.name}, ${areaTitle[n.area]}: ${n.summary}` }, gn)
+      // Upcoming (private) repos: a plain group, not a link and not an .mp-node, so
+      // hover, focus and click handlers skip them. The title shows the summary.
+      const up = n.kind === "upcoming"
+      const a = up
+        ? el("g", { class: "mp-up", "data-name": n.name, role: "img", "aria-label": `${n.name}, upcoming, not public yet: ${n.summary}` }, gn)
+        : el("a", { href: href(n.name), class: `mp-node k-${n.kind}${n.featured ? " is-featured" : ""}`, "data-name": n.name, "aria-label": `${n.name}, ${areaTitle[n.area]}: ${n.summary}` }, gn)
+      if (up) el("title", {}, a).textContent = `Upcoming: ${n.summary}`
       el("rect", { class: "mp-pill", x: p.x - p.w / 2, y: p.y - p.h / 2, width: p.w, height: p.h, rx: 7 }, a)
       const t = el("text", { x: p.x - p.w / 2 + 11, y: p.y + 4.2, class: "mp-label" }, a)
       t.textContent = n.name
@@ -518,7 +525,7 @@ function init() {
       if (label) label.classList.toggle("is-lit", !!active && on)
     }
     for (const c of svg.querySelectorAll(".mp-cluster")) c.classList.toggle("is-lit", !!f && [...f].some((n) => byName[n].area === c.dataset.area))
-    if (countEl) countEl.textContent = f ? `${f.size} of ${nodes.length}` : `${nodes.length} repos · ${edges.length} links`
+    if (countEl) countEl.textContent = f ? `${f.size} of ${nodes.length}` : `${nodes.length - upcoming} repos · ${edges.length} links${upcoming ? ` · ${upcoming} upcoming` : ""}`
   }
 
   function showPanel(name) {

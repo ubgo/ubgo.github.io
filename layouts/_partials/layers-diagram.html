@@ -2,7 +2,7 @@
   The three layers: ubgo libraries at the bottom, voltkit tooling in the middle,
   your app on top. Every chip is a real public repo or module; the one drawn edge
   (versioncmd -> buildinfo) is a real go.mod require read from data/facts.
-  "App starters" is shown only as "coming", per the owner (no names).
+  App starters are the volt-area `upcoming` entries (private, so named without links).
   Context: dict "compact" bool (home uses the compact version).
 */ -}}
 {{- $d := hugo.Data.libraries }}
@@ -21,7 +21,7 @@
     </div>
     <div class="mt-2 flex flex-wrap gap-1.5">
       {{- range slice "mytool  (volt new cli)" "your library" "your service" }}<span class="layer-chip">{{ . }}</span>{{ end }}
-      <span class="layer-chip border-dashed text-slate-400 dark:text-slate-500">app starters are coming</span>
+      {{- range where hugo.Data.libraries.upcoming "area" "volt" }}<span class="layer-chip border-dashed font-mono text-slate-500 dark:text-slate-400" title="Upcoming: {{ .summary }}">{{ .name }} · upcoming</span>{{ end }}
     </div>
   </div>
 

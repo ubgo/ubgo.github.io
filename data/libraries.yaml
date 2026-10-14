@@ -502,3 +502,98 @@ volt:
       family: voltkit
       install: ""
       docs: ""
+
+# Upcoming: repos that exist but are still PRIVATE. Shown dimmed, never linked,
+# never given a page or a social card. `summary` is taken only from the repo's own
+# GitHub description (`gh repo view ubgo/<name> --json description`, read
+# 2026-10-14). When one goes public, move it into `libraries` (or `volt.repos`)
+# and run `task facts og check`.
+upcoming:
+  - name: workflow
+    area: jobs
+    summary: Embeddable Go library for cron schedules, delayed and background jobs with retries, and multi-step workflows behind one Client interface, with swappable drivers (in-memory, SQL and Hatchet).
+    lang: Go
+  - name: brick
+    area: web
+    summary: A component-based HTML render engine for Go built on html/template, with layouts, components, islands and server actions, and a 133-component UI kit.
+    lang: Go
+  - name: validator
+    area: web
+    summary: Struct-native Go validator with a serializable IR; one set of rules validates in Go, exports to JSON Schema, and runs as a Standard-Schema TypeScript validator.
+    lang: Go
+  - name: volt-api
+    area: volt
+    summary: The batteries-included Go backend starter, with schema-first GraphQL (gqlgen), Ent ORM, NATS JetStream, type-safe PKL config, OpenTelemetry, CLI and cron.
+    lang: Go
+  - name: volt-web
+    area: volt
+    summary: A production-ready TanStack Start boilerplate for SSR React apps, with a dashboard shell, tRPC and oRPC, typed GraphQL via gqlkit, Drizzle and PostgreSQL.
+    lang: TypeScript
+
+# Home page "Build almost any app" stack builder. Every module named here must be
+# a public library, a public volt repo or an `upcoming` entry; the template fails
+# the build otherwise. `bands` are the rows of the diagram (top to bottom) and
+# `role` is the two-word label under each tile. `stacks` are the app shapes.
+builder:
+  bands:
+    - title: Start and ship
+      modules: [volt-api, volt-web, voltkit, volt-action]
+    - title: Interface
+      modules: [auth, gqlkit, entx, entkit, brick, validator]
+    - title: Run
+      modules: [workflow, lock, cache, health, shutdown, buildinfo]
+    - title: Foundations
+      modules: [sqlb, cfgkit, dotenv, logger, errx, otelkit, crypt]
+  roles:
+    volt-api: API starter
+    volt-web: web starter
+    voltkit: build + release
+    volt-action: CI action
+    auth: sign-in
+    gqlkit: GraphQL clients
+    entx: ent extensions
+    entkit: ent fields
+    brick: HTML views
+    validator: validation
+    workflow: jobs + cron
+    lock: locks
+    cache: caching
+    health: health checks
+    shutdown: graceful stop
+    buildinfo: version info
+    sqlb: SQL
+    cfgkit: config
+    dotenv: .env files
+    logger: logs
+    errx: errors
+    otelkit: telemetry
+    crypt: encryption
+  stacks:
+    - key: saas
+      title: SaaS backend
+      text: Accounts and organizations, a typed SQL layer, caching, config, logs and telemetry, health checks and a clean shutdown, plus background jobs and cron.
+      modules: [auth, sqlb, cache, cfgkit, logger, errx, otelkit, health, shutdown, workflow]
+    - key: graphql
+      title: GraphQL API
+      text: A schema-first API on ent and gqlgen, typed GraphQL clients for Go and TypeScript, sign-in on every request and input validation, or start from the backend starter.
+      modules: [volt-api, gqlkit, entx, entkit, auth, validator, sqlb]
+    - key: workers
+      title: Workers and cron
+      text: Cron schedules, delayed jobs with retries and multi-step workflows, with locks so one job runs once, a cache for shared state, and probes and a graceful stop for the worker.
+      modules: [workflow, lock, cache, logger, health, shutdown]
+    - key: web
+      title: Server-rendered web app
+      text: Pages and components rendered on the server in Go, sign-in and sessions, form validation, and SQL, with no client framework required.
+      modules: [brick, auth, validator, sqlb, cfgkit, crypt]
+    - key: fullstack
+      title: Full-stack React app
+      text: A TanStack Start web app on top of the Go backend starter, talking over typed GraphQL, with sign-in from auth.
+      modules: [volt-web, volt-api, gqlkit, auth]
+    - key: cli
+      title: CLIs and dev tools
+      text: Scaffold a CLI with volt new, read typed config and .env files, and print version info, with logs and errors that stay readable.
+      modules: [voltkit, cfgkit, dotenv, buildinfo, logger, errx]
+    - key: ship
+      title: Ship it
+      text: Run the CI gate, build for every platform and publish releases that are checked after publishing, locally or from a GitHub Action.
+      modules: [voltkit, volt-action, buildinfo]
