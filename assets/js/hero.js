@@ -62,13 +62,15 @@ function factChips(lib) {
   if (typeof lib.coreDeps === "number") out.push(`core: ${plural(lib.coreDeps, "direct dep", "direct deps")}`)
   if (lib.go) out.push(`go ${lib.go}`)
   if (lib.license) out.push(lib.license)
-  if (lib.tag) out.push(lib.tag)
+  out.push(lib.tag || "no release yet")
   return out
 }
 
 function groupWord(lib, n) {
   if (lib.source === "family") return plural(n, "backend", "backends")
   if (lib.source === "packages") return plural(n, "module", "modules")
+  // auth draws two kinds of node, so name both counts whatever n is.
+  if (lib.source === "plugins") return `${plural(lib.plugins, "plugin", "plugins")} and ${plural(lib.contribs, "adapter", "adapters")}`
   return plural(n, "adapter", "adapters")
 }
 
@@ -293,6 +295,10 @@ function caption(lib) {
   const n = lib.adapters.length
   let s
   if (lib.source === "family") s = `${groupWord(lib, n)}, each in its own repo, all behind one interface.`
+  // auth: README "Modules": the core needs the standard library and sqlb only; a
+  // plugin with a third-party dependency (password, passkey, ...) is its own module.
+  else if (lib.source === "plugins")
+    s = `${groupWord(lib, n)}, in plugin/ and contrib/. A plugin with a third-party dependency is its own Go module, so you download only what you import. The tables live in your own Postgres, MySQL or SQLite.`
   else if (lib.source === "packages") s = `${groupWord(lib, n)} beside the core, each its own Go module, so you download only the backend you import.`
   else s = `${groupWord(lib, n)} under contrib/, each its own Go module, so you download only what you import.`
   if (lib.suite) {

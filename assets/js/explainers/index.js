@@ -8,6 +8,7 @@ import "./shutdown-phases.js"
 import "./lock-fencing.js"
 import "./logger-fingers-crossed.js"
 import "./sqlb-typed-columns.js"
+import "./auth-pipeline.js"
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start)
 else start()
