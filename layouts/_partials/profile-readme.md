@@ -73,8 +73,6 @@ Most libraries install with:
 go get github.com/ubgo/<name>
 ```
 
-{{ range where $d.libraries "install" "ne" "" }}{{ if and (hasPrefix .install "go get") (hasSuffix .install "@latest") }}[{{ .name }}](https://github.com/ubgo/{{ .name }}) is not tagged yet; install the newest commit with `{{ .install }}`.
-{{ end }}{{ end }}
 Some are split into sub-modules or ship a CLI to `go install`. Each repo's README, and its page on [{{ replace $site "https://" "" }}]({{ $site }}/libraries/), gives the exact line.
 
 ## FAQ
