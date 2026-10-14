@@ -128,3 +128,25 @@
 
 /* Early-alpha notice: hidden before first paint by the head script once dismissed. */
 .alpha-off [data-alpha-bar] { display: none; }
+/* Home stack builder (layouts/_partials/stack-builder.html, assets/js/stackbuilder.js). */
+.sb-pick { @apply shrink-0 text-left rounded-xl border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/50 px-3 py-2 transition-colors hover:border-brand-500; }
+.sb-pick[aria-pressed="true"] { @apply border-brand-500 bg-brand-50 dark:bg-brand-500/15 shadow-sm; }
+.sb-tile { @apply inline-flex flex-col justify-center min-h-10 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-[12.5px] leading-tight text-slate-800 dark:text-slate-200 transition; }
+a.sb-tile:hover { @apply border-brand-500; }
+.sb-role { @apply text-[10.5px] text-slate-500 dark:text-slate-400; }
+.sb-tile.is-up { @apply border-dashed border-slate-300 dark:border-slate-600 cursor-default; }
+.sb-tile.is-on { @apply border-brand-500 bg-brand-50 text-brand-800 dark:bg-brand-500/15 dark:text-brand-100 shadow-sm shadow-brand-500/10; }
+.sb-tile.is-up.is-on { @apply border-amber-500 bg-amber-50 text-amber-900 dark:bg-amber-500/10 dark:text-amber-100; }
+.sb-tile.is-on .sb-role { @apply text-brand-700 dark:text-brand-100; }
+.sb-tile.is-up.is-on .sb-role { @apply text-amber-700 dark:text-amber-300; }
+.sb.is-picked .sb-tile:not(.is-on) { @apply text-slate-400 dark:text-slate-500 border-slate-200/80 dark:border-slate-800; }
+.sb.is-picked .sb-tile:not(.is-on) .sb-role { @apply text-slate-400/80 dark:text-slate-600; }
+.sb.is-picked a.sb-tile:not(.is-on):hover, .sb.is-picked .sb-tile:not(.is-on):focus-visible { @apply text-slate-800 dark:text-slate-200 border-brand-500; }
+.sb-wire { fill: none; stroke: #0891b2; stroke-opacity: .35; stroke-width: 1.5; }
+.sb-wire.is-up { stroke: #f59e0b; stroke-dasharray: 4 4; }
+.sb-pulse { fill: none; stroke: #0891b2; stroke-width: 2; stroke-dasharray: 6 40; animation: sb-flow 1.6s linear infinite; }
+.sb-pulse.is-up { stroke: #f59e0b; }
+.dark .sb-wire, .dark .sb-pulse { stroke: #22d3ee; }
+.dark .sb-wire.is-up, .dark .sb-pulse.is-up { stroke: #fbbf24; }
+@keyframes sb-flow { to { stroke-dashoffset: -46; } }
+@media (prefers-reduced-motion: reduce) { .sb-pulse { display: none; } .sb-tile, .sb-pick { transition: none; } }

@@ -29,6 +29,17 @@
 
 {{ partial "hero-diagram.html" . }}
 
+<section class="relative py-12" aria-labelledby="build">
+  <div class="max-w-3xl">
+    <p class="text-[12px] font-semibold uppercase tracking-wider text-brand-700 dark:text-brand-400">Batteries included</p>
+    <h2 id="build" class="mt-1 font-display font-bold text-[28px] sm:text-[34px] leading-tight tracking-tight text-slate-900 dark:text-white">Build almost any app</h2>
+    <p class="mt-2 text-[15px] leading-relaxed text-slate-600 dark:text-slate-400">The pieces an app needs come out of the box: sign-in, SQL, caching, config, logging, jobs, health checks, GraphQL and HTML views, starters for the backend and the web app, and the tool that builds and releases it all. Each piece is its own module, so you take only what your app uses. Pick an app shape to see which modules it is built from.</p>
+  </div>
+  <div class="mt-6">{{ partial "stack-builder.html" . }}</div>
+  {{- $up := hugo.Data.libraries.upcoming }}
+  <p class="mt-3 text-[12px] text-slate-500 dark:text-slate-400">Upcoming modules ({{ range $i, $u := $up }}{{ if $i }}, {{ end }}<span class="font-mono">{{ $u.name }}</span>{{ end }}) are on the way and not public yet.</p>
+</section>
+
 <section class="relative py-6" aria-label="ubgo in numbers">
   <dl class="grid grid-cols-2 sm:grid-cols-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/40 backdrop-blur divide-slate-200 dark:divide-slate-800 sm:divide-x [&>div:nth-child(-n+2)]:border-b sm:[&>div]:border-b-0 [&>div]:border-slate-200 dark:[&>div]:border-slate-800">
     {{- range slice (dict "v" (len $libs) "k" "public libraries" "u" "/libraries/") (dict "v" $modules "k" "Go modules" "u" "/map/") (dict "v" $adapters "k" "adapters in contrib/" "u" "/libraries/") (dict "v" $suites "k" "shared conformance suites" "u" "/about/") }}
@@ -199,7 +210,7 @@
     </div>
     {{- end }}
   </div>
-  <p class="mt-6 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 px-4 py-3 text-center text-[14px] text-slate-600 dark:text-slate-400">More libraries are on the way.</p>
+  <div class="mt-6">{{ partial "upcoming-list.html" . }}</div>
 </section>
 </div>
 {{ end }}

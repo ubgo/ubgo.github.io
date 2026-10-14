@@ -1,0 +1,14 @@
+{{- /* Upcoming (private) repos from libraries.yaml `upcoming`: dimmed, never linked. */ -}}
+{{- with hugo.Data.libraries.upcoming }}
+<div class="rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 p-4" aria-labelledby="upcoming-h">
+  <div class="flex flex-wrap items-baseline justify-between gap-2">
+    <h3 id="upcoming-h" class="font-semibold text-[14px] text-slate-700 dark:text-slate-300">Upcoming</h3>
+    <span class="text-[12px] text-slate-500 dark:text-slate-400">Not public yet, so no links</span>
+  </div>
+  <ul class="mt-2 grid gap-x-6 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
+    {{- range . }}
+    <li class="opacity-75"><span class="font-mono font-medium text-[12.5px] text-slate-700 dark:text-slate-300">{{ .name }}</span> <span class="inline-flex items-center h-4 px-1 rounded text-[10px] font-medium uppercase tracking-wide bg-amber-50 text-amber-800 dark:bg-amber-500/10 dark:text-amber-300">upcoming</span><p class="text-[12px] leading-snug text-slate-500 dark:text-slate-400">{{ .summary }}</p></li>
+    {{- end }}
+  </ul>
+</div>
+{{- end }}

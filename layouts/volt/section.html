@@ -163,7 +163,12 @@ gate: releases are blocked (RELEASE_BLOCKED=1) — refusing notes/v0.2.1
     </li>
     {{- end }}
   </ul>
-  <p class="mt-4 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 px-4 py-3 text-[13.5px] text-slate-600 dark:text-slate-400">App starters are coming.</p>
+  {{- with where hugo.Data.libraries.upcoming "area" "volt" }}
+  <div class="mt-4 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 px-4 py-3 text-[13.5px] text-slate-600 dark:text-slate-400">
+    <p>App starters are on the way. They are not public yet, so there are no links:</p>
+    <ul class="mt-2 space-y-1.5">{{ range . }}<li><span class="font-mono font-medium text-slate-800 dark:text-slate-200">{{ .name }}</span> <span class="inline-flex items-center h-4 px-1 rounded text-[10px] font-medium uppercase tracking-wide bg-amber-50 text-amber-800 dark:bg-amber-500/10 dark:text-amber-300">upcoming</span> <span class="text-[12.5px]">{{ .summary }}</span></li>{{ end }}</ul>
+  </div>
+  {{- end }}
 </section>
 </div>
 {{ end }}

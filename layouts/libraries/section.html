@@ -48,6 +48,7 @@
   </tbody>
 </table>
 </div>
-<p class="mt-6 text-center text-[13px] text-slate-500">More libraries are on the way. Building and shipping CLIs? See <a class="text-brand-700 dark:text-brand-400 hover:underline" href="{{ "/volt/" | relURL }}">Volt</a>.</p>
+<div class="mt-6">{{ partial "upcoming-list.html" . }}</div>
+<p class="mt-4 text-center text-[13px] text-slate-500">Building and shipping CLIs? See <a class="text-brand-700 dark:text-brand-400 hover:underline" href="{{ "/volt/" | relURL }}">Volt</a>.</p>
 <p class="hidden py-6 text-center text-slate-500" data-lib-empty>No library matches. <button type="button" class="text-brand-700 dark:text-brand-400 underline" data-lib-reset>Clear filters</button></p>
 {{ end }}
