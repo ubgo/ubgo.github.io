@@ -7,9 +7,9 @@
  "latestTag": "",
  "streamTags": {
   "cmd/lath": "v0.1.1",
-  "kit": "v0.1.1",
+  "kit": "v0.1.2",
   "pipeline": "v0.1.0",
-  "steps": "v0.1.0"
+  "steps": "v0.1.1"
  },
  "branch": "main",
  "modules": [

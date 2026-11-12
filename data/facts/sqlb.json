@@ -7,12 +7,13 @@
  "latestTag": "v0.1.1",
  "streamTags": {
   "contrib/debug": "v0.1.0",
-  "contrib/driver-mysql": "v0.1.0",
-  "contrib/driver-pgx": "v0.1.0",
-  "contrib/driver-sqlite": "v0.1.0",
-  "contrib/migrate": "v0.1.0",
-  "contrib/structbind": "v0.1.0",
-  "contrib/vet": "v0.1.1",
+  "contrib/driver-mysql": "v0.1.1",
+  "contrib/driver-pgx": "v0.1.1",
+  "contrib/driver-sqlite": "v0.1.1",
+  "contrib/migrate": "v0.1.1",
+  "contrib/structbind": "v0.1.1",
+  "contrib/vet": "v0.1.2",
+  "contrib/vet/cmd/sqlb": "v0.1.2",
   "sqlb": "v0.1.1",
   "sqlbvet": "v0.1.0"
  },
@@ -31,16 +32,31 @@
   {
    "dir": "contrib/driver-mysql",
    "module": "github.com/ubgo/sqlb/contrib/driver-mysql",
+   "deps": 1
+  },
+  {
+   "dir": "contrib/driver-mysql/enginetest",
+   "module": "github.com/ubgo/sqlb/contrib/driver-mysql/enginetest",
    "deps": 2
   },
   {
    "dir": "contrib/driver-pgx",
    "module": "github.com/ubgo/sqlb/contrib/driver-pgx",
-   "deps": 2
+   "deps": 1
+  },
+  {
+   "dir": "contrib/driver-pgx/enginetest",
+   "module": "github.com/ubgo/sqlb/contrib/driver-pgx/enginetest",
+   "deps": 3
   },
   {
    "dir": "contrib/driver-sqlite",
    "module": "github.com/ubgo/sqlb/contrib/driver-sqlite",
+   "deps": 1
+  },
+  {
+   "dir": "contrib/driver-sqlite/enginetest",
+   "module": "github.com/ubgo/sqlb/contrib/driver-sqlite/enginetest",
    "deps": 2
   },
   {
@@ -49,13 +65,33 @@
    "deps": 1
   },
   {
+   "dir": "contrib/migrate/enginetest",
+   "module": "github.com/ubgo/sqlb/contrib/migrate/enginetest",
+   "deps": 5
+  },
+  {
    "dir": "contrib/structbind",
    "module": "github.com/ubgo/sqlb/contrib/structbind",
-   "deps": 2
+   "deps": 1
+  },
+  {
+   "dir": "contrib/structbind/enginetest",
+   "module": "github.com/ubgo/sqlb/contrib/structbind/enginetest",
+   "deps": 3
   },
   {
    "dir": "contrib/vet",
    "module": "github.com/ubgo/sqlb/contrib/vet",
+   "deps": 2
+  },
+  {
+   "dir": "contrib/vet/cmd/sqlb",
+   "module": "github.com/ubgo/sqlb/contrib/vet/cmd/sqlb",
+   "deps": 5
+  },
+  {
+   "dir": "contrib/vet/enginetest",
+   "module": "github.com/ubgo/sqlb/contrib/vet/enginetest",
    "deps": 5
   }
  ],
@@ -69,19 +105,19 @@
   {
    "name": "driver-mysql",
    "module": "github.com/ubgo/sqlb/contrib/driver-mysql",
-   "deps": 2,
+   "deps": 1,
    "summary": "Opens MySQL databases for `github.com/ubgo/sqlb`, and proves the core on a real MySQL 8."
   },
   {
    "name": "driver-pgx",
    "module": "github.com/ubgo/sqlb/contrib/driver-pgx",
-   "deps": 2,
+   "deps": 1,
    "summary": "Opens Postgres for `github.com/ubgo/sqlb` through `github.com/jackc/pgx/v5`'s `database/sql` adapter, and is where the `pg` package is **executed** rather than "
   },
   {
    "name": "driver-sqlite",
    "module": "github.com/ubgo/sqlb/contrib/driver-sqlite",
-   "deps": 2,
+   "deps": 1,
    "summary": "`driver-sqlite` opens SQLite databases for `github.com/ubgo/sqlb`, with the pragmas a library-owned schema needs already applied."
   },
   {
@@ -93,13 +129,13 @@
   {
    "name": "structbind",
    "module": "github.com/ubgo/sqlb/contrib/structbind",
-   "deps": 2,
+   "deps": 1,
    "summary": "import \"github.com/ubgo/sqlb/contrib/structbind\""
   },
   {
    "name": "vet",
    "module": "github.com/ubgo/sqlb/contrib/vet",
-   "deps": 5,
+   "deps": 2,
    "summary": "The analyzers behind `sqlb vet`: the checks the compiler cannot make, as standard `golang.org/x/tools/go/analysis` values, runnable from a CLI or from an applic"
   }
  ],

@@ -63,11 +63,11 @@ libraries:
   # Auth and identity
   - name: auth
     area: auth-identity
-    summary: Embeddable authentication with plugins for email, password, phone, OAuth, passkeys, 2FA, API keys, JWT and organizations, stored in your own Postgres, MySQL or SQLite.
+    summary: Embeddable authentication with plugins for email, password, phone, OAuth, passkeys, 2FA, API keys, JWT and organizations, stored in your own Postgres, MySQL or SQLite; it can also be the OpenID Connect login for your other apps.
     lang: Go
     install: go get github.com/ubgo/auth
     docs: https://pkg.go.dev/github.com/ubgo/auth
-    note: "Each plugin and adapter is its own module, tagged v0.1.0 with the core. Add the ones you use, for example: go get github.com/ubgo/auth/plugin/password"
+    note: "Each plugin and adapter is its own module with its own tag (core v0.1.1). Add the ones you use, for example: go get github.com/ubgo/auth/plugin/password. For a company login server: plugin/oauthprovider (ClientAccess, AllowList) and authui/social."
     featured: true
     flagship: true
     # In the order the README's opening sentence lists them.

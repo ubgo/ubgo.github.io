@@ -1,12 +1,12 @@
 {
  "name": "gqlkit",
- "module": "github.com/khanakia/graphqlclient_go",
+ "module": "github.com/ubgo/gqlkit",
  "go": "1.25.5",
  "coreDeps": 1,
  "license": "Apache-2.0",
  "latestTag": "",
  "streamTags": {
-  "gqlkit": "v0.14.0",
+  "gqlkit": "v0.14.1",
   "gqlkit-sdl": "v0.12.0",
   "gqlkit-ts": "v0.3.0"
  },
@@ -14,7 +14,7 @@
  "modules": [
   {
    "dir": ".",
-   "module": "github.com/khanakia/graphqlclient_go",
+   "module": "github.com/ubgo/gqlkit",
    "deps": 1
   },
   {
