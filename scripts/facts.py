@@ -42,6 +42,12 @@ if os.environ.get("FACTS_ONLY"):
     NAMES = [n for n in NAMES if n in os.environ["FACTS_ONLY"].split(",")]
 # Module path prefixes that refer to a ubgo library (some repos moved from khanakia).
 PREFIXES = ("github.com/ubgo/", "github.com/khanakia/")
+# Tag streams of modules that left a repo: their old tags stay on GitHub forever, so
+# stream_tags skips them or the page would keep showing a version chip for code the
+# repo no longer has. repo name -> retired stream prefixes.
+RETIRED_STREAMS = {
+    "voltkit": {"appdir"},  # moved to github.com/ubgo/appdir and removed from voltkit
+}
 SKIP_DIRS = {"internal", "cmd", "contrib", "plugin", "plugins", "examples", "example", "docs", "testdata", "scripts", "brand", "vendor", ".github", "node_modules"}
 
 
@@ -83,6 +89,8 @@ def stream_tags(name):
         return {}
     best = {}
     for stream, ver in re.findall(r"refs/tags/(.+?)[/@](v\d+\.\d+\.\d+)$", open(p).read(), re.M):
+        if stream in RETIRED_STREAMS.get(name, ()):
+            continue
         key = tuple(int(x) for x in ver[1:].split("."))
         if stream not in best or key > best[stream][0]:
             best[stream] = (key, ver)

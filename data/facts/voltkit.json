@@ -6,7 +6,6 @@
  "license": "Apache-2.0",
  "latestTag": "",
  "streamTags": {
-  "appdir": "v0.2.1",
   "output": "v0.2.0",
   "skillcmd": "v0.2.0",
   "versioncmd": "v0.2.1",
