@@ -96,11 +96,10 @@ pkg/textutil     library  v0.1.0    <span class="text-emerald-400">up to date</s
 <section class="py-8" aria-labelledby="kit">
   <h2 id="kit" class="font-display font-semibold text-[22px] text-slate-900 dark:text-white">The kit: parts every CLI needs</h2>
   <p class="mt-1 mb-4 max-w-2xl text-[14px] text-slate-600 dark:text-slate-400">Each is its own module with its own tag, so a CLI adopts them one at a time and picks up fixes with <code class="font-mono text-[12.5px]">go get -u</code>.</p>
-  <div class="grid gap-3 md:grid-cols-3 [&>*]:min-w-0">
+  <div class="grid gap-3 md:grid-cols-2 [&>*]:min-w-0">
     {{- range slice
       (dict "m" "versioncmd" "d" "A ready-made version subcommand with build provenance." "code" "root.AddCommand(versioncmd.New(versioncmd.WithBinaryName(\"mycli\")))")
       (dict "m" "output" "d" "The stable JSON envelope every command's --json emits." "code" "output.JSON(os.Stdout, \"notes.list\", notes, len(notes))\n// → {\"schema_version\":1,\"kind\":\"notes.list\",\"count\":2,\"data\":[...]}")
-      (dict "m" "appdir" "d" "Where state lives, resolved by policy and never hardcoded; it reports which rule decided." "code" "paths, _ := appdir.Resolve(meta)")
     }}
     <article class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 overflow-hidden flex flex-col">
       <div class="p-4 flex-1">
@@ -111,7 +110,7 @@ pkg/textutil     library  v0.1.0    <span class="text-emerald-400">up to date</s
     </article>
     {{- end }}
   </div>
-  <p class="mt-2 text-[12px] text-slate-500">From the voltkit README, "The kit". Also <code class="font-mono">skillcmd</code>: a skills subcommand that serves the project's published skills, matched to the binary's version.</p>
+  <p class="mt-2 text-[12px] text-slate-500">From the voltkit README, "The kit". Also <code class="font-mono">skillcmd</code>: a skills subcommand that serves the project's published skills, matched to the binary's version. Where a CLI keeps its files is its own library now: <a class="font-mono underline-offset-2 hover:underline" href="{{ "/libraries/appdir/" | relURL }}">appdir</a> (<code class="font-mono">github.com/ubgo/appdir</code>).</p>
 </section>
 
 <section class="py-8 grid gap-6 lg:grid-cols-2 [&>*]:min-w-0" aria-labelledby="ci">
