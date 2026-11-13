@@ -1,0 +1,30 @@
+{
+ "name": "appdir",
+ "module": "github.com/ubgo/appdir",
+ "go": "1.24",
+ "coreDeps": 0,
+ "license": "Apache-2.0",
+ "latestTag": "v0.1.0",
+ "streamTags": {},
+ "branch": "main",
+ "modules": [
+  {
+   "dir": ".",
+   "module": "github.com/ubgo/appdir",
+   "deps": 0
+  }
+ ],
+ "contrib": [],
+ "packages": [],
+ "ubgoDeps": [],
+ "plugins": [],
+ "examples": [
+  {
+   "title": "Quick start",
+   "lang": "go",
+   "code": "// open resolves every home for the app. The three seams keep the example\n// away from the real machine: the user's home, the working folder and the\n// environment all come from the caller. WithRelease(true) keeps the prod\n// profile, so folders have their plain names (.lore, not .lore-dev).\nfunc open(home, workDir string) (*appdir.Dirs, error) {\n\td, err := appdir.New(appName,\n\t\tappdir.WithHomeDir(func() (string, error) { return home, nil }),\n\t\tappdir.WithWorkDir(workDir),\n\t\tappdir.WithEnv(func(string) (string, bool) { return \"\", false }),\n\t\tappdir.WithRelease(true),\n\t)\n\tif err != nil {\n\t\treturn nil, fmt.Errorf(\"appdir: %w\", err)\n\t}\n\treturn d, nil\n}"
+  }
+ ],
+ "features": [],
+ "table": ""
+}

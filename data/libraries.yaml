@@ -224,6 +224,13 @@ libraries:
     install: go get github.com/ubgo/dotenv
     docs: https://pkg.go.dev/github.com/ubgo/dotenv
     related: [cfgkit]
+  - name: appdir
+    area: config-env
+    summary: Where a Go tool keeps its files, from the global and project homes to the prod/dev profile split, pointer keys and moving an old home, each path with the rule that picked it.
+    lang: Go
+    install: go get github.com/ubgo/appdir
+    docs: https://pkg.go.dev/github.com/ubgo/appdir
+    related: [cfgkit]
 
   # SQL and data
   - name: sqlb
