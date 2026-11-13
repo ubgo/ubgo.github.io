@@ -4,12 +4,13 @@
  "go": "1.22",
  "coreDeps": 1,
  "license": "Apache-2.0",
- "latestTag": "v0.1.0",
+ "latestTag": "v0.1.1",
  "streamTags": {
   "contrib/cli-cobra": "v0.1.0",
   "contrib/flags-pflag": "v0.1.0",
   "contrib/format-hcl": "v0.1.0",
   "contrib/format-ini": "v0.1.0",
+  "contrib/format-jsonc": "v0.1.2",
   "contrib/format-properties": "v0.1.0",
   "contrib/format-toml": "v0.1.0",
   "contrib/format-yaml": "v0.1.0",
@@ -53,6 +54,11 @@
    "dir": "contrib/format-ini",
    "module": "github.com/ubgo/cfgkit/contrib/format-ini",
    "deps": 2
+  },
+  {
+   "dir": "contrib/format-jsonc",
+   "module": "github.com/ubgo/cfgkit/contrib/format-jsonc",
+   "deps": 3
   },
   {
    "dir": "contrib/format-properties",
@@ -161,6 +167,12 @@
    "summary": "**Support level: supported** — 100% covered, and it passes the shared flat-source conformance suite. See the catalogue."
   },
   {
+   "name": "format-jsonc",
+   "module": "github.com/ubgo/cfgkit/contrib/format-jsonc",
+   "deps": 3,
+   "summary": "**Support level: best-effort** — complete and tested, built on `github.com/ubgo/textdata/jsonc`, which is not tagged yet. See the catalogue."
+  },
+  {
    "name": "format-properties",
    "module": "github.com/ubgo/cfgkit/contrib/format-properties",
    "deps": 2,
@@ -255,12 +267,7 @@
   "cfgkittest",
   "mock"
  ],
- "ubgoDeps": [
-  {
-   "name": "dotenv",
-   "from": "."
-  }
- ],
+ "ubgoDeps": [],
  "plugins": [],
  "examples": [
   {
@@ -285,5 +292,5 @@
   }
  ],
  "features": [],
- "table": "| Module | Adds | Guide |\n|---|---|---|\n| `contrib/format-hcl` | HCL documents and files | README |\n| `contrib/format-ini` | INI documents and files — **flat** | README |\n| `contrib/format-properties` | Java `.properties` — **flat** | README |\n| `contrib/format-toml` | TOML documents and files | README |\n| `contrib/format-yaml` | YAML documents and files | README |\n| `contrib/flags-pflag` | cobra / pflag flag sets | README |\n| `contrib/source-azurekeyvault` | Azure Key Vault — **no dependencies** | README |\n| `contrib/source-consul` | Consul KV prefixes — **no dependencies** | README |\n| `contrib/source-etcd` | etcd v3 prefixes, via its HTTP gateway — **no dependencies** | README |\n| `contrib/source-gcpsecrets` | Google Secret Manager — **no dependencies** | README |\n| `contrib/source-k8s` | Kubernetes ConfigMaps and Secrets — **no dependencies** | README |\n| `contrib/source-vault` | HashiCorp Vault KV secrets — **no dependencies** | README |\n| `contrib/source-appconfig` | AWS AppConfig profiles | README |\n| `contrib/source-s3` | a config document in an S3 object | README |\n| `contrib/source-secretsmanager` | AWS Secrets Manager | README |\n| `contrib/source-ssm` | AWS Parameter Store | README |\n| `contrib/source-kiln` | kiln-encrypted env files — the one source whose file is **safe to commit** | README |\n| `contrib/source-nats` | NATS JetStream key/value buckets | README |"
+ "table": "| Module | Adds | Guide |\n|---|---|---|\n| `contrib/format-hcl` | HCL documents and files | README |\n| `contrib/format-ini` | INI documents and files — **flat** | README |\n| `contrib/format-jsonc` | JSONC (JSON with comments) files with `file:line` provenance | README |\n| `contrib/format-properties` | Java `.properties` — **flat** | README |\n| `contrib/format-toml` | TOML documents and files | README |\n| `contrib/format-yaml` | YAML documents and files | README |\n| `contrib/flags-pflag` | cobra / pflag flag sets | README |\n| `contrib/source-azurekeyvault` | Azure Key Vault — **no dependencies** | README |\n| `contrib/source-consul` | Consul KV prefixes — **no dependencies** | README |\n| `contrib/source-etcd` | etcd v3 prefixes, via its HTTP gateway — **no dependencies** | README |\n| `contrib/source-gcpsecrets` | Google Secret Manager — **no dependencies** | README |\n| `contrib/source-k8s` | Kubernetes ConfigMaps and Secrets — **no dependencies** | README |\n| `contrib/source-vault` | HashiCorp Vault KV secrets — **no dependencies** | README |\n| `contrib/source-appconfig` | AWS AppConfig profiles | README |\n| `contrib/source-s3` | a config document in an S3 object | README |\n| `contrib/source-secretsmanager` | AWS Secrets Manager | README |\n| `contrib/source-ssm` | AWS Parameter Store | README |\n| `contrib/source-kiln` | kiln-encrypted env files — the one source whose file is **safe to commit** | README |\n| `contrib/source-nats` | NATS JetStream key/value buckets | README |"
 }
