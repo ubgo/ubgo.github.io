@@ -1,0 +1,2 @@
+# Generic words this repo may use even though they are on the private list.
+hatchet
