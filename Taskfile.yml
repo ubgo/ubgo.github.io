@@ -82,6 +82,7 @@ tasks:
   check:
     desc: Everything before publishing (profile in sync, build with no warnings, link check)
     cmds:
+      - task: names:check
       - task: profile
       - task: linkcheck
 
@@ -100,3 +101,8 @@ tasks:
     vars:
       SRC_COMMIT:
         sh: git rev-parse --short HEAD
+
+  names:check:
+    desc: Fail if a tracked file holds a private name listed (as a sha256 hash) in .github/denyhash.txt
+    cmds:
+      - bash scripts/check-names.sh
